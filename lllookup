@@ -1,0 +1,140 @@
+#!/usr/bin/env ruby
+
+require_relative 'experiment/llvm_utils'
+
+require 'optparse'
+require 'yaml'
+
+arch = nil
+
+mnemonic_filter = nil
+input_filters = []
+output_filters = []
+nullary_filter = false
+store_filter = nil
+load_filter = nil
+
+only_arch_info = false
+
+OptionParser.new do |opts|
+  opts.on("-a", "--arch ARCH", "Required: architecture whose instructions to search") do |a|
+    arch = a
+  end
+
+  opts.on("-m", "--mnemonic MNEMONIC", "Filter on mnemonics containing a specific string") do |m|
+    mnemonic_filter = m
+  end
+
+  opts.on("-i", "--input INPUT", "Filter on type of an input operand") do |input|
+    input_filters << input
+  end
+
+  opts.on("-o", "--output OUTPUT", "Filter on type of an output operand") do |output|
+    output_filters << output
+  end
+
+  opts.on("-n", "--nullary", "Filter to instructions with no operands") do
+    nullary_filter = true
+  end
+
+  opts.on("-s", "--[no-]store", "Filter to instructions which [do not] store to memory") do |s|
+    store_filter = s
+  end
+
+  opts.on("-l", "--[no-]load", "Filter to instructions which [do not] load from memory") do |l|
+    load_filter = l
+  end
+  
+  opts.on("--arch-info", "Print information about this architecture, then exit") do 
+    only_arch_info = true
+  end
+end.parse!
+
+if arch.nil?
+  abort "Error: --arch parameter is required"
+end
+
+# Load info for architecture
+instructions = load_instructions(arch)
+extra_data = YAML.load(File.read(File.join(__dir__, 'data', "#{arch}.yaml")))
+operand_types = extra_data['operand_types']
+
+if only_arch_info
+  puts
+  puts "#{instructions.length} instruction variants"
+  puts "#{instructions.flat_map { |_, i| mnemonics(i) }.uniq.length} unique mnemonics"
+  puts
+  puts "Operand types:"
+  operand_types.each do |opty|
+    puts "  #{opty['name']} (#{opty['friendly_names'].join(', ')})"
+  end
+  puts
+
+  exit
+end
+
+def operand_friendly_to_llvm_names(mappings, friendly)
+  mappings.each do |mapping|
+    if mapping['friendly_names'].include?(friendly)
+      return mapping['llvm_names']
+    end
+  end
+
+  raise "unknown operand class: #{friendly}"
+end
+
+# Now, gradually filter down instructions based on our filters
+
+if mnemonic_filter
+  instructions.select! do |_, ins|
+    mnemonics(ins).any? { |m| m.include?(mnemonic_filter) }
+  end
+end
+
+# TODO: these filters don't consider implicits, but they don't have types, so...? dunno how we do that
+if input_filters
+  instructions.select! do |_, ins|
+    input_types = unwrap_flat_dag(ins['InOperandList']).map(&:first)
+    input_filters.all? { |filter| (input_types & operand_friendly_to_llvm_names(operand_types, filter)).any? }
+  end
+end
+if output_filters
+  instructions.select! do |_, ins|
+    output_types = unwrap_flat_dag(ins['OutOperandList']).map(&:first)
+    output_filters.all? { |filter| (output_types & operand_friendly_to_llvm_names(operand_types, filter)).any? }
+  end
+end
+
+if nullary_filter
+  instructions.select! do |_, ins|
+    unwrap_flat_dag(ins['InOperandList']).empty? && unwrap_flat_dag(ins['OutOperandList']).empty?
+  end
+end
+
+# I've seen these as either:
+#   - 1, does load/store
+#   - 0, definitely doesn't load/store
+#   - null, which I'm going to treat as equivalent to 0, but I don't know if that's right
+unless store_filter.nil?
+  instructions.select! do |_, ins|
+    if store_filter
+      ins['mayStore'] == 1
+    else
+      ins['mayStore'] == 0 || ins['mayStore'] == nil
+    end
+  end
+end
+unless load_filter.nil?
+  instructions.select! do |_, ins|
+    if load_filter
+      ins['mayLoad'] == 1
+    else
+      ins['mayLoad'] == 0 || ins['mayLoad'] == nil
+    end
+  end
+end
+
+# Print remaining instructions
+instructions.each do |_, ins|
+  dump_instruction(ins)
+end

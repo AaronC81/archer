@@ -1,0 +1,13 @@
+# TODO: very incomplete
+operand_types:
+  - name: General-purpose register
+    llvm_names: ["GR8", "GR16", "GR32", "GR64"]
+    friendly_names: ["gp", "gr", "gpr"]
+
+  - name: Immediate
+    llvm_names: ["i8imm", "i16imm", "i32imm", "i64imm", "u8imm", "u16imm", "u32imm", "u64imm"]
+    friendly_names: ["imm"]
+
+  - name: Memory address
+    llvm_names: ["i8mem", "i16mem", "i32mem", "i64mem", "u8mem", "u16mem", "u32mem", "u64mem"]
+    friendly_names: ["mem"]

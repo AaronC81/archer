@@ -1,0 +1,12 @@
+operand_types:
+  - name: General-purpose register
+    llvm_names: ["GPR"]
+    friendly_names: ["gp", "gr", "gpr"]
+
+  - name: Immediate
+    llvm_names: ["i32imm"]
+    friendly_names: ["imm"]
+
+  - name: Memory address
+    llvm_names: ["j2MemOperand", "j2BRATarget", "j2CallTarget"]
+    friendly_names: ["mem"]
