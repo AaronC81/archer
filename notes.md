@@ -7,6 +7,15 @@
     - `Constraints` - defines constraints, e.g. two-operand add has `src1 = dst`
     - `Uses`/`Defs` - implicitly-accessed registers
 
+# Operands
+
+- Look for `DAGOperand`
+    - Some inherit `RegisterClass`
+        - (and include members, which we could look up in `Uses` or `Defs` - awesome)
+    - Some inherit `Operand` and are either...
+        - Special value types like immediates (`ValueType` field)
+        - Composed of combinations of other operands (`MIOperandInfo` field)
+            - e.g. TriCore's `bo` (`AddrRegs` + `i32imm`)
 
 
 # Fun examples
