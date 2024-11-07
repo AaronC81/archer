@@ -1,0 +1,11 @@
+<h1>lllookup</h1>
+<h2>Supported architectures:</h2>
+<ul>
+    <% @targets.each do |_, target| %>
+        <li>
+            <a href="/target/<%= target.name %>">
+                <%= target.name %>
+            </a>
+        </li>
+    <% end %>
+</ul>

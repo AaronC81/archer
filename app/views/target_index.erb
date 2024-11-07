@@ -1,0 +1,51 @@
+<h1><%= @target.name %></h1>
+
+<a href="/target/<%= @target.name %>/info">
+    Info
+</a>
+
+<h2>Search</h2>
+<form method="GET">
+    <div>
+        <label>
+            Mnemonic
+            <input name="mnemonic" value="<%= @mnemonic_filter %>" />
+        </label>
+    </div>
+
+    <div>
+        <b>Memory:</b>
+        <label>
+            <input name="store" type="checkbox" <%= "checked" if @store_filter %> />
+            Store
+        </label>
+        <label>
+            <input name="load" type="checkbox" <%= "checked" if @load_filter %> />
+            Load
+        </label>
+    </div>
+
+    <div>
+        <b>Inputs:</b>
+    </div>
+
+    <!-- Triggers a search to actually happen -->
+    <input type="hidden" name="filtered" value="yes">
+
+    <button>
+        Search
+    </button>
+</form>
+
+<% if @instructions %>
+    <h2>Results</h2>
+    <ul>
+        <% @instructions.each do |ins| %>
+            <li>
+                <%= ins.name %><br>
+                <code><%= ins.assembly_format %></code><br>
+                <br>
+            </li>
+        <% end %>
+    </ul>
+<% end %>
