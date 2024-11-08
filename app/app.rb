@@ -13,22 +13,7 @@ TARGETS = %w[X86 TriCore J2]
 
 get '/target/:target' do
   @target = TARGETS.fetch(params[:target])
-
-  if params[:filtered]
-    @instructions = @target.instructions.values
-
-    @mnemonic_filter = params[:mnemonic]
-    if !(@mnemonic_filter.nil? || @mnemonic_filter.empty?)
-      # TODO: actually use mnemonics - this is searching the entire instruction, bad
-      @instructions.filter! { |i| i.assembly_format.include?(@mnemonic_filter) }
-    end
-
-    @store_filter = (params[:store] == 'on')
-    @instructions.filter!(&:may_store?) if @store_filter
-
-    @load_filter = (params[:load] == 'on')
-    @instructions.filter!(&:may_load?) if @load_filter
-  end
+  @instructions = @target.instructions.values
 
   erb :target_index
 end
