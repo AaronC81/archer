@@ -26,6 +26,7 @@ class Target
 
     @instructions = dump.definitions(of: :Instruction)
       .map { |d| Instruction.new(d, self) }
+      .reject { |i| i.pseudo? }
       .map { |i| [i.name, i] }
       .to_h
   end

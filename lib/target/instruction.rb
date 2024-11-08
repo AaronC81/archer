@@ -19,6 +19,8 @@ class Target
 
       @implicitly_read_registers = defi.fetch('Uses').map { |reg| target.fetch_register(reg) }
       @implicitly_written_registers = defi.fetch('Defs').map { |reg| target.fetch_register(reg) }
+
+      @pseudo = defi.fetch_bool('isPseudo')
     end
 
     # @return [Symbol] LLVM's internal name for this instruction.
@@ -33,6 +35,10 @@ class Target
 
     # @return [Boolean] Whether this instruction can read from memory.
     def may_load?; @may_load; end
+
+    # @return [Boolean] Whether this instruction is a psuedoinstruction - that is, a non-machine
+    #   instruction used to help model LLVM's codegen.
+    def pseudo?; @pseudo; end
 
     # @return [<Operand>] A list of input operands for this instruction.
     attr_reader :inputs
