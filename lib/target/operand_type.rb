@@ -76,4 +76,15 @@ class Target
       operands
     end
   end
+
+  # Special operand type when the real type could not be loaded correctly.
+  class UnknownOperandType < OperandType
+    def initialize(name)
+      @name = "#{name} ???"
+    end
+
+    def flatten
+      []
+    end
+  end
 end

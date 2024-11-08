@@ -1,3 +1,11 @@
+<style>
+    /* Table borders */
+    table, tr, td {
+        border: 1px solid gray;
+        border-collapse: collapse;
+    }
+</style>
+
 <h1><%= @target.name %></h1>
 
 <a href="/target/<%= @target.name %>/info">
@@ -9,43 +17,173 @@
     <div>
         <label>
             Mnemonic
-            <input name="mnemonic" value="<%= @mnemonic_filter %>" />
+            <input name="mnemonic" id="input-mnemonic-filter" oninput="refreshFilters()" onchange="refreshFilters()" />
         </label>
     </div>
 
     <div>
         <b>Memory:</b>
         <label>
-            <input name="store" type="checkbox" <%= "checked" if @store_filter %> />
+            <input name="store" id="input-store-filter" type="checkbox" onchange="refreshFilters()" />
             Store
         </label>
         <label>
-            <input name="load" type="checkbox" <%= "checked" if @load_filter %> />
+            <input name="load" id="input-load-filter" type="checkbox" onchange="refreshFilters()" />
             Load
         </label>
     </div>
 
     <div>
-        <b>Inputs:</b>
+        <br/>
+        <b>Operands:</b>
+        <% all_operands = @target.register_classes.values + @target.operand_types.values %>
+        <table>
+            <tr>
+                <td></td>
+                <% all_operands.each do |ty| %>
+                    <td><%= ty.name %></td>
+                <% end %>
+            </tr>
+            <tr>
+                <td><b>Input</b></td>
+                <% all_operands.each do |ty| %>
+                    <td>
+                        <input name="load" class="input-operand-input-filter" data-operand-name="<%= ty.name %>" type="checkbox" onchange="refreshFilters()" />
+                    </td>
+                <% end %>
+            </tr>
+            <tr>
+                <td><b>Output</b></td>
+                <% all_operands.each do |ty| %>
+                    <td>
+                        <input name="load" class="input-operand-output-filter" data-operand-name="<%= ty.name %>" type="checkbox" onchange="refreshFilters()" />
+                    </td>
+                <% end %>
+            </tr>
+        </table>
     </div>
-
-    <!-- Triggers a search to actually happen -->
-    <input type="hidden" name="filtered" value="yes">
-
-    <button>
-        Search
-    </button>
 </form>
 
-<% if @instructions %>
-    <h2>Results</h2>
-    <ul>
-        <% @instructions.each do |ins| %>
+<h2>Results</h2>
+<div id="instruction-results">
+
+<script>
+
+const instructions = [
+    <% @instructions.each do |ins| %>
+        {
+            name: "<%= ins.name %>",
+            assemblyFormat: "<%= ins.assembly_format %>",
+
+            mayStore: <%= ins.may_store? %>,
+            mayLoad: <%= ins.may_load? %>,
+
+            <% %w[inputs outputs].each do |dir| %>
+                <%= dir %>: [
+                    <% ins.send(dir).each do |op| %>
+                        {
+                            name: "<%= op.name %>",
+                            operandType: "<%= op.operand_type.name %>",
+                        },
+                    <% end %>
+                ],
+            <% end %>
+        },
+    <% end %>
+]
+
+const mnemonicFilter = document.getElementById("input-mnemonic-filter");
+const storeFilter = document.getElementById("input-store-filter");
+const loadFilter = document.getElementById("input-load-filter");
+
+const operandInputFilters = [...document.querySelectorAll(".input-operand-input-filter")];
+const operandOutputFilters = [...document.querySelectorAll(".input-operand-output-filter")];
+
+const instructionResults = document.getElementById("instruction-results");
+
+const resultLimit = 500;
+
+function refreshFilters() {
+    // Load filter values
+    const storeFilterValue = storeFilter.checked;
+    const loadFilterValue = loadFilter.checked;
+    // TODO: actually use mnemonics, not this
+    const mnemonicFilterValue = mnemonicFilter.value.trim();
+
+    const operandInputFilterValues = operandInputFilters
+        .filter(el => el.checked)
+        .map(el => el.dataset.operandName);
+    const operandOutputFilterValues = operandOutputFilters
+        .filter(el => el.checked)
+        .map(el => el.dataset.operandName);
+
+    var includedResults = 0;
+    var htmlString = "<ul>";
+    for (var i = 0; i < instructions.length; i++) {
+        const instruction = instructions[i];
+
+        // Test against filters
+        if (storeFilterValue && !instruction.mayStore)
+            continue;
+        if (loadFilterValue && !instruction.mayLoad)
+            continue;
+        if (mnemonicFilterValue && !instruction.assemblyFormat.includes(mnemonicFilterValue))
+            continue;
+
+        if (operandInputFilterValues.length > 0) {
+            if (!instruction.inputs.some(o => operandInputFilterValues.includes(o.operandType)))
+                continue;
+        }
+        if (operandOutputFilterValues.length > 0) {
+            if (!instruction.outputs.some(o => operandOutputFilterValues.includes(o.operandType)))
+                continue;
+        }
+
+
+        // This element has survived the filters!
+        // Add to output HTML
+        includedResults++;
+        htmlString += `
             <li>
-                <%= ins.name %><br>
-                <code><%= ins.assembly_format %></code><br>
+                ${instruction.name}<br>
+                <code>${instruction.assemblyFormat}</code><br>
+                <ul>
+                    <li>Inputs:</li>
+                    <ul>
+                        ${
+                            instruction.inputs
+                                .map(i => `<li><code>${i.name}</code> - <code>${i.operandType}</code></li>`)
+                                .join("")
+                        }
+                        ${ instruction.mayLoad ? "<li>Loads memory</li>" : "" }
+                    </ul>
+                    <li>Outputs:</li>
+                    <ul>
+                        ${
+                            instruction.outputs
+                                .map(i => `<li><code>${i.name}</code> - <code>${i.operandType}</code></li>`)
+                                .join("")
+                        }
+                        ${ instruction.mayStore ? "<li>Stores memory</li>" : "" }
+                    </ul>
+                </ul>
                 <br>
             </li>
-        <% end %>
-    </ul>
-<% end %>
+        `;
+
+        if (includedResults == resultLimit) {
+            htmlString = `
+                <div>
+                    <b>Truncated to ${resultLimit} results</b> - apply some filters.
+                </div>
+            ` + htmlString;
+            break;
+        }
+    }
+    htmlString += "</ul>";
+
+    instructionResults.innerHTML = htmlString;
+}
+
+refreshFilters();
+</script>

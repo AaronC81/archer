@@ -1,5 +1,7 @@
 class Target
   # A specific variant of an instruction, as understood by LLVM.
+
+  # TODO: exclude pseudoinstructions
   class Instruction
     def initialize(defi, target)
       @name = defi.name
@@ -55,7 +57,7 @@ class Target
     )
 
     private def look_up_operand_type(name, target)
-      target.operand_types[name] || target.register_classes[name]
+      target.operand_types[name] || target.register_classes[name] || UnknownOperandType.new(name)
     end
   end
 end
