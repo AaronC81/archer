@@ -40,23 +40,34 @@
         <table>
             <tr>
                 <td></td>
+                <td><i>None</i></td>
                 <% all_operands.each do |ty| %>
                     <td><%= ty.name %></td>
                 <% end %>
             </tr>
             <tr>
                 <td><b>Input</b></td>
+
+                <td>
+                    <input id="input-operand-input-none-filter" type="checkbox" onchange="refreshFilters()" />
+                </td>
+
                 <% all_operands.each do |ty| %>
                     <td>
-                        <input name="load" class="input-operand-input-filter" data-operand-name="<%= ty.name %>" type="checkbox" onchange="refreshFilters()" />
+                        <input class="input-operand-input-filter" data-operand-name="<%= ty.name %>" type="checkbox" onchange="refreshFilters()" />
                     </td>
                 <% end %>
             </tr>
             <tr>
                 <td><b>Output</b></td>
+
+                <td>
+                    <input id="input-operand-output-none-filter" type="checkbox" onchange="refreshFilters()" />
+                </td>
+
                 <% all_operands.each do |ty| %>
                     <td>
-                        <input name="load" class="input-operand-output-filter" data-operand-name="<%= ty.name %>" type="checkbox" onchange="refreshFilters()" />
+                        <input class="input-operand-output-filter" data-operand-name="<%= ty.name %>" type="checkbox" onchange="refreshFilters()" />
                     </td>
                 <% end %>
             </tr>
@@ -99,6 +110,9 @@ const loadFilter = document.getElementById("input-load-filter");
 const operandInputFilters = [...document.querySelectorAll(".input-operand-input-filter")];
 const operandOutputFilters = [...document.querySelectorAll(".input-operand-output-filter")];
 
+const operandNoInputsFilter = document.getElementById("input-operand-input-none-filter");
+const operandNoOutputsFilter = document.getElementById("input-operand-output-none-filter");
+
 const instructionResults = document.getElementById("instruction-results");
 
 const resultLimit = 500;
@@ -116,6 +130,9 @@ function refreshFilters() {
     const operandOutputFilterValues = operandOutputFilters
         .filter(el => el.checked)
         .map(el => el.dataset.operandName);
+
+    const operandNoInputsFilterValue = operandNoInputsFilter.checked;
+    const operandNoOutputsFilterValue = operandNoOutputsFilter.checked;
 
     var includedResults = 0;
     var htmlString = "<ul>";
@@ -139,6 +156,10 @@ function refreshFilters() {
                 continue;
         }
 
+        if (operandNoInputsFilterValue && instruction.inputs.length > 0)
+            continue;
+        if (operandNoOutputsFilterValue && instruction.outputs.length > 0)
+            continue;
 
         // This element has survived the filters!
         // Add to output HTML
