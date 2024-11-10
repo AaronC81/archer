@@ -3,7 +3,7 @@
 require 'json'
 require_relative 'llvm_utils'
 
-instructions = load_instructions('J2')
+instructions = load_instructions('TriCore')
 
 $types = {}
 def add_to_count(tys)

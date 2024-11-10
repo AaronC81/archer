@@ -58,12 +58,12 @@ class Target
       # [String] The name of the operand. 
       :name,
 
-      # [RegisterClass, OperandType] The operand's type.
+      # [SupplementaryData::OperandType] The operand's type.
       :operand_type,
     )
 
     private def look_up_operand_type(name, target)
-      target.operand_types[name] || target.register_classes[name] || UnknownOperandType.new(name)
+      target.operand_types[name] || target.operand_types['unknown!']
     end
   end
 end

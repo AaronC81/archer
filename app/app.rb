@@ -1,12 +1,20 @@
 require 'sinatra'
 require_relative '../lib/target'
 require_relative '../lib/tablegen/dump'
+require_relative '../lib/supp'
 
-TARGETS = %w[X86 TriCore J2]
+TARGETS = %w[TriCore]
   .map do |t|
-    puts "Loading: #{t}"
+    puts "=== Loading: #{t} ==="
+
+    puts "Loading supplementary data"
+    data = SupplementaryData.load(File.join(__dir__, '..', 'supp', "#{t}.yaml"))
+
+    puts "Loading TableGen data"
     dump = TableGen::Dump.load(File.join(__dir__, '..', 'tblgen_dump', "#{t}.json"))
-    target = Target.new(t, dump)
+
+    puts "Creating target"
+    target = Target.new(t, dump, data)
     [t, target]
   end
   .to_h
