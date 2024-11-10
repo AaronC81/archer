@@ -36,12 +36,11 @@
     <div>
         <br/>
         <b>Operands:</b>
-        <% all_operands = @target.register_classes.values + @target.operand_types.values %>
         <table>
             <tr>
                 <td></td>
                 <td><i>None</i></td>
-                <% all_operands.each do |ty| %>
+                <% @target.operand_type_families.each do |_, ty| %>
                     <td><%= ty.name %></td>
                 <% end %>
             </tr>
@@ -52,7 +51,7 @@
                     <input id="input-operand-input-none-filter" type="checkbox" onchange="refreshFilters()" />
                 </td>
 
-                <% all_operands.each do |ty| %>
+                <% @target.operand_type_families.each do |_, ty| %>
                     <td>
                         <input class="input-operand-input-filter" data-operand-name="<%= ty.name %>" type="checkbox" onchange="refreshFilters()" />
                     </td>
@@ -65,7 +64,7 @@
                     <input id="input-operand-output-none-filter" type="checkbox" onchange="refreshFilters()" />
                 </td>
 
-                <% all_operands.each do |ty| %>
+                <% @target.operand_type_families.each do |_, ty| %>
                     <td>
                         <input class="input-operand-output-filter" data-operand-name="<%= ty.name %>" type="checkbox" onchange="refreshFilters()" />
                     </td>
@@ -77,6 +76,7 @@
 
 <h2>Results</h2>
 <div id="instruction-results">
+</div>
 
 <script>
 
@@ -94,11 +94,15 @@ const instructions = [
                     <% ins.send(dir).each do |op| %>
                         {
                             name: "<%= op.name %>",
-                            operandType: "<%= op.operand_type.name %>",
+                            operandType: "<%= op.operand_type.friendly_name %>",
+                            operandTypeFamily: "<%= op.operand_type.family %>",
                         },
                     <% end %>
                 ],
             <% end %>
+
+            implicitInputs: <%= ins.implicitly_read_registers.map(&:name).map(&:to_s).inspect %>,
+            implicitOutputs: <%= ins.implicitly_written_registers.map(&:name).map(&:to_s).inspect %>,
         },
     <% end %>
 ]
@@ -148,11 +152,11 @@ function refreshFilters() {
             continue;
 
         if (operandInputFilterValues.length > 0) {
-            if (!instruction.inputs.some(o => operandInputFilterValues.includes(o.operandType)))
+            if (!instruction.inputs.some(o => operandInputFilterValues.includes(o.operandTypeFamily)))
                 continue;
         }
         if (operandOutputFilterValues.length > 0) {
-            if (!instruction.outputs.some(o => operandOutputFilterValues.includes(o.operandType)))
+            if (!instruction.outputs.some(o => operandOutputFilterValues.includes(o.operandTypeFamily)))
                 continue;
         }
 
@@ -173,7 +177,12 @@ function refreshFilters() {
                     <ul>
                         ${
                             instruction.inputs
-                                .map(i => `<li><code>${i.name}</code> - <code>${i.operandType}</code></li>`)
+                                .map(i => `<li><code>${i.name}</code> - ${i.operandType}</li>`)
+                                .join("")
+                        }
+                        ${
+                            instruction.implicitInputs
+                                .map(i => `<li>Implicit: <code>${i}</code></li>`)
                                 .join("")
                         }
                         ${ instruction.mayLoad ? "<li>Loads memory</li>" : "" }
@@ -182,7 +191,12 @@ function refreshFilters() {
                     <ul>
                         ${
                             instruction.outputs
-                                .map(i => `<li><code>${i.name}</code> - <code>${i.operandType}</code></li>`)
+                                .map(i => `<li><code>${i.name}</code> - ${i.operandType}</li>`)
+                                .join("")
+                        }
+                        ${
+                            instruction.implicitOutputs
+                                .map(i => `<li>Implicit: <code>${i}</code></li>`)
                                 .join("")
                         }
                         ${ instruction.mayStore ? "<li>Stores memory</li>" : "" }

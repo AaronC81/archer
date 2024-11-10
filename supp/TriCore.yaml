@@ -1,0 +1,47 @@
+operand_types:
+  # Registers
+  addr_reg:
+    friendly_name: Address register
+    llvm_name: AddrRegs
+    family: Address register
+  data_reg:
+    friendly_name: Data register
+    llvm_name: DataRegs
+    family: Data register
+  ext_reg:
+    friendly_name: Extended register
+    llvm_name: ExtRegs
+    family: Other register
+  ps_reg:
+    friendly_name: Program status register
+    llvm_name: PSRegs
+    family: Other register
+  pair_addr_reg:
+    friendly_name: Address register pair
+    llvm_name: PairAddrRegs
+    family: Address register
+  
+  # Immediates
+  "expand_immediates!": ["i1imm", "i8imm", "i16imm", "i32imm", "i64imm", "s9imm", "s16imm", "u4imm", "u8imm", "u9imm"]
+
+  # Memory
+  mem_bo:
+    friendly_name: Memory (base+offset)
+    llvm_name: bo
+    family: Memory
+  mem_circbo:
+    friendly_name: Memory (circular)
+    llvm_name: circbo
+    family: Memory
+  mem_postincbo:
+    friendly_name: Memory (base+offset, post-increment)
+    llvm_name: postincbo
+    family: Memory
+  mem_preincbo:
+    friendly_name: Memory (base+offset, pre-increment)
+    llvm_name: preincbo
+    family: Memory
+  mem_preincbo:
+    friendly_name: Memory (base+offset, bit-reversed)
+    llvm_name: bitrevbo
+    family: Memory
