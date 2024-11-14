@@ -64,6 +64,19 @@ class Target
       :operand_type,
     )
 
+    def assembly_parts
+      assembly_format
+        .split(/\$([A-Za-z0-9]+)/) # Capture group is kept in the split
+        .map.with_index do |part, i|
+          # Format of split swaps between [text, operand, text, operand, ...]
+          if i.odd?
+            [:operand, find_operand(part)]
+          else
+            [:text, part]
+          end
+        end  
+    end
+
     private def look_up_operand_type(name, target)
       target.fetch_operand_type(name)
     end
@@ -138,6 +151,13 @@ class Target
     private def rename_operand(old_name:, new_name:)
       @inputs.each  { |op| op.name = new_name if op.name == old_name }
       @outputs.each { |op| op.name = new_name if op.name == old_name }
+    end
+
+    # Find an operand by name.
+    # @raise [KeyError]
+    # @return [Operand]
+    private def find_operand(name)
+      @inputs.find { |op| op.name == name } || @outputs.find { |op| op.name == name } || (raise "no operand named `#{name}`")
     end
   end
 end
