@@ -1,4 +1,5 @@
 require 'yaml'
+require_relative 'colours'
 
 # Suplementary architecture data, which helps make the TableGen info "friendlier."
 class SupplementaryData
@@ -90,6 +91,10 @@ class SupplementaryData
 
     attr_reader :name
     attr_reader :members
+
+    def colour
+      Colours::OPERAND_FAMILY_COLOURS[name] || Colours::DEFAULT
+    end
   end
 
   class InstructionFixup

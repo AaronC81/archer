@@ -71,3 +71,13 @@ body, html {
     text-align: end;
     padding-right: 10px;
 }
+
+/* For operand highlighting */
+mark {
+    display: inline-block;
+    padding: 1px 3px;
+    border-radius: 3px;
+
+    /* default colour - almost always overridden */
+    background-color: white;
+}
