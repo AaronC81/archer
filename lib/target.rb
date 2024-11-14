@@ -28,8 +28,8 @@ class Target
       .to_h
 
     @instructions = dump.definitions(of: :Instruction)
+      .reject { |d| d.fetch_bool(:isPseudo) } # Reject early, so we don't get "unknown operand types" warnings for useless pseudo stuff
       .map { |d| Instruction.new(d, self) }
-      .reject { |i| i.pseudo? }
       .map { |i| [i.name, i] }
       .to_h
 
@@ -56,5 +56,14 @@ class Target
 
   def fetch_register(name)
     registers.fetch(name.to_sym)
+  end
+
+  def fetch_operand_type(name)
+    unless operand_types.has_key?(name)
+      puts "WARNING: Unknown operand type `#{name}`"
+      operand_types[name] = operand_types['unknown!']
+    end
+    
+    operand_types[name]
   end
 end
