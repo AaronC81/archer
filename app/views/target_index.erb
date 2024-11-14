@@ -1,11 +1,3 @@
-<style>
-    /* Table borders */
-    table, tr, td {
-        border: 1px solid gray;
-        border-collapse: collapse;
-    }
-</style>
-
 <%= erb :_title_bar, locals: { title: @target.name } %>
 
 <!--
@@ -22,7 +14,7 @@ TODO: Find a nice way to fit into design
             <form method="GET">
                 <div>
                     <label>
-                        Mnemonic
+                        <b>Mnemonic:</b>
                         <input name="mnemonic" id="input-mnemonic-filter" oninput="refreshFilters()" onchange="refreshFilters()" />
                     </label>
                 </div>
@@ -42,40 +34,38 @@ TODO: Find a nice way to fit into design
                 <div>
                     <br/>
                     <b>Operands:</b>
-                    <table>
+                    <table id="filter-operand-table">
                         <tr>
                             <td></td>
-                            <td><i>None</i></td>
-                            <% @target.operand_type_families.each do |_, ty| %>
-                                <td><%= ty.name %></td>
-                            <% end %>
+                            <td class="checkbox-cell"><b>Input</b></td>
+                            <td class="checkbox-cell"><b>Output</b></td>
                         </tr>
-                        <tr>
-                            <td><b>Input</b></td>
 
-                            <td>
+                        <tr>
+                            <td class="label-cell">
+                                <i>
+                                    <abbr title="Filter to instructions which do not have any input/output operands">None</abbr>
+                                </i>
+                            </td>
+                            <td class="checkbox-cell">
                                 <input id="input-operand-input-none-filter" type="checkbox" onchange="refreshFilters()" />
                             </td>
-
-                            <% @target.operand_type_families.each do |_, ty| %>
-                                <td>
-                                    <input class="input-operand-input-filter" data-operand-name="<%= ty.name %>" type="checkbox" onchange="refreshFilters()" />
-                                </td>
-                            <% end %>
-                        </tr>
-                        <tr>
-                            <td><b>Output</b></td>
-
-                            <td>
+                            <td class="checkbox-cell">
                                 <input id="input-operand-output-none-filter" type="checkbox" onchange="refreshFilters()" />
                             </td>
+                        </tr>
 
-                            <% @target.operand_type_families.each do |_, ty| %>
-                                <td>
+                        <% @target.operand_type_families.each do |_, ty| %>
+                            <tr>
+                                <td class="label-cell"><%= ty.name %></td>
+                                <td class="checkbox-cell">
+                                    <input class="input-operand-input-filter" data-operand-name="<%= ty.name %>" type="checkbox" onchange="refreshFilters()" />
+                                </td>
+                                <td class="checkbox-cell">
                                     <input class="input-operand-output-filter" data-operand-name="<%= ty.name %>" type="checkbox" onchange="refreshFilters()" />
                                 </td>
-                            <% end %>
-                        </tr>
+                            </tr>
+                        <% end %>
                     </table>
                 </div>
             </form>
