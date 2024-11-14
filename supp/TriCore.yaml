@@ -22,7 +22,7 @@ operand_types:
     family: Address register
   
   # Immediates
-  "expand_immediates!": ["i1imm", "i8imm", "i16imm", "i32imm", "i64imm", "s9imm", "s16imm", "u4imm", "u8imm", "u9imm"]
+  "expand_immediates!": ["i1imm", "i8imm", "i16imm", "i32imm", "i64imm", "s4imm", "s9imm", "s16imm", "u4imm", "u8imm", "u9imm", "u16imm"]
 
   # Memory
   mem_bo:
@@ -41,7 +41,7 @@ operand_types:
     friendly_name: Memory (base+offset, pre-increment)
     llvm_name: preincbo
     family: Memory
-  mem_preincbo:
+  mem_bitrevbo:
     friendly_name: Memory (base+offset, bit-reversed)
     llvm_name: bitrevbo
     family: Memory
