@@ -37,8 +37,8 @@ body, html {
     justify-content: space-around;
 }
 
-#filter-panel { flex: 2; }
-#filter-results { flex: 5; }
+#filter-panel { flex: 1; }
+#filter-results { flex: 4; }
 
 #filter-panel {
     top: 0;
@@ -51,4 +51,23 @@ body, html {
     background-color: #FAFAFA;
 
     box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+#filter-operand-table {
+    margin: 0 auto;
+    border-collapse: collapse;
+}
+
+#filter-operand-table tr {
+    border-bottom: 1px solid rgb(213, 213, 213);
+}
+
+#filter-operand-table .checkbox-cell {
+    width: 60px;
+    text-align: center;
+}
+
+#filter-operand-table .label-cell {
+    text-align: end;
+    padding-right: 10px;
 }
