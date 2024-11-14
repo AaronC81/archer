@@ -53,6 +53,31 @@ body, html {
     box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 
+#filter-results .result-card {
+    padding: 15px;
+    margin: 30px 10px;
+    border-radius: 20px;
+    background-color: #FAFAFA;
+
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+#filter-results .result-card .header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+}
+
+#filter-results .result-card .assembly-format {
+    font-size: 20px;
+}
+
+#filter-results .result-card ul {
+    margin-block: 0;
+}
+
 #filter-operand-table {
     margin: 0 auto;
     border-collapse: collapse;
