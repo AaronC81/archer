@@ -3,7 +3,7 @@ require_relative '../lib/target'
 require_relative '../lib/tablegen/dump'
 require_relative '../lib/supp'
 
-TARGETS = %w[TriCore]
+TARGETS = %w[TriCore J2]
   .map do |t|
     puts "=== Loading: #{t} ==="
 
