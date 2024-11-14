@@ -76,7 +76,6 @@ TODO: Find a nice way to fit into design
         </div>
 
         <div id="filter-results">
-            <h2>Results</h2>
             <div id="instruction-results">
             </div>
         </div>
@@ -161,7 +160,7 @@ function refreshFilters() {
     const operandNoOutputsFilterValue = operandNoOutputsFilter.checked;
 
     var includedResults = 0;
-    var htmlString = "<ul>";
+    var htmlString = "";
     for (var i = 0; i < instructions.length; i++) {
         const instruction = instructions[i];
 
@@ -191,41 +190,40 @@ function refreshFilters() {
         // Add to output HTML
         includedResults++;
         htmlString += `
-            <li>
-                ${instruction.name}<br>
-                <code>${instruction.assemblyHtml}</code><br>
+            <div class="result-card">
+                <div class="header">
+                    <code class="assembly-format">${instruction.assemblyHtml}</code>
+                    ${instruction.name}
+                </div>
+                <b>Inputs</b>
                 <ul>
-                    <li>Inputs:</li>
-                    <ul>
-                        ${
-                            instruction.inputs
-                                .map(i => `<li><mark style="${i.operandTypeFamilyStyle}"><code>${i.name}</code></mark> - ${i.operandType}</li>`)
-                                .join("")
-                        }
-                        ${
-                            instruction.implicitInputs
-                                .map(i => `<li>Implicit: <code>${i}</code></li>`)
-                                .join("")
-                        }
-                        ${ instruction.mayLoad ? "<li>Loads memory</li>" : "" }
-                    </ul>
-                    <li>Outputs:</li>
-                    <ul>
-                        ${
-                            instruction.outputs
-                                .map(i => `<li><mark style="${i.operandTypeFamilyStyle}"><code>${i.name}</code></mark> - ${i.operandType}</li>`)
-                                .join("")
-                        }
-                        ${
-                            instruction.implicitOutputs
-                                .map(i => `<li>Implicit: <code>${i}</code></li>`)
-                                .join("")
-                        }
-                        ${ instruction.mayStore ? "<li>Stores memory</li>" : "" }
-                    </ul>
+                    ${
+                        instruction.inputs
+                            .map(i => `<li><mark style="${i.operandTypeFamilyStyle}"><code>${i.name}</code></mark> - ${i.operandType}</li>`)
+                            .join("")
+                    }
+                    ${
+                        instruction.implicitInputs
+                            .map(i => `<li>Implicit: <code>${i}</code></li>`)
+                            .join("")
+                    }
+                    ${ instruction.mayLoad ? "<li>Loads memory</li>" : "" }
                 </ul>
-                <br>
-            </li>
+                <b>Outputs</b>
+                <ul>
+                    ${
+                        instruction.outputs
+                            .map(i => `<li><mark style="${i.operandTypeFamilyStyle}"><code>${i.name}</code></mark> - ${i.operandType}</li>`)
+                            .join("")
+                    }
+                    ${
+                        instruction.implicitOutputs
+                            .map(i => `<li>Implicit: <code>${i}</code></li>`)
+                            .join("")
+                    }
+                    ${ instruction.mayStore ? "<li>Stores memory</li>" : "" }
+                </ul>
+            </div>
         `;
 
         if (includedResults == resultLimit) {
@@ -237,7 +235,7 @@ function refreshFilters() {
             break;
         }
     }
-    htmlString += "</ul>";
+    htmlString += "";
 
     instructionResults.innerHTML = htmlString;
 }
