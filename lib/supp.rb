@@ -16,6 +16,16 @@ class SupplementaryData
       .reject { |ty| ty.family.nil? }
       .group_by(&:family)
       .map { |name, members| OperandTypeFamily.new(name, members) }
+
+    @instruction_fixups = data.fetch('instruction_fixups')
+      .map do |fixup|
+        InstructionFixup.new(
+          Regexp.new(fixup.fetch('match')),
+          fixup.fetch('modify')
+            .map { |k, v| [k.to_sym, v] }
+            .to_h
+        )
+      end
   end
 
   def self.load(file)
@@ -27,6 +37,9 @@ class SupplementaryData
 
   # @return [<OperandTypeFamily>]
   attr_reader :operand_type_families
+
+  # @return [<InstructionFixup>]
+  attr_reader :instruction_fixups
 
   class OperandType
     def initialize(data)
@@ -77,5 +90,18 @@ class SupplementaryData
 
     attr_reader :name
     attr_reader :members
+  end
+
+  class InstructionFixup
+    def initialize(match, modify)
+      @match = match
+      @modify = modify
+    end
+
+    # @return [Regexp]
+    attr_reader :match
+
+    # @return [{ Symbol => Object }]
+    attr_reader :modify
   end
 end
