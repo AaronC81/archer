@@ -45,3 +45,10 @@ operand_types:
     friendly_name: Memory (base+offset, bit-reversed)
     llvm_name: bitrevbo
     family: Memory
+
+instruction_fixups:
+  # All TriCore instructions have `mayStore = ?`
+  # (Yet `mayLoad` seems correct...)
+  - match: "^ST_"
+    modify:
+      "@may_store": true

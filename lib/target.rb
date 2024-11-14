@@ -32,6 +32,13 @@ class Target
       .reject { |i| i.pseudo? }
       .map { |i| [i.name, i] }
       .to_h
+
+    # O(n^2), ouch
+    instructions.each do |_, ins|
+      supp.instruction_fixups.each do |fixup|
+        ins.apply_fixup(fixup)
+      end
+    end
   end
 
   attr_reader :name

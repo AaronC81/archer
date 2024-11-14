@@ -65,5 +65,14 @@ class Target
     private def look_up_operand_type(name, target)
       target.operand_types[name] || target.operand_types['unknown!']
     end
+
+    # @param fixup [SupplementaryData::InstructionFixup] 
+    def apply_fixup(fixup)
+      return unless fixup.match === name
+
+      fixup.modify.each do |var, value|
+        instance_variable_set(var, value)
+      end
+    end
   end
 end
