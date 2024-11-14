@@ -63,7 +63,7 @@ class Target
     )
 
     private def look_up_operand_type(name, target)
-      target.operand_types[name] || target.operand_types['unknown!']
+      target.fetch_operand_type(name)
     end
 
     # @param fixup [SupplementaryData::InstructionFixup] 
