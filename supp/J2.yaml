@@ -1,0 +1,17 @@
+operand_types:
+  # Register
+  gen_reg:
+    friendly_name: General-purpose register
+    llvm_name: GPR
+    family: General-purpose register
+
+  # Immediates
+  "expand_immediates!": ["i32imm"]
+
+  # Memory
+  mem:
+    friendly_name: Memory
+    llvm_name: j2MemOperand
+    family: Memory
+
+instruction_fixups: []
