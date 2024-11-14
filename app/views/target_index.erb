@@ -90,6 +90,22 @@ const instructions = [
         {
             name: "<%= ins.name %>",
             assemblyFormat: "<%= ins.assembly_format %>",
+            assemblyHtml: <%=
+                ins.assembly_parts
+                    .map do |type, param|
+                        case type
+                        when :text
+                            param
+                        when :operand
+                            style = @target.operand_type_families[param.operand_type.family]&.colour&.css_text_style
+                            "<mark style=\"#{style}\">#{param.name}</mark>"
+                        else
+                            raise 'unknown assembly part'
+                        end
+                    end
+                    .join
+                    .inspect
+            %>,
 
             mayStore: <%= ins.may_store? %>,
             mayLoad: <%= ins.may_load? %>,
@@ -177,7 +193,7 @@ function refreshFilters() {
         htmlString += `
             <li>
                 ${instruction.name}<br>
-                <code>${instruction.assemblyFormat}</code><br>
+                <code>${instruction.assemblyHtml}</code><br>
                 <ul>
                     <li>Inputs:</li>
                     <ul>
