@@ -57,7 +57,11 @@ TODO: Find a nice way to fit into design
 
                         <% @target.operand_type_families.each do |_, ty| %>
                             <tr>
-                                <td class="label-cell"><%= ty.name %></td>
+                                <td class="label-cell">
+                                    <mark style="<%= ty.colour.css_text_style %>">
+                                        <%= ty.name %>
+                                    </mark>
+                                </td>
                                 <td class="checkbox-cell">
                                     <input class="input-operand-input-filter" data-operand-name="<%= ty.name %>" type="checkbox" onchange="refreshFilters()" />
                                 </td>
@@ -97,6 +101,7 @@ const instructions = [
                             name: "<%= op.name %>",
                             operandType: "<%= op.operand_type.friendly_name %>",
                             operandTypeFamily: "<%= op.operand_type.family %>",
+                            operandTypeFamilyStyle: "<%= @target.operand_type_families[op.operand_type.family]&.colour&.css_text_style %>",
                         },
                     <% end %>
                 ],
@@ -178,7 +183,7 @@ function refreshFilters() {
                     <ul>
                         ${
                             instruction.inputs
-                                .map(i => `<li><code>${i.name}</code> - ${i.operandType}</li>`)
+                                .map(i => `<li><mark style="${i.operandTypeFamilyStyle}"><code>${i.name}</code></mark> - ${i.operandType}</li>`)
                                 .join("")
                         }
                         ${
@@ -192,7 +197,7 @@ function refreshFilters() {
                     <ul>
                         ${
                             instruction.outputs
-                                .map(i => `<li><code>${i.name}</code> - ${i.operandType}</li>`)
+                                .map(i => `<li><mark style="${i.operandTypeFamilyStyle}"><code>${i.name}</code></mark> - ${i.operandType}</li>`)
                                 .join("")
                         }
                         ${
