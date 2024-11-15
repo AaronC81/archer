@@ -97,6 +97,25 @@ body, html {
     padding-right: 10px;
 }
 
+.result-operand-table {
+    border-collapse: collapse;
+}
+
+.result-operand-table tr, .result-operand-table th {
+    border-bottom: 1px solid rgb(213, 213, 213);
+}
+
+.result-operand-table th {
+    padding-top: 15px;
+    text-align: left;
+}
+
+.result-operand-table .label-cell {
+    text-align: end;
+    padding-right: 10px;
+    padding-left: 20px;
+}
+
 /* For operand highlighting */
 mark {
     display: inline-block;
