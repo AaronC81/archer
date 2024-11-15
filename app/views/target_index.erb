@@ -173,11 +173,11 @@ function refreshFilters() {
             continue;
 
         if (operandInputFilterValues.length > 0) {
-            if (!instruction.inputs.some(o => operandInputFilterValues.includes(o.operandTypeFamily)))
+            if (!operandInputFilterValues.every(o => instruction.inputs.map(i => i.operandTypeFamily).includes(o)))
                 continue;
         }
         if (operandOutputFilterValues.length > 0) {
-            if (!instruction.outputs.some(o => operandOutputFilterValues.includes(o.operandTypeFamily)))
+            if (!operandOutputFilterValues.every(o => instruction.outputs.map(i => i.operandTypeFamily).includes(o.operandTypeFamily)))
                 continue;
         }
 
