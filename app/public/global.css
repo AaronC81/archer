@@ -41,7 +41,7 @@ body, html {
 #filter-results { flex: 3; }
 
 #filter-panel {
-    top: 0;
+    top: 15px;
     position: sticky;
     align-self: flex-start; /* Fixes sticky not sticking in flexbox */
 
