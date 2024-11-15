@@ -38,7 +38,7 @@ body, html {
 }
 
 #filter-panel { flex: 1; }
-#filter-results { flex: 4; }
+#filter-results { flex: 3; }
 
 #filter-panel {
     top: 0;
