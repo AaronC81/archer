@@ -195,34 +195,47 @@ function refreshFilters() {
                     <code class="assembly-format">${instruction.assemblyHtml}</code>
                     ${instruction.name}
                 </div>
-                <b>Inputs</b>
-                <ul>
+                <table class="result-operand-table">
+                    <tr>
+                        <th colspan="2">Inputs</th>
+                    <tr>
                     ${
                         instruction.inputs
-                            .map(i => `<li><mark style="${i.operandTypeFamilyStyle}"><code>${i.name}</code></mark> - ${i.operandType}</li>`)
+                            .map(i => `
+                                <tr>
+                                    <td class="label-cell"><mark style="${i.operandTypeFamilyStyle}"><code>${i.name}</code></mark></td>
+                                    <td>${i.operandType}</td>
+                                </tr>`
+                            )
                             .join("")
                     }
                     ${
                         instruction.implicitInputs
-                            .map(i => `<li>Implicit: <code>${i}</code></li>`)
+                            .map(i => `<tr><td class="label-cell">Implicit</td><td><code>${i}</code></td></tr>`)
                             .join("")
                     }
-                    ${ instruction.mayLoad ? "<li>Loads memory</li>" : "" }
-                </ul>
-                <b>Outputs</b>
-                <ul>
+                    ${ instruction.mayLoad ? "<tr><td></td><td>Loads memory</td></tr>" : "" }
+
+                    <tr>
+                        <th colspan="2">Outputs</th>
+                    <tr>
                     ${
                         instruction.outputs
-                            .map(i => `<li><mark style="${i.operandTypeFamilyStyle}"><code>${i.name}</code></mark> - ${i.operandType}</li>`)
+                            .map(i => `
+                                <tr>
+                                    <td class="label-cell"><mark style="${i.operandTypeFamilyStyle}"><code>${i.name}</code></mark></td>
+                                    <td>${i.operandType}</td>
+                                </tr>`
+                            )
                             .join("")
                     }
                     ${
                         instruction.implicitOutputs
-                            .map(i => `<li>Implicit: <code>${i}</code></li>`)
+                            .map(i => `<tr><td class="label-cell">Implicit</td><td><code>${i}</code></td></tr>`)
                             .join("")
                     }
-                    ${ instruction.mayStore ? "<li>Stores memory</li>" : "" }
-                </ul>
+                    ${ instruction.mayStore ? "<tr><td></td><td>Stores memory</td></tr>" : "" }
+                </table>
             </div>
         `;
 
