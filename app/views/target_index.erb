@@ -179,7 +179,7 @@ function refreshFilters() {
                 continue;
         }
         if (operandOutputFilterValues.length > 0) {
-            if (!operandOutputFilterValues.every(o => instruction.outputs.map(i => i.operandTypeFamily).includes(o.operandTypeFamily)))
+            if (!operandOutputFilterValues.every(o => instruction.outputs.map(i => i.operandTypeFamily).includes(o)))
                 continue;
         }
 
