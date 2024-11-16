@@ -34,6 +34,11 @@ body, html {
     box-sizing: border-box;
 }
 
+#content.centred {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
 #filter-view {
     display: flex;
     flex-direction: row;

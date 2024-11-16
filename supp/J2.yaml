@@ -1,3 +1,6 @@
+title: "J2"
+subtitle: "Super-H"
+
 operand_types:
   # Register
   gen_reg:
