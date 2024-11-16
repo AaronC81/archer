@@ -1,11 +1,12 @@
+require_relative 'assembly_format_parser'
+
 class Target
   # A specific variant of an instruction, as understood by LLVM.
-
-  # TODO: exclude pseudoinstructions
   class Instruction
     def initialize(defi, target)
       @name = defi.name
-      @assembly_format = defi.fetch('AsmString')
+      @raw_assembly_format = defi.fetch('AsmString')
+      @assembly_format = AssemblyFormatParser.parse(@raw_assembly_format)
 
       @may_store = defi.fetch_bool('mayStore')
       @may_load = defi.fetch_bool('mayLoad')
@@ -28,8 +29,11 @@ class Target
     # @return [Symbol] LLVM's internal name for this instruction.
     attr_reader :name
 
-    # @return [String] The pattern of available assembly formats for this instruction.
+    # @return [String] The raw pattern of available assembly formats for this instruction.
     #   Depending on the architecture, this may represent multiple permitted forms.
+    attr_reader :raw_assembly_format
+
+    # @return [AssemblyFormatParser::Node] The parsed assembly format for this instruction.
     attr_reader :assembly_format
 
     # @return [Boolean] Whether this instruction can write to memory.
@@ -64,17 +68,43 @@ class Target
       :operand_type,
     )
 
-    def assembly_parts
-      assembly_format
-        .split(/\$([A-Za-z0-9]+)/) # Capture group is kept in the split
-        .map.with_index do |part, i|
-          # Format of split swaps between [text, operand, text, operand, ...]
-          if i.odd?
-            [:operand, find_operand(part)]
-          else
-            [:text, part]
-          end
-        end  
+    # Split up this instruction's `#assembly_format` into its constituent parts. This can be used
+    # to style different parts of the format differently.
+    #
+    # Returns an array of:
+    #   - `[:text, String]` - A raw text part of the Assembly string.
+    #   - `[:operand, Operand]` - A reference to one of this instruction's operands.
+    def assembly_parts_for_variant(variant)
+      parts = []
+
+      assembly_format.walk(variant) do |node|
+        case node
+        when AssemblyFormatParser::Text
+          parts << [:text, node.text]
+        when AssemblyFormatParser::Operand
+          parts << [:operand, find_operand(node.name)]
+        else
+          raise 'unexpected leaf type'
+        end 
+      end
+
+      parts
+    end
+
+    def assembly_format_for_variant(variant)
+      str = ""
+      assembly_format.walk(variant) do |node|
+        case node
+        when AssemblyFormatParser::Text
+          str += node.text
+        when AssemblyFormatParser::Operand
+          str += node.name
+        else
+          raise 'unexpected leaf type'
+        end
+      end
+
+      str
     end
 
     private def look_up_operand_type(name, target)
@@ -129,9 +159,10 @@ class Target
       right = $2
 
       # Figure out which of the two sides of the constraint actually appears in the Assembly string
-      operands_in_asm = assembly_format
-        .scan(/\$[A-Za-z0-9]+/)
-        .map { |op| op[1..-1] } # Drop leading $
+      operands_in_asm = []
+      assembly_format.walk(nil) do |node|
+        operands_in_asm << node.name if node.is_a?(AssemblyFormatParser::Operand)
+      end
 
       if operands_in_asm.include?(left) && operands_in_asm.include?(right)
         # Ah, they're both mentioned! why is there a constraint then?
