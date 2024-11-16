@@ -1,4 +1,82 @@
-operand_types: []
+operand_types:
+  # General-purpose registers
+  gr8:
+    friendly_name: 8-bit general purpose register
+    llvm_name: GR8
+    family: General-purpose register
+  gr16:
+    friendly_name: 16-bit general purpose register
+    llvm_name: GR16
+    family: General-purpose register
+  gr32:
+    friendly_name: 32-bit general purpose register
+    llvm_name: GR32
+    family: General-purpose register
+  gr64:
+    friendly_name: 64-bit general purpose register
+    llvm_name: GR64
+    family: General-purpose register
+
+  # Immediates
+  "expand_immediates!": ["i8imm", "i16imm", "i32imm", "i64imm"]
+
+  # Memory
+  "expand_memory!": [
+    "i8mem", "i16mem", "i32mem", "i64mem", "i128mem", "i256mem", "i512mem",
+    "f8mem", "f16mem", "f32mem", "f64mem", "f80mem", "f128mem", "f256mem", "f512mem"
+  ]
+
+  # SSE registers
+  fr16:
+    friendly_name: SSE register (XMM 0-15), accessed as 16-bit
+    llvm_name: FR16
+    family: SSE vector register
+  fr16x:
+    friendly_name: EVEX SSE register (XMM 0-32), accessed as 16-bit
+    llvm_name: FR16X
+    family: SSE vector register
+  fr32:
+    friendly_name: SSE register (XMM 0-15), accessed as 32-bit
+    llvm_name: FR32
+    family: SSE vector register
+  fr32x:
+    friendly_name: EVEX SSE register (XMM 0-32), accessed as 32-bit
+    llvm_name: FR32X
+    family: SSE vector register
+  fr64:
+    friendly_name: SSE register (XMM 0-15), accessed as 64-bit
+    llvm_name: FR64
+    family: SSE vector register
+  fr64x:
+    friendly_name: EVEX SSE register (XMM 0-32), accessed as 64-bit
+    llvm_name: FR64X
+    family: SSE vector register
+
+  # AVX registers
+  vr64:
+    friendly_name: AVX register (YMM 0-15), accessed as 64-bit
+    llvm_name: VR64
+    family: AVX vector register
+  vr128:
+    friendly_name: AVX register (YMM 0-15), accessed as 128-bit
+    llvm_name: VR128
+    family: AVX vector register
+  vr128x:
+    friendly_name: EVEX AVX register (YMM 0-32), accessed as 128-bit
+    llvm_name: VR128X
+    family: AVX vector register
+  vr256:
+    friendly_name: AVX register (YMM 0-15), accessed as 256-bit
+    llvm_name: VR256
+    family: AVX vector register
+  vr256x:
+    friendly_name: EVEX AVX register (YMM 0-32), accessed as 256-bit
+    llvm_name: VR256X
+    family: AVX vector register
+  vr512:
+    friendly_name: AVX register (YMM 0-15), accessed as 512-bit
+    llvm_name: VR512
+    family: AVX vector register
 
 instruction_fixups: []
 
