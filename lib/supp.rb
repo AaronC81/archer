@@ -6,8 +6,11 @@ class SupplementaryData
   def initialize(data)
     @operand_types = data.fetch('operand_types')
       .flat_map do |key, ty|
-        if key == "expand_immediates!"
+        case key
+        when "expand_immediates!"
           ty.map { |imm| OperandType.from_immediate(imm) }
+        when "expand_memory!"
+          ty.map { |mem| OperandType.from_memory(mem) }
         else
           [OperandType.new(ty)]
         end
@@ -67,6 +70,21 @@ class SupplementaryData
         'friendly_name' => "#{form}#{bits}-bit immediate",
         'llvm_name' => llvm_name,
         'family' => 'Immediate',
+      })
+    end
+
+    def self.from_memory(llvm_name)
+      raise "malformed memory name" unless /^([fi])(\d+)mem$/ === llvm_name
+      bits = $2.to_i
+      ty = case $1
+        when 'f'; 'float'
+        when 'i'; 'integer'
+      end
+
+      new({
+        'friendly_name' => "Memory reference to #{ty} (#{bits}-bit width)",
+        'llvm_name' => llvm_name,
+        'family' => 'Memory',
       })
     end
 
