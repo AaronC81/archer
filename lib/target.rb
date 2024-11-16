@@ -46,6 +46,8 @@ class Target
         ins.apply_fixup(fixup)
       end
     end
+
+    @assembly_variants = supp.assembly_variants
   end
 
   attr_reader :name
@@ -60,6 +62,9 @@ class Target
 
   # @return [{ String => Instruction }]
   attr_reader :instructions
+
+  # @return [<String>]
+  attr_reader :assembly_variants
 
   def fetch_register(name)
     registers.fetch(name.to_sym)

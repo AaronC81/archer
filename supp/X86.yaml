@@ -1,3 +1,7 @@
 operand_types: []
 
 instruction_fixups: []
+
+assembly_variants:
+  - AT&T
+  - Intel

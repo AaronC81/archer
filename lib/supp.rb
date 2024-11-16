@@ -27,6 +27,8 @@ class SupplementaryData
             .to_h
         )
       end
+
+    @assembly_variants = data['assembly_variants'] || ['Default']
   end
 
   def self.load(file)
@@ -41,6 +43,9 @@ class SupplementaryData
 
   # @return [<InstructionFixup>]
   attr_reader :instruction_fixups
+
+  # @return [<String>]
+  attr_reader :assembly_variants
 
   class OperandType
     def initialize(data)

@@ -25,6 +25,10 @@ body, html {
     margin-block: 0;
 }
 
+#title-bar #assembly-variant-selector {
+    font-size: 25px;
+}
+
 #content {
     padding: 20px;
     box-sizing: border-box;
