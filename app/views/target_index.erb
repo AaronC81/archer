@@ -91,9 +91,9 @@ const instructions = [
     <% @instructions.each do |ins| %>
         {
             name: "<%= ins.name %>",
-            assemblyFormat: "<%= ins.assembly_format %>",
+            assemblyFormat: "<%= ins.assembly_format_for_variant(0) %>",
             assemblyHtml: <%=
-                ins.assembly_parts
+                ins.assembly_parts_for_variant(0)
                     .map do |type, param|
                         case type
                         when :text

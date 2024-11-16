@@ -29,7 +29,14 @@ class Target
 
     @instructions = dump.definitions(of: :Instruction)
       .reject { |d| d.fetch_bool(:isPseudo) } # Reject early, so we don't get "unknown operand types" warnings for useless pseudo stuff
-      .map { |d| Instruction.new(d, self) }
+      .map do |d|
+        begin
+          Instruction.new(d, self)
+        rescue AssemblyFormatParser::MalformedError => e # TODO: Hopefully temporary
+          puts "WARNING: Unable to parse assembly string for instruction: #{e}"
+        end
+      end
+      .compact
       .map { |i| [i.name, i] }
       .to_h
 
