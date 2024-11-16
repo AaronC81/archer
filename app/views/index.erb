@@ -1,11 +1,79 @@
-<%= erb :_title_bar, locals: { title: "Architectures" } %>
-
-<ul>
-    <% @targets.each do |_, target| %>
-        <li>
+<div id="content" class="centred">
+    <h1>lllookup</h1>
+    <p>
+        <b>A machine instruction search tool</b> for Assembly polyglots.
+    </p>
+    <p>
+        Find the instruction you need by filtering on operands and behaviour.<br>Or learn about an
+        instruction you've never seen before, by searching for its mnemonic.
+    </p>
+    <ul id="arch-list">
+        <% @targets.each do |_, target| %>
             <a href="/target/<%= target.name %>">
-                <%= target.name %>
+                <li>
+                    <span><b><%= target.title %></b></span>
+                    <% if target.subtitle %>
+                        <br>
+                        <small><%= target.subtitle %></small>
+                    <% end %>
+                </li>
             </a>
-        </li>
-    <% end %>
-</ul>
+        <% end %>
+    </ul>
+    <p>
+        Instruction set listings are generated automatically from <a href="https://llvm.org/">LLVM</a>.
+        <br>Data sources:
+    </p>
+    <ul>
+        <li><a href="https://github.com/TriDis/llvm-tricore"><code>llvm-tricore</code> fork by Sidney Pontes-Filho</a> - TriCore
+        <li><a href="https://github.com/francisvm/j2-llvm"><code>j2-llvm</code> fork by Francis Visoiu Mistrih</a> - J2
+        <li><a href="https://github.com/llvm/llvm-project">Mainline</a> - All other architectures</li>
+    </ul>
+    <small>lllookup created by <a href="https://aaronc.cc">Aaron Christiansen</a>.</small>
+</div>
+
+<style>
+    #arch-list {
+        padding: 20px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-auto-rows: 1fr;
+        gap: 20px;
+
+        list-style-type: none;
+    }
+
+    @media screen and (max-width: 767px) {
+        #arch-list {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    #arch-list a {
+        display: block;
+        background-color: #FAFAFA;
+        border-radius: 10px;
+        padding: 10px;
+        font-size: 20px;
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+
+        color: black;
+        text-align: center;
+        text-decoration: none;
+
+        /* Vertically centre content */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+    }
+
+    #arch-list a span {
+        color: black;
+        text-align: center;
+        text-decoration: underline;
+    }
+
+    #arch-list a small {
+        font-size: 14px;
+    }
+</style>

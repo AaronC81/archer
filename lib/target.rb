@@ -6,6 +6,8 @@ require_relative 'supp'
 class Target
   def initialize(name, dump, supp)
     @name = name
+    @title = supp.title
+    @subtitle = supp.subtitle
 
     @registers = dump.definitions(of: :Register)
       .map { |d| Register.new(d) }
@@ -29,11 +31,12 @@ class Target
 
     @instructions = dump.definitions(of: :Instruction)
       .reject { |d| d.fetch_bool(:isPseudo) } # Reject early, so we don't get "unknown operand types" warnings for useless pseudo stuff
+      .reject { |d| d.has_superclass?(:PseudoI) } # Another way of implementing pseudoinstructions, done by x86
       .map do |d|
         begin
           Instruction.new(d, self)
         rescue AssemblyFormatParser::MalformedError => e # TODO: Hopefully temporary
-          puts "WARNING: Unable to parse assembly string for instruction: #{e}"
+          # puts "WARNING: Unable to parse assembly string for instruction: #{e}"
         end
       end
       .compact
@@ -53,6 +56,14 @@ class Target
   attr_reader :name
   attr_reader :registers
   attr_reader :register_classes
+
+  # A friendly title to use for this architecture, which may not match the LLVM `#name`.
+  # @return [String]
+  attr_reader :title
+
+  # An optional subtitle further describing the architecture.
+  # @return [String, nil]
+  attr_reader :subtitle
 
   # @return [{ String => SupplementaryData::OperandType }]
   attr_reader :operand_types

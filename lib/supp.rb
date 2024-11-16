@@ -4,6 +4,9 @@ require_relative 'colours'
 # Suplementary architecture data, which helps make the TableGen info "friendlier."
 class SupplementaryData
   def initialize(data)
+    @title = data.fetch('title')
+    @subtitle = data['subtitle']
+
     @operand_types = data.fetch('operand_types')
       .flat_map do |key, ty|
         case key
@@ -37,6 +40,12 @@ class SupplementaryData
   def self.load(file)
     new(YAML.load(File.read(file)))
   end
+
+  # @return [String]
+  attr_reader :title
+
+  # @return [String, nil]
+  attr_reader :subtitle
 
   # @return [<OperandType>]
   attr_reader :operand_types
