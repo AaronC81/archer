@@ -1,4 +1,12 @@
 <div id="title-bar">
     <a href="/" id="home-link">lllookup</a>
     <h1><%= title %></h1>
+
+    <% if @target && @target.assembly_variants.length > 1 %>
+        <select id="assembly-variant-selector" onchange="refreshFilters()">
+            <% @target.assembly_variants.each.with_index do |name, i| %>
+                <option value="<%= i %>"><%= name %></option>
+            <% end %>
+        </select>
+    <% end %>
 </div>

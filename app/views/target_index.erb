@@ -1,4 +1,4 @@
-<%= erb :_title_bar, locals: { title: @target.name } %>
+<%= erb :_title_bar, locals: { title: @target.name, target: @target } %>
 
 <!--
 TODO: Find a nice way to fit into design
@@ -91,23 +91,29 @@ const instructions = [
     <% @instructions.each do |ins| %>
         {
             name: "<%= ins.name %>",
-            assemblyFormat: "<%= ins.assembly_format_for_variant(0) %>",
-            assemblyHtml: <%=
-                ins.assembly_parts_for_variant(0)
-                    .map do |type, param|
-                        case type
-                        when :text
-                            param
-                        when :operand
-                            style = @target.operand_type_families[param.operand_type.family]&.colour&.css_text_style
-                            "<mark style=\"#{style}\">#{param.name}</mark>"
-                        else
-                            raise 'unknown assembly part'
-                        end
-                    end
-                    .join
-                    .inspect
-            %>,
+            assemblyVariants: [
+                <% @target.assembly_variants.length.times do |i| %>
+                    {
+                        format: <%= ins.assembly_format_for_variant(i).inspect %>,
+                        html: <%=
+                            ins.assembly_parts_for_variant(i)
+                                .map do |type, param|
+                                    case type
+                                    when :text
+                                        param
+                                    when :operand
+                                        style = @target.operand_type_families[param.operand_type.family]&.colour&.css_text_style
+                                        "<mark style=\"#{style}\">#{param.name}</mark>"
+                                    else
+                                        raise 'unknown assembly part'
+                                    end
+                                end
+                                .join
+                                .inspect
+                        %>,
+                    },
+                <% end %>
+            ],
 
             mayStore: <%= ins.may_store? %>,
             mayLoad: <%= ins.may_load? %>,
@@ -143,6 +149,8 @@ const operandNoOutputsFilter = document.getElementById("input-operand-output-non
 
 const instructionResults = document.getElementById("instruction-results");
 
+const assemblyVariantSelector = document.getElementById("assembly-variant-selector");
+
 const resultLimit = 500;
 
 function refreshFilters() {
@@ -162,6 +170,13 @@ function refreshFilters() {
     const operandNoInputsFilterValue = operandNoInputsFilter.checked;
     const operandNoOutputsFilterValue = operandNoOutputsFilter.checked;
 
+    let assemblyVariant;
+    if (assemblyVariantSelector) {
+        assemblyVariant = parseInt(assemblyVariantSelector.value);
+    } else {
+        assemblyVariant = 0;
+    }
+
     var includedResults = 0;
     var htmlString = "";
     for (var i = 0; i < instructions.length; i++) {
@@ -172,7 +187,7 @@ function refreshFilters() {
             continue;
         if (loadFilterValue && !instruction.mayLoad)
             continue;
-        if (mnemonicFilterValue && !instruction.assemblyFormat.includes(mnemonicFilterValue))
+        if (mnemonicFilterValue && !instruction.assemblyVariants[assemblyVariant].format.includes(mnemonicFilterValue))
             continue;
 
         if (operandInputFilterValues.length > 0) {
@@ -195,7 +210,7 @@ function refreshFilters() {
         htmlString += `
             <div class="result-card">
                 <div class="header">
-                    <code class="assembly-format">${instruction.assemblyHtml}</code>
+                    <code class="assembly-format">${instruction.assemblyVariants[assemblyVariant].html}</code>
                     ${instruction.name}
                 </div>
                 <table class="result-operand-table">
