@@ -84,7 +84,7 @@ class Target
       # Break out the things we care about into separate items in the list:
       #   - Variant characters: {|}
       #   - Operands: $abc
-      tokens = format.split(/([\{\|\}]|\$[a-zA-Z0-9]+)/)
+      tokens = format.split(/([\{\|\}]|\$[a-zA-Z0-9_]+)/)
 
       top_sequence = Sequence.new
       current_sequence = top_sequence
