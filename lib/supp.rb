@@ -1,11 +1,23 @@
 require 'yaml'
 require_relative 'colours'
 
+# Ensure that any requested documentation provider is already imported
+Dir[File.join(__dir__, 'documentation', '*.rb')].each do |rb|
+  require_relative rb
+end
+
 # Suplementary architecture data, which helps make the TableGen info "friendlier."
 class SupplementaryData
   def initialize(data)
     @title = data.fetch('title')
     @subtitle = data['subtitle']
+
+    @documentation_provider =
+      if data['documentation_provider']
+        Documentation.const_get(data['documentation_provider'].to_sym).new
+      else
+        Documentation::NoneProvider.new
+      end
 
     @operand_types = data.fetch('operand_types')
       .flat_map do |key, ty|
@@ -73,6 +85,9 @@ class SupplementaryData
 
   # @return [<Predicate>]
   attr_reader :predicates
+
+  # @return [Documentation::Provider]
+  attr_reader :documentation_provider
 
   class OperandType
     def initialize(data)

@@ -145,6 +145,16 @@ const instructions = [
                     .uniq # Predicates are allowed to share friendly names
                     .inspect
             %>,
+
+            documentation:
+            <% if ins.documentation %>
+                {
+                    text: <%= ins.documentation.text.inspect %>,
+                    url: <%= ins.documentation.url.inspect %>,
+                }
+            <% else %>
+                undefined
+            <% end %>,
         },
     <% end %>
 ]
@@ -269,6 +279,11 @@ function refreshFilters() {
                 <div class="predicate-labels">
                     ${instruction.predicates.map(pred => `<span>${pred}</span>`).join("")}
                 </div>
+                ${
+                    instruction.documentation
+                        ? `<a href="${instruction.documentation.url}" target="_blank" style="display: inline-block; margin-top: 15px;">${ instruction.documentation.text }</a>`
+                        : ''
+                }
             </div>
         `;
 

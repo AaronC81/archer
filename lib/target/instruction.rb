@@ -22,8 +22,8 @@ class Target
       @implicitly_written_registers = defi.fetch('Defs').map { |reg| target.fetch_register(reg) }
 
       @predicates = defi.fetch('Predicates')
-
       @pseudo = defi.fetch_bool('isPseudo')
+      @documentation = target.documentation_provider.documentation_url(self)
 
       apply_constraints(defi.fetch('Constraints'))
     end
@@ -66,6 +66,9 @@ class Target
     #   instruction to be used. These are usually extensions that the processor must support, or
     #   modes that it must be in.
     attr_reader :predicates
+
+    # @return [Documentation::Link, nil] This instruction's documentation, if it has any.
+    attr_reader :documentation
 
     Operand = Struct.new('Operand',
       # [String] The name of the operand. 
