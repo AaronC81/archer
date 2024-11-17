@@ -8,7 +8,7 @@
         instruction you've never seen before, by searching for its mnemonic.
     </p>
     <ul id="arch-list">
-        <% @targets.each do |_, target| %>
+        <% @targets.each do |target| %>
             <a href="/target/<%= target.name %>">
                 <li>
                     <span><b><%= target.title %></b></span>
