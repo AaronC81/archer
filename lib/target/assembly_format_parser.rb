@@ -83,8 +83,8 @@ class Target
 
       # Break out the things we care about into separate items in the list:
       #   - Variant characters: {|}
-      #   - Operands: $abc
-      tokens = format.split(/([\{\|\}]|\$[a-zA-Z0-9_]+)/)
+      #   - Operands: $abc or ${abc}
+      tokens = format.split(/([\{\|\}]|\$\{?[a-zA-Z0-9_]+\}?)/)
 
       top_sequence = Sequence.new
       current_sequence = top_sequence
@@ -107,7 +107,7 @@ class Target
           raise MalformedError, "variant delimiter outside of variant: #{format}" unless current_variant
           current_sequence = Sequence.new
           current_variant.variants << current_sequence
-        when /^\$([a-zA-Z0-9_]+)$/
+        when /^\$\{?([a-zA-Z0-9_]+)\}?$/
           current_sequence.items << Operand.new($1)
         else          
           current_sequence.items << Text.new(token) unless token.empty?

@@ -98,8 +98,8 @@ class SupplementaryData
 
     def self.from_immediate(llvm_name)
       case llvm_name
-      when /^([siu])(\d+)imm$/
-        bits = $2.to_i
+      when /^([siu])((?<size>\d+)imm|imm(?<size>\d+))$/ # sometimes "u1imm", sometimes "uimm1"
+        bits = $~['size'].to_i
         form = case $1
           when 's'; 'Signed '
           when 'u'; 'Unsigned '

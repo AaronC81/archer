@@ -1,0 +1,64 @@
+title: RISC-V
+
+operand_types:
+  # General-purpose registers
+  GPR:
+    friendly_name: General-purpose register
+    llvm_name: GPR
+    family: General-purpose register
+  GPRMem:
+    friendly_name: General-purpose register, containing memory address
+    llvm_name: GPRMem
+    family: General-purpose register
+  GPRMemZeroOffset:
+    friendly_name: General-purpose register, containing memory address
+    llvm_name: GPRMemZeroOffset
+    family: General-purpose register
+  GPRC:
+    friendly_name: General-purpose register, compressed set (x8-x15)
+    llvm_name: GPRC
+    family: General-purpose register
+  GPRCMem:
+    friendly_name: General-purpose register, compressed set (x8-x15), containing memory address
+    llvm_name: GPRCMem
+    family: General-purpose register
+
+  # Specifically used in directives - not even sure we should include these
+  AnyReg:
+    friendly_name: General-purpose register
+    llvm_name: AnyReg
+    family: General-purpose register
+  AnyRegC:
+    friendly_name: General-purpose register, compressed set (x8-x15)
+    llvm_name: AnyRegC
+    family: General-purpose register
+  uimm2_opcode:
+    friendly_name: 2-bit immediate
+    llvm_name: uimm2_opcode
+    family: Immediate
+  uimm7_opcode:
+    friendly_name: 7-bit immediate
+    llvm_name: uimm7_opcode
+    family: Immediate
+  
+  # Immediates
+  "expand_immediates!": [
+    "uimm1", "uimm2", "uimm3", "uimm4", "uimm5", "uimm6", "uimm7", "uimm8",
+    "simm6", "simm5", "simm12"
+  ]
+  spimm:
+    friendly_name: 5-bit immediate; number of 16-byte blocks
+    llvm_name: spimm
+    family: Immediate
+  immzero: # Don't like this, used as a marker in certain compressed instructions (e.g. c.addi)
+    friendly_name: Fixed zero immediate
+    llvm_name: immzero
+    family: Immediate
+
+  # Other registers
+  rlist:
+    friendly_name: Register list
+    llvm_name: rlist
+    family: General-purpose register # Hmm...
+
+instruction_fixups: []

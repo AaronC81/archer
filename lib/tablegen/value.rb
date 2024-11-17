@@ -24,7 +24,7 @@ module TableGen
         when 'def'
           # Defs become symbols instead of strings, to differentiate them
           json['def'].to_sym
-        when 'complex', 'varbit'
+        when 'complex', 'varbit', 'var'
           Complex.new(json)
         else
           raise "unknown complex TableGen value: #{json}"
