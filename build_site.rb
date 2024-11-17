@@ -1,4 +1,5 @@
 require 'erb'
+require 'sass-embedded'
 require 'fileutils'
 require 'pathname'
 
@@ -45,6 +46,19 @@ def build_site
 
   # Copy static assets
   FileUtils.cp_r(APP_DIR/"public\/.", BUILD_DIR)
+
+  # Compile styles
+  Dir.entries((APP_DIR/'style').to_s).each do |f|
+    path = APP_DIR/'style'/f
+    next unless path.file?
+
+    compiled = Sass.compile(path.to_s)
+
+    File.write(
+      BUILD_DIR/(path.basename.sub_ext(".css")),
+      compiled.css,
+    )
+  end
 
   # Generate homepage
   @targets = targets
