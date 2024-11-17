@@ -51,6 +51,21 @@ class Target
     end
 
     @assembly_variants = supp.assembly_variants
+
+    @predicates = supp.predicates
+      .map { |pred| [pred.llvm_name, pred] }
+      .to_h
+
+    # Check for predicates we don't understand
+    unknown_predicates = Set.new
+    instructions.each do |_, ins|
+      ins.predicates.each do |pred|
+        if !predicates.has_key?(pred) && !unknown_predicates.include?(pred)
+          puts "WARNING: Unknown predicate `#{pred}` (first seen on instruction #{ins.name})"
+          unknown_predicates << pred
+        end
+      end
+    end
   end
 
   attr_reader :name
@@ -76,6 +91,9 @@ class Target
 
   # @return [<String>]
   attr_reader :assembly_variants
+
+  # @return [{ Symbol => SupplementaryData::Predicate }]
+  attr_reader :predicates
 
   def fetch_register(name)
     registers.fetch(name.to_sym)

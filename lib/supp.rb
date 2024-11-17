@@ -35,6 +35,18 @@ class SupplementaryData
       end
 
     @assembly_variants = data['assembly_variants'] || ['Default']
+
+    @predicates = (data['predicates'] || [])
+      .flat_map do |pred|
+        # Supports specifying multiple LLVM names, as some architectures have some overlap that we
+        # don't care about (e.g. `UseSSE1` vs `HasSSE1`)
+        llvm_names = pred.fetch('llvm_name')
+        llvm_names = [llvm_names] unless llvm_names.is_a?(Array)
+
+        llvm_names.map do |llvm_name|
+          Predicate.new(llvm_name.to_sym, pred.fetch('friendly_name'))
+        end
+      end
   end
 
   def self.load(file)
@@ -58,6 +70,9 @@ class SupplementaryData
 
   # @return [<String>]
   attr_reader :assembly_variants
+
+  # @return [<Predicate>]
+  attr_reader :predicates
 
   class OperandType
     def initialize(data)
@@ -161,4 +176,12 @@ class SupplementaryData
     # @return [{ Symbol => Object }]
     attr_reader :modify
   end
+
+  Predicate = Struct.new('Predicate',
+    # [Symbol]
+    :llvm_name,
+
+    # [String]
+    :friendly_name,
+  )
 end
