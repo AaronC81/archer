@@ -204,7 +204,7 @@ class Target
     # @raise [KeyError]
     # @return [Operand]
     private def find_operand(name)
-      @inputs.find { |op| op.name == name } || @outputs.find { |op| op.name == name } || (raise "no operand named `#{name}`")
+      @inputs.find { |op| op.name == name } || @outputs.find { |op| op.name == name } || (raise "no operand named `#{name}` in instruction `#{self.name}`")
     end
   end
 end
