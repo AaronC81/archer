@@ -9,6 +9,8 @@ class Target
     @title = supp.title
     @subtitle = supp.subtitle
 
+    @documentation_provider = supp.documentation_provider
+
     @registers = dump.definitions(of: :Register)
       .map { |d| Register.new(d) }
       .map { |reg| [reg.name, reg] }
@@ -94,6 +96,9 @@ class Target
 
   # @return [{ Symbol => SupplementaryData::Predicate }]
   attr_reader :predicates
+
+  # @return [Documentation::Provider]
+  attr_reader :documentation_provider
 
   def fetch_register(name)
     registers.fetch(name.to_sym)

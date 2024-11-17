@@ -1,6 +1,8 @@
 title: "x86"
 subtitle: "AT&T or Intel"
 
+documentation_provider: FelixCloutierX86Provider
+
 operand_types:
   # General-purpose registers
   gr8:
