@@ -67,19 +67,39 @@ class SupplementaryData
     end
 
     def self.from_immediate(llvm_name)
-      raise "malformed immediate name" unless /^([siu])(\d+)imm$/ === llvm_name
-      bits = $2.to_i
-      form = case $1
-        when 's'; 'Sign-extended '
-        when 'u'; 'Zero-extended '
-        when 'i'; ''
-      end
+      case llvm_name
+      when /^([siu])(\d+)imm$/
+        bits = $2.to_i
+        form = case $1
+          when 's'; 'Signed '
+          when 'u'; 'Unsigned '
+          when 'i'; ''
+        end
 
-      new({
-        'friendly_name' => "#{form}#{bits}-bit immediate",
-        'llvm_name' => llvm_name,
-        'family' => 'Immediate',
-      })
+        new({
+          'friendly_name' => "#{form}#{bits}-bit immediate",
+          'llvm_name' => llvm_name,
+          'family' => 'Immediate',
+        })
+
+      when /^([iu])(\d+)([iu])(\d+)imm$/
+        to_bits = $2.to_i
+        from_form = case $3
+          when 's'; 'Signed '
+          when 'u'; 'Unsigned '
+          when 'i'; ''
+        end
+        from_bits = $4.to_i
+
+        new({
+          'friendly_name' => "#{from_form}#{from_bits}-bit immediate (extended to #{to_bits}-bit)",
+          'llvm_name' => llvm_name,
+          'family' => 'Immediate',
+        })
+
+      else
+        raise "unknown immediate #{llvm_name}"
+      end
     end
 
     def self.from_memory(llvm_name)
