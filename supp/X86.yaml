@@ -21,7 +21,11 @@ operand_types:
     family: General-purpose register
 
   # Immediates
-  "expand_immediates!": ["i8imm", "i16imm", "i32imm", "i64imm"]
+  "expand_immediates!": [
+    "u4imm", "u8imm",
+    "i8imm", "i16imm", "i32imm", "i64imm",
+    "i16i8imm", "i32i8imm", "i64i8imm", "i64i32imm", "i16u8imm", "i32u8imm", "i64u8imm"
+  ]
 
   # Memory
   "expand_memory!": [
