@@ -107,7 +107,7 @@ class Target
           raise MalformedError, "variant delimiter outside of variant: #{format}" unless current_variant
           current_sequence = Sequence.new
           current_variant.variants << current_sequence
-        when /^\$([a-zA-Z0-9]+)$/
+        when /^\$([a-zA-Z0-9_]+)$/
           current_sequence.items << Operand.new($1)
         else          
           current_sequence.items << Text.new(token) unless token.empty?
