@@ -149,32 +149,38 @@ class Target
     private def apply_constraints(constraints)
       return if constraints.strip.empty?
 
-      # We only currently support the constraint "$x = $y"
-      unless /^\s*\$([A-Za-z0-9]+)\s*=\s*\$([A-Za-z0-9]+)\s*$/ === constraints
-        puts "WARNING: Dropping unknown constraint applied to `#{name}`: `#{constraints}`"
-        return
-      end
+      # Multiple constraints can be separated by commas
+      constraints.split(',').map(&:strip).each do |constraint|
+        # Nothing to do with the `@earlyclobber` constraint
+        next if constraint.start_with?('@earlyclobber ')
 
-      left = $1
-      right = $2
+        # Besides that, we only currently support the constraint "$x = $y"
+        unless /^\s*\$([A-Za-z0-9_]+)\s*=\s*\$([A-Za-z0-9_]+)\s*$/ === constraint
+          puts "WARNING: Dropping unknown constraint applied to `#{name}`: `#{constraint}`"
+          next
+        end
 
-      # Figure out which of the two sides of the constraint actually appears in the Assembly string
-      operands_in_asm = []
-      assembly_format.walk(nil) do |node|
-        operands_in_asm << node.name if node.is_a?(AssemblyFormatParser::Operand)
-      end
+        left = $1
+        right = $2
 
-      if operands_in_asm.include?(left) && operands_in_asm.include?(right)
-        # Ah, they're both mentioned! why is there a constraint then?
-        # Whatever. Leave things as they are
-        return
-      elsif operands_in_asm.include?(left)
-        rename_operand(old_name: right, new_name: left)
-      elsif operands_in_asm.include?(right)
-        rename_operand(old_name: left, new_name: right)
-      else
-        # Neither operand is in the assembly! huh?
-        puts "WARNING: Operands in `#{name}` involved in constraint do not exist in Assembly string: `#{constraints}`"
+        # Figure out which of the two sides of the constraint actually appears in the Assembly string
+        operands_in_asm = []
+        assembly_format.walk(nil) do |node|
+          operands_in_asm << node.name if node.is_a?(AssemblyFormatParser::Operand)
+        end
+
+        if operands_in_asm.include?(left) && operands_in_asm.include?(right)
+          # Ah, they're both mentioned! why is there a constraint then?
+          # Whatever. Leave things as they are
+          return
+        elsif operands_in_asm.include?(left)
+          rename_operand(old_name: right, new_name: left)
+        elsif operands_in_asm.include?(right)
+          rename_operand(old_name: left, new_name: right)
+        else
+          # Neither operand is in the assembly! huh?
+          puts "WARNING: Operands in `#{name}` involved in constraint do not exist in Assembly string: `#{constraints}`"
+        end
       end
     end
 
