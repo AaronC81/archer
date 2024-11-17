@@ -21,6 +21,8 @@ class Target
       @implicitly_read_registers = defi.fetch('Uses').map { |reg| target.fetch_register(reg) }
       @implicitly_written_registers = defi.fetch('Defs').map { |reg| target.fetch_register(reg) }
 
+      @predicates = defi.fetch('Predicates')
+
       @pseudo = defi.fetch_bool('isPseudo')
 
       apply_constraints(defi.fetch('Constraints'))
@@ -59,6 +61,11 @@ class Target
     # @return [<Registers>] Registers which may be written by this instruction, despite not being
     #   listed as operands.
     attr_reader :implicitly_written_registers
+
+    # @return [<Symbol>] A list of LLVM names for predicates which must be fulfilled for this
+    #   instruction to be used. These are usually extensions that the processor must support, or
+    #   modes that it must be in.
+    attr_reader :predicates
 
     Operand = Struct.new('Operand',
       # [String] The name of the operand. 

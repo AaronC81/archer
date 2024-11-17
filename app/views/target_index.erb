@@ -137,6 +137,14 @@ const instructions = [
 
             implicitInputs: <%= ins.implicitly_read_registers.map(&:name).map(&:to_s).inspect %>,
             implicitOutputs: <%= ins.implicitly_written_registers.map(&:name).map(&:to_s).inspect %>,
+
+            predicates: <%=
+                ins.predicates
+                    .map { |pred| @target.predicates[pred]&.friendly_name }
+                    .compact
+                    .uniq # Predicates are allowed to share friendly names
+                    .inspect
+            %>,
         },
     <% end %>
 ]
@@ -258,6 +266,9 @@ function refreshFilters() {
                     }
                     ${ instruction.mayStore ? "<tr><td></td><td>Stores memory</td></tr>" : "" }
                 </table>
+                <div class="predicate-labels">
+                    ${instruction.predicates.map(pred => `<span>${pred}</span>`).join("")}
+                </div>
             </div>
         `;
 
