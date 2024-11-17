@@ -25,7 +25,7 @@ end
 
 def build_site
   # Load supported architecture data
-  targets = %w[TriCore J2 X86]
+  targets = %w[TriCore J2 X86 RISCV]
     .map do |t|
       puts "=== Loading: #{t} ==="
 

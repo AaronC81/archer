@@ -24,23 +24,29 @@ class Target
 
     # Called once, internally, to fix up member list. Don't call again later!
     def resolve_members(target)
-      case @members.operator
+      @members = expand_members_dag(@members)
+        .map { |member| resolve_member(member, target) }
+        .compact
+    end
 
-      when :add # Plain-old list
-        @members = @members.to_array.map { |member| resolve_member(member.value, target) }.compact
-        
-      when :sequence # (sequence "r%u", 0, 15)
-        pattern, first, last = @members.to_array.map(&:value)
-        names = (first...last).map { |i| (pattern % i).to_sym }
+    # @return [<Symbol>]
+    private def expand_members_dag(dag)
+      return dag unless dag.is_a?(TableGen::Value::Dag)
 
-        @members = names.map { |member| resolve_member(member, target) }.compact
+      case dag.operator
+      when :add
+        dag.arguments.flat_map { |arg| expand_members_dag(arg.value) }
 
-      when :and, :sub # boolean operators?
-        puts "WARNING: `#{name}` register class uses unsupported `#{@members.operator}` type"
-        @members = []
-      
+      when :sequence
+        pattern, first, last = dag.to_array.map(&:value)
+        (first...last).map { |i| (pattern % i).to_sym }
+
+      when :and, :sub
+        puts "WARNING: `#{name}` register class uses unsupported `#{dag.operator}` type"
+        []
+
       else
-        raise "unknown register DAG operator #{@members.operator}"
+        raise "unknown register DAG operator #{dag.operator}"
       end
     end
 

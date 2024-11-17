@@ -28,5 +28,6 @@ dump_arch () {
 
 dump_arch $llvm_mainline_target X86 X86
 dump_arch $llvm_mainline_target PowerPC PPC
+dump_arch $llvm_mainline_target RISCV RISCV
 dump_arch /Users/aaron/Source/llvm-tricore TriCore TriCore
 dump_arch /Users/aaron/Source/j2-llvm J2 J2
