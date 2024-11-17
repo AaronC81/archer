@@ -1,3 +1,11 @@
+:root {
+    --page-color: white;
+    --panel-color: #FAFAFA;
+    --line-color: #D5D5D5;
+    
+    --font-color: black;
+}
+
 body, html {
     margin: 0 !important;
     padding: 0 !important;
@@ -7,6 +15,9 @@ body, html {
     font-optical-sizing: auto;
     font-weight: 300;
     font-style: normal;
+
+    background-color: var(--page-color);
+    color: var(--font-color);
 }
 
 #title-bar {
@@ -60,7 +71,7 @@ body, html {
     padding: 15px;
     margin: 0 10px;
     border-radius: 20px;
-    background-color: #FAFAFA;
+    background-color: var(--panel-color);
 
     box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 
@@ -73,7 +84,7 @@ body, html {
         width: 100%;
         box-sizing: border-box;
         padding: 5px;
-        border: 1px solid rgb(213, 213, 213);
+        border: 1px solid var(--line-color);
         border-radius: 5px;
     }
 }
@@ -86,7 +97,7 @@ body, html {
 
         border: 0;
         height: 0;
-        border-top: 1px solid rgb(213, 213, 213);
+        border-top: 1px solid var(--line-color);
         margin-top: 20px;
         margin-bottom: 20px;
 
@@ -100,7 +111,7 @@ body, html {
         margin: 0 10px;
         margin-bottom: 30px;
         border-radius: 20px;
-        background-color: #FAFAFA;
+        background-color: var(--panel-color);
     
         box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 
@@ -127,7 +138,7 @@ body, html {
     border-collapse: collapse;
 
     tr {
-        border-bottom: 1px solid rgb(213, 213, 213);
+        border-bottom: 1px solid var(--line-color);
     }
 
     .checkbox-cell {
@@ -145,7 +156,7 @@ body, html {
     border-collapse: collapse;
 
     tr, th {
-        border-bottom: 1px solid rgb(213, 213, 213);
+        border-bottom: 1px solid var(--line-color);
     }
 
     th {
