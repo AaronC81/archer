@@ -5,18 +5,16 @@ class Target
   class Instruction
     def initialize(defi, target)
       @name = defi.name
+      # p name
       @raw_assembly_format = defi.fetch('AsmString')
-      @assembly_format = AssemblyFormatParser.parse(@raw_assembly_format)
 
       @may_store = defi.fetch_bool('mayStore')
       @may_load = defi.fetch_bool('mayLoad')
 
-      @inputs = defi.fetch('InOperandList')
-        .to_array
-        .map { |op| Operand.new(op.name, look_up_operand_type(op.value, target)) }
-      @outputs = defi.fetch('OutOperandList')
-        .to_array
-        .map { |op| Operand.new(op.name, look_up_operand_type(op.value, target)) }
+      @inputs, @raw_assembly_format = process_operand_list(target, defi.fetch('InOperandList'), @raw_assembly_format)
+      @outputs, @raw_assembly_format = process_operand_list(target, defi.fetch('OutOperandList'), @raw_assembly_format)
+
+      @assembly_format = AssemblyFormatParser.parse(@raw_assembly_format)
 
       @implicitly_read_registers = defi.fetch('Uses').map { |reg| target.fetch_register(reg) }
       @implicitly_written_registers = defi.fetch('Defs').map { |reg| target.fetch_register(reg) }
@@ -77,6 +75,34 @@ class Target
       # [SupplementaryData::OperandType] The operand's type.
       :operand_type,
     )
+
+    # @return [(<Operand>, String)]
+    def process_operand_list(target, dag, assembly_format)
+      operands = dag.arguments.flat_map do |arg|
+        if arg.value.is_a?(Symbol)
+          # Simple case - it's just a simple named operand
+          [Operand.new(arg.name, look_up_operand_type(arg.value, target))]
+        elsif arg.value.is_a?(TableGen::Value::Dag)
+          # Nested argument time!
+          # We need to have been told how to explode this operand.
+          complex_arg_name = arg.value.operator
+          explode_ty = target.explodable_operand_types[complex_arg_name]
+          if explode_ty
+            ops = explode_ty.create_operands(arg.name)
+            new_assembly_format_fragment = explode_ty.substitute_string(ops)
+
+            # TODO: less error-prone substitution
+            assembly_format = assembly_format.gsub("$#{arg.name}", new_assembly_format_fragment)
+
+            ops
+          else
+            raise "don't know how to explode nested operand type `#{complex_arg_name}` in instruction `#{name}`"
+          end
+        end
+      end
+
+      [operands, assembly_format]
+    end
 
     # Split up this instruction's `#assembly_format` into its constituent parts. This can be used
     # to style different parts of the format differently.
@@ -165,7 +191,7 @@ class Target
         next if constraint.start_with?('@earlyclobber ')
 
         # Besides that, we only currently support the constraint "$x = $y"
-        unless /^\s*\$([A-Za-z0-9_]+)\s*=\s*\$([A-Za-z0-9_]+)\s*$/ === constraint
+        unless /^\s*\$([A-Za-z0-9_\.]+)\s*=\s*\$([A-Za-z0-9_\.]+)\s*$/ === constraint
           puts "WARNING: Dropping unknown constraint applied to `#{name}`: `#{constraint}`"
           next
         end

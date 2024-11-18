@@ -31,6 +31,9 @@ class SupplementaryData
         end
       end
 
+    @explode_operand_types = (data['explode_operand_types'] || [])
+      .map { |ty| ExplodeOperandType.new(ty) }
+
     @operand_type_families = operand_types
       .reject { |ty| ty.family.nil? }
       .group_by(&:family)
@@ -76,6 +79,9 @@ class SupplementaryData
 
   # @return [<OperandTypeFamily>]
   attr_reader :operand_type_families
+
+  # @return [<ExplodeOperandType>]
+  attr_reader :explode_operand_types
 
   # @return [<InstructionFixup>]
   attr_reader :instruction_fixups
@@ -163,6 +169,19 @@ class SupplementaryData
 
     # @return [String]
     attr_reader :family
+  end
+
+  class ExplodeOperandType
+    def initialize(data)
+      @llvm_name = data.fetch('llvm_name').to_sym
+      @format = data.fetch('format')
+    end
+
+    # @return [Symbol]
+    attr_reader :llvm_name
+
+    # @return [String]
+    attr_reader :format
   end
 
   class OperandTypeFamily
