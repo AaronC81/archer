@@ -1,6 +1,7 @@
 require_relative 'target/register'
 require_relative 'target/register_class'
 require_relative 'target/instruction'
+require_relative 'target/explodable_operand_type'
 require_relative 'supp'
 
 class Target
@@ -31,9 +32,21 @@ class Target
       .map { |fam| [fam.name, fam] }
       .to_h
 
+    @explodable_operand_types = supp.explode_operand_types
+      .map do |ty|
+        record = dump.fetch(ty.llvm_name)
+        inner_operands = record.fetch(:MIOperandInfo)
+          .to_array
+          .map { |item| [item.name, fetch_operand_type(item.value)] }
+        
+        [ty.llvm_name, ExplodableOperandType.new(inner_operands, ty.format)]
+      end
+      .to_h
+
     @instructions = dump.definitions(of: :Instruction)
       .reject { |d| d.fetch_bool(:isPseudo) } # Reject early, so we don't get "unknown operand types" warnings for useless pseudo stuff
       .reject { |d| d.has_superclass?(:PseudoI) } # Another way of implementing pseudoinstructions, done by x86
+      .reject { |d| d.fetch_bool(:isCodeGenOnly) }
       .map do |d|
         begin
           Instruction.new(d, self)
@@ -87,6 +100,9 @@ class Target
 
   # @return [{ String => SupplementaryData::OperandTypeFamily }]
   attr_reader :operand_type_families
+
+  # @return [{ Symbol => ExplodableOperandType }]
+  attr_reader :explodable_operand_types
 
   # @return [{ String => Instruction }]
   attr_reader :instructions
