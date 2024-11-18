@@ -1,0 +1,52 @@
+title: PowerPC
+subtitle: Very incomplete
+
+operand_types:
+  # Register
+  # TODO: figure out difference between all of these
+  gprc:
+    friendly_name: General-purpose register
+    llvm_name: gprc
+    family: General-purpose register
+  g8rc:
+    friendly_name: General-purpose register
+    llvm_name: g8rc
+    family: General-purpose register
+  ptr_rc_nor0:
+    friendly_name: General-purpose register # TODO: ??? is this right?
+    llvm_name: ptr_rc_nor0 
+    family: General-purpose register
+
+
+  # Immediates
+  dispRIX:
+    friendly_name: 16-bit signed immediate, multiple of 4
+    llvm_name: dispRIX
+    family: Immediate
+
+
+explode_operand_types:
+  - llvm_name: memrr
+    format: "$0, $1"
+  - llvm_name: spe2dis
+    format: "$0($1)"
+  - llvm_name: spe4dis
+    format: "$0($1)"
+  - llvm_name: spe8dis
+    format: "$0($1)"
+  - llvm_name: memri
+    format: "$0($1)"
+  - llvm_name: memri34
+    format: "$0($1)"
+  - llvm_name: memri34_pcrel
+    format: "$0($1)"
+  - llvm_name: memrihash
+    format: "$0($1)"
+  - llvm_name: memrix
+    format: "$0($1)"
+  - llvm_name: memrix16
+    format: "$0($1)"
+  - llvm_name: memr
+    format: "$0"
+
+instruction_fixups: []
