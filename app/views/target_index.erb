@@ -1,89 +1,97 @@
-<div id="title-bar">
-    <a href="/" id="home-link">
-        <img src="/logo.svg" alt="Archer logo" />
-    </a>
-    <h1><%= @target.title %></h1>
-
-    <% if @target.assembly_variants.length > 1 %>
-        <select id="assembly-variant-selector" onchange="refreshFilters()">
-            <% @target.assembly_variants.each.with_index do |name, i| %>
-                <option value="<%= i %>"><%= name %></option>
-            <% end %>
-        </select>
-    <% end %>
-
-    <a href="info">Architecture Info</a>
-</div>
-
 <div id="content">
     <div id="filter-view">
-        <div id="filter-panel">
-            <h2>Search</h2>
-            <form method="GET">
-                <div>
-                    <label>
-                        <b>Mnemonic:</b>
-                        <br>
-                        <input name="mnemonic" id="input-mnemonic-filter" oninput="refreshFilters()" onchange="refreshFilters()" />
-                    </label>
-                </div>
-                <br>
+        <div id="static-panel">
+            <div id="title-bar">
+                <a href="/" id="home-link">
+                    <img src="/logo.svg" alt="Archer logo" />
+                </a>
 
                 <div>
-                    <b>Memory:</b>
-                    <label>
-                        <input name="store" id="input-store-filter" type="checkbox" onchange="refreshFilters()" />
-                        Store
-                    </label>
-                    <label>
-                        <input name="load" id="input-load-filter" type="checkbox" onchange="refreshFilters()" />
-                        Load
-                    </label>
+                    <h1><%= @target.title %></h1>
+                    <small>
+                        <a href="info">Architecture Info</a>
+                    </small>
                 </div>
 
-                <div>
-                    <br/>
-                    <b>Operands:</b>
-                    <table id="filter-operand-table">
-                        <tr>
-                            <td></td>
-                            <td class="checkbox-cell"><b>Input</b></td>
-                            <td class="checkbox-cell"><b>Output</b></td>
-                        </tr>
+                <% if @target.assembly_variants.length > 1 %>
+                    <select id="assembly-variant-selector" onchange="refreshFilters()">
+                        <% @target.assembly_variants.each.with_index do |name, i| %>
+                            <option value="<%= i %>"><%= name %></option>
+                        <% end %>
+                    </select>
+                <% end %>
+            </div>
+            
+            <div id="filter-panel">
+                <h2>Search</h2>
+                <form method="GET">
+                    <div>
+                        <label>
+                            <b>Mnemonic:</b>
+                            <br>
+                            <input name="mnemonic" id="input-mnemonic-filter" oninput="refreshFilters()" onchange="refreshFilters()" />
+                        </label>
+                    </div>
+                    <br>
 
-                        <tr>
-                            <td class="label-cell">
-                                <i>
-                                    <abbr title="Filter to instructions which do not have any input/output operands">None</abbr>
-                                </i>
-                            </td>
-                            <td class="checkbox-cell">
-                                <input id="input-operand-input-none-filter" type="checkbox" onchange="refreshFilters()" />
-                            </td>
-                            <td class="checkbox-cell">
-                                <input id="input-operand-output-none-filter" type="checkbox" onchange="refreshFilters()" />
-                            </td>
-                        </tr>
+                    <div>
+                        <b>Memory:</b>
+                        <label>
+                            <input name="store" id="input-store-filter" type="checkbox" onchange="refreshFilters()" />
+                            Store
+                        </label>
+                        <label>
+                            <input name="load" id="input-load-filter" type="checkbox" onchange="refreshFilters()" />
+                            Load
+                        </label>
+                    </div>
 
-                        <% @target.operand_type_families.each do |_, ty| %>
+                    <div>
+                        <br/>
+                        <b>Operands:</b>
+                        <table id="filter-operand-table">
+                            <tr>
+                                <td></td>
+                                <td class="checkbox-cell"><b>Input</b></td>
+                                <td class="checkbox-cell"><b>Output</b></td>
+                            </tr>
+
                             <tr>
                                 <td class="label-cell">
-                                    <mark style="<%= ty.colour.css_text_style %>">
-                                        <%= ty.name %>
-                                    </mark>
+                                    <i>
+                                        <abbr title="Filter to instructions which do not have any input/output operands">None</abbr>
+                                    </i>
                                 </td>
                                 <td class="checkbox-cell">
-                                    <input class="input-operand-input-filter" data-operand-name="<%= ty.name %>" type="checkbox" onchange="refreshFilters()" />
+                                    <input id="input-operand-input-none-filter" type="checkbox" onchange="refreshFilters()" />
                                 </td>
                                 <td class="checkbox-cell">
-                                    <input class="input-operand-output-filter" data-operand-name="<%= ty.name %>" type="checkbox" onchange="refreshFilters()" />
+                                    <input id="input-operand-output-none-filter" type="checkbox" onchange="refreshFilters()" />
                                 </td>
                             </tr>
-                        <% end %>
-                    </table>
-                </div>
-            </form>
+
+                            <% @target.operand_type_families.each do |_, ty| %>
+                                <tr>
+                                    <td class="label-cell">
+                                        <mark style="<%= ty.colour.css_text_style %>">
+                                            <%= ty.name %>
+                                        </mark>
+                                    </td>
+                                    <td class="checkbox-cell">
+                                        <input class="input-operand-input-filter" data-operand-name="<%= ty.name %>" type="checkbox" onchange="refreshFilters()" />
+                                    </td>
+                                    <td class="checkbox-cell">
+                                        <input class="input-operand-output-filter" data-operand-name="<%= ty.name %>" type="checkbox" onchange="refreshFilters()" />
+                                    </td>
+                                </tr>
+                            <% end %>
+                        </table>
+                    </div>
+                </form>
+            </div>
         </div>
+
+        <div id="filter-view-divider"></div>
 
         <div id="filter-results">
             <hr id="filter-results-divider" />

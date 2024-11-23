@@ -66,8 +66,9 @@ body, html {
     color: #aaa;
 }
 
+$content-padding: 20px;
 #content {
-    padding: 20px;
+    padding: $content-padding;
     box-sizing: border-box;
 
     &.centred {
@@ -85,34 +86,50 @@ body, html {
     @media screen and (max-width: 767px) {
         flex-direction: column;
     }
+
+    #filter-view-divider {
+        position: sticky;
+        align-self: flex-start;
+        top: $content-padding;
+        height: calc(100vh - 2*$content-padding);
+
+        width: 1px;
+        background-color: #eee;
+
+        @media screen and (max-width: 767px) {
+            display: none;
+        }
+    }
 }
 
-#filter-panel {
+#static-panel {
     flex: 1;
 
-    top: 15px;
+    top: $content-padding; /* So it immediately becomes sticky */
     position: sticky;
     align-self: flex-start; /* Fixes sticky not sticking in flexbox */
-
-    padding: 15px;
-    margin: 0 10px;
-    border-radius: 20px;
-    background-color: var(--panel-color);
-
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 
     @media screen and (max-width: 767px) {
         position: static;
         align-self: unset;
     }
 
-    #input-mnemonic-filter {
-        width: 100%;
-        box-sizing: border-box;
-        padding: 5px;
-        border: 1px solid var(--line-color);
-        border-radius: 5px;
-    }
+    #filter-panel {
+        padding: 15px;
+        margin: 0 10px;
+        border-radius: 20px;
+        background-color: var(--panel-color);
+    
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    
+        #input-mnemonic-filter {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 5px;
+            border: 1px solid var(--line-color);
+            border-radius: 5px;
+        }
+    }    
 }
 
 #filter-results {
