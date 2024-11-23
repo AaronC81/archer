@@ -3,7 +3,7 @@
         <img src="logo.svg">
         <h1>archer</h1>
     </div>
-    
+
     <p>
         <b>A machine instruction search tool</b> for Assembly polyglots.
     </p>
@@ -33,7 +33,19 @@
         <li><a href="https://github.com/francisvm/j2-llvm"><code>j2-llvm</code> fork by Francis Visoiu Mistrih</a> - J2
         <li><a href="https://github.com/llvm/llvm-project">Mainline</a> - All other architectures</li>
     </ul>
-    <small>archer created by <a href="https://aaronc.cc">Aaron Christiansen</a>.</small>
+    
+    <p>
+        <small>
+            archer created by <a href="https://aaronc.cc">Aaron Christiansen</a>.
+        </small>
+    </p>
+    <p>
+        <small id="revision-info">
+            Built from
+            <code><%= `git rev-parse --short HEAD` %></code>
+            at <%= Time.now %>
+        </small>
+    </p>
 </div>
 
 <style>
