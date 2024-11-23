@@ -45,6 +45,11 @@ body, html {
     justify-content: flex-start;
     gap: 50px;
     align-items: center;
+
+    #home-link img {
+        height: 60px;
+        display: block;
+    }
     
     h1 {
         margin-block: 0;
