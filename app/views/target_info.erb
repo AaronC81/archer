@@ -1,0 +1,48 @@
+<div id="title-bar">
+    <a href="/" id="home-link">archer</a>
+    <h1><%= @target.title %></h1>
+</div>
+
+<div id="content">
+    <h1>Import Logs</h1>
+    <p>
+        Describes any problems or quirks encountered while loading LLVM data and reconciling it with
+        hand-written filter files.
+    </p>
+    <p>
+        A high number of warnings means that an architecture will have less accurate instruction
+        listings and search results.
+    </p>
+
+    <%
+        # 'Debug' messages aren't very helpful in a view like this - they're designed for
+        # figuring out where an exception occurred while building the site.
+        messages = @target.logger.messages
+            .reject { |msg| msg.severity == :debug }
+            .map do |msg| 
+                # Replace pairs of backticks with `code` tags for nicer rendering
+                [
+                    msg.severity,
+                    msg.text.gsub(/`(.+?)`/) { "<code>#{$1}</code>" },
+                ]
+            end
+
+        emoji = {
+            warn: '⚠️',
+            info: 'ℹ️',
+        }
+
+        counts = @target.logger.count_message_severities
+    %>
+    
+    <p>
+        <b><%= counts[:warn] %> warnings</b>
+        and <%= counts[:info] %> info messages:
+    </p>
+
+    <ul>
+        <% messages.each do |sev, text| %>
+            <li><%= emoji[sev] %> <%= text %></li>
+        <% end %>
+    </ul>
+</div>

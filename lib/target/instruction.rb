@@ -151,6 +151,8 @@ class Target
     def apply_fixup(fixup)
       return unless fixup.match === name
 
+      LoadLogger.info "Fixup applied to `#{name}`: #{fixup.desc}"
+
       fixup.modify.each do |var, value|
         instance_variable_set(var, value)
       end

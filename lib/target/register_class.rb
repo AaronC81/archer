@@ -42,7 +42,7 @@ class Target
         (first...last).map { |i| (pattern % i).to_sym }
 
       when :and, :sub
-        LoadLogger.warn "`#{name}` register class uses unsupported `#{dag.operator}` type"
+        LoadLogger.warn "`#{name}` register class uses unsupported `#{dag.operator}` DAG operator to collect members"
         []
 
       else

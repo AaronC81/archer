@@ -54,3 +54,4 @@ instruction_fixups:
   - match: "^ST_"
     modify:
       "@may_store": true
+    desc: Add store information

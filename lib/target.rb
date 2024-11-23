@@ -77,7 +77,7 @@ class Target
     instructions.each do |_, ins|
       ins.predicates.each do |pred|
         if !predicates.has_key?(pred) && !unknown_predicates.include?(pred)
-          LoadLogger.warn "Unknown predicate `#{pred}` (first seen on instruction #{ins.name})"
+          LoadLogger.warn "Unknown predicate `#{pred}` (first seen on instruction `#{ins.name}`)"
           unknown_predicates << pred
         end
       end

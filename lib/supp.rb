@@ -45,7 +45,8 @@ class SupplementaryData
           Regexp.new(fixup.fetch('match')),
           fixup.fetch('modify')
             .map { |k, v| [k.to_sym, v] }
-            .to_h
+            .to_h,
+          fixup.fetch('desc'),
         )
       end
 
@@ -199,9 +200,10 @@ class SupplementaryData
   end
 
   class InstructionFixup
-    def initialize(match, modify)
+    def initialize(match, modify, desc)
       @match = match
       @modify = modify
+      @desc = desc
     end
 
     # @return [Regexp]
@@ -209,6 +211,9 @@ class SupplementaryData
 
     # @return [{ Symbol => Object }]
     attr_reader :modify
+
+    # @return [String]
+    attr_reader :desc
   end
 
   Predicate = Struct.new('Predicate',

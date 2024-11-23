@@ -75,12 +75,13 @@ def build_site
   @targets = targets
   render_erb VIEWS_DIR/'index.erb', BUILD_DIR/'index.html'
 
-  # Generate each target page
+  # Generate target pages
   targets.each do |target|
     @target = target
     @instructions = target.instructions.values
 
     render_erb VIEWS_DIR/'target_index.erb', BUILD_DIR/'target'/target.name/'index.html'
+    render_erb VIEWS_DIR/'target_info.erb', BUILD_DIR/'target'/target.name/'info'/'index.html'
   end
 end
 

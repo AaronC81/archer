@@ -36,6 +36,19 @@ class LoadLogger
   # @return [<Message>] The messages which have been logged by this logger.
   attr_reader :messages
 
+  # Count the number of messages logged of each severity.
+  # @return [{ Symbol => Integer }]
+  def count_message_severities
+    counts = LOG_PREFIXES
+      .keys
+      .map { |sev| [sev, 0] }
+      .to_h
+    messages.each do |msg|
+      counts[msg.severity] += 1
+    end
+    counts
+  end
+
   def debug(text) = log(:debug, text)
   def info(text)  = log(:info, text)
   def warn(text)  = log(:warn, text)
