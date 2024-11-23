@@ -94,17 +94,17 @@ class Target
       token = tokens.shift
         case token
         when '{'
-          raise MalformedError, "nested variants are not allowed: #{format}" if current_variant
+          raise MalformedError, "nested variants are not allowed: `#{format}`" if current_variant
           current_variant = Variant.new
           current_sequence.items << current_variant
           current_sequence = Sequence.new
           current_variant.variants << current_sequence
         when '}'
-          raise MalformedError, "mismatched variant close: #{format}" unless current_variant
+          raise MalformedError, "mismatched variant close: `#{format}`" unless current_variant
           current_variant = nil
           current_sequence = top_sequence
         when '|'
-          raise MalformedError, "variant delimiter outside of variant: #{format}" unless current_variant
+          raise MalformedError, "variant delimiter outside of variant: `#{format}`" unless current_variant
           current_sequence = Sequence.new
           current_variant.variants << current_sequence
         when /^\$\{?([a-zA-Z0-9_\.]+)\}?$/
