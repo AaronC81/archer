@@ -192,7 +192,7 @@ class Target
 
         # Besides that, we only currently support the constraint "$x = $y"
         unless /^\s*\$([A-Za-z0-9_\.]+)\s*=\s*\$([A-Za-z0-9_\.]+)\s*$/ === constraint
-          puts "WARNING: Dropping unknown constraint applied to `#{name}`: `#{constraint}`"
+          LoadLogger.warn "Dropping unknown constraint applied to `#{name}`: `#{constraint}`"
           next
         end
 
@@ -215,7 +215,7 @@ class Target
           rename_operand(old_name: left, new_name: right)
         else
           # Neither operand is in the assembly! huh?
-          puts "WARNING: Operands in `#{name}` involved in constraint do not exist in Assembly string: `#{constraints}`"
+          LoadLogger.warn "Operands in `#{name}` involved in constraint do not exist in Assembly string: `#{constraints}`"
         end
       end
     end

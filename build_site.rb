@@ -6,11 +6,14 @@ require 'pathname'
 require_relative 'lib/target'
 require_relative 'lib/tablegen/dump'
 require_relative 'lib/supp'
+require_relative 'lib/load_logger'
 
 ROOT_DIR = Pathname.new(__dir__)
 APP_DIR = ROOT_DIR/'app'
 VIEWS_DIR = APP_DIR/'views'
 BUILD_DIR = ROOT_DIR/'build'
+
+SUPPORTED_TARGETS = %w[X86 RISCV TriCore J2 PowerPC]
 
 def render_erb(template, output)
   render_erb_in_layout(output) do
@@ -26,18 +29,26 @@ end
 
 def build_site
   # Load supported architecture data
-  targets = %w[X86 RISCV TriCore J2 PowerPC]
+  targets = SUPPORTED_TARGETS
     .map do |t|
-      puts "=== Loading: #{t} ==="
+      target = nil
+      logger = LoadLogger.collect do
+        LoadLogger.debug "=== Loading: #{t} ==="
 
-      puts "Loading supplementary data"
-      data = SupplementaryData.load(File.join(__dir__, 'supp', "#{t}.yaml"))
+        LoadLogger.debug "Loading supplementary data"
+        data = SupplementaryData.load(File.join(__dir__, 'supp', "#{t}.yaml"))
 
-      puts "Loading TableGen data"
-      dump = TableGen::Dump.load(File.join(__dir__, 'tblgen_dump', "#{t}.json"))
+        LoadLogger.debug "Loading TableGen data"
+        dump = TableGen::Dump.load(File.join(__dir__, 'tblgen_dump', "#{t}.json"))
 
-      puts "Creating target"
-      Target.new(t, dump, data)
+        LoadLogger.debug "Creating target"
+        target = Target.new(t, dump, data)
+      end
+
+      # Keep the log messages around so we know what went wrong while loading it
+      target.logger = logger
+
+      target
     end
 
   # Recreate empty build directory

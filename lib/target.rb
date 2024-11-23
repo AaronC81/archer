@@ -50,8 +50,9 @@ class Target
       .map do |d|
         begin
           Instruction.new(d, self)
-        rescue AssemblyFormatParser::MalformedError => e # TODO: Hopefully temporary
-          # puts "WARNING: Unable to parse assembly string for instruction: #{e}"
+        rescue AssemblyFormatParser::MalformedError => e
+          LoadLogger.warn "Unable to parse assembly string for instruction: #{e}"
+          nil
         end
       end
       .compact
@@ -76,7 +77,7 @@ class Target
     instructions.each do |_, ins|
       ins.predicates.each do |pred|
         if !predicates.has_key?(pred) && !unknown_predicates.include?(pred)
-          puts "WARNING: Unknown predicate `#{pred}` (first seen on instruction #{ins.name})"
+          LoadLogger.warn "Unknown predicate `#{pred}` (first seen on instruction #{ins.name})"
           unknown_predicates << pred
         end
       end
@@ -116,13 +117,16 @@ class Target
   # @return [Documentation::Provider]
   attr_reader :documentation_provider
 
+  # @return [LoadLogger] The logger from loading this target. Should be assigned later.
+  attr_accessor :logger
+
   def fetch_register(name)
     registers.fetch(name.to_sym)
   end
 
   def fetch_operand_type(name)
     unless operand_types.has_key?(name)
-      puts "WARNING: Unknown operand type `#{name}`"
+      LoadLogger.warn "Unknown operand type `#{name}`"
       operand_types[name] = operand_types['unknown!']
     end
     

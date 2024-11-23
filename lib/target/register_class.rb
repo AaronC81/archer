@@ -42,7 +42,7 @@ class Target
         (first...last).map { |i| (pattern % i).to_sym }
 
       when :and, :sub
-        puts "WARNING: `#{name}` register class uses unsupported `#{dag.operator}` type"
+        LoadLogger.warn "`#{name}` register class uses unsupported `#{dag.operator}` type"
         []
 
       else
@@ -52,7 +52,7 @@ class Target
 
     private def resolve_member(member_name, target)
       target.registers[member_name] || target.register_classes[member_name] || (
-        puts "WARNING: `#{name}` register class has unresolvable register member `#{member_name}`"
+        LoadLogger.warn "`#{name}` register class has unresolvable register member `#{member_name}`"
         nil
       )
     end
