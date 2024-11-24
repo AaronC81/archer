@@ -196,7 +196,7 @@ $content-padding: 20px;
     }
 }
 
-#filter-operand-table {
+.filter-table {
     margin: 0 auto;
     border-collapse: collapse;
 
@@ -210,8 +210,11 @@ $content-padding: 20px;
     }
     
     .label-cell {
-        text-align: end;
         padding-right: 10px;
+
+        &.align-end {
+            text-align: end;
+        }
     }
 }
 
