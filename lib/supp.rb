@@ -63,6 +63,8 @@ class SupplementaryData
           Predicate.new(llvm_name.to_sym, pred.fetch('friendly_name'), pred['important'] || false)
         end
       end
+
+    @ignore_predicates = (data['ignore_predicates'] || []).map(&:to_sym)
   end
 
   def self.load(file)
@@ -92,6 +94,10 @@ class SupplementaryData
 
   # @return [<Predicate>]
   attr_reader :predicates
+
+  # @return [<Symbol>] A list of predicates which are defined in LLVM, but don't need an equivalent
+  #   here, so should be ignored.
+  attr_reader :ignore_predicates
 
   # @return [Documentation::Provider]
   attr_reader :documentation_provider

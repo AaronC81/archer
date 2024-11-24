@@ -76,7 +76,7 @@ class Target
     unknown_predicates = Set.new
     instructions.each do |_, ins|
       ins.predicates.each do |pred|
-        if !predicates.has_key?(pred) && !unknown_predicates.include?(pred)
+        if !predicates.has_key?(pred) && !unknown_predicates.include?(pred) && !supp.ignore_predicates.include?(pred)
           LoadLogger.warn "Unknown predicate `#{pred}` (first seen on instruction `#{ins.name}`)"
           unknown_predicates << pred
         end
