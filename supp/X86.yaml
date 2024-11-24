@@ -98,15 +98,36 @@ predicates:
   - friendly_name: "64-bit"
     llvm_name: In64BitMode
 
+    # There are some x86 instructions which are disabled in 64-bit mode
+    # (e.g. some variants of the `jcc` family)
+  - friendly_name: "32-bit Only"
+    llvm_name: Not64BitMode
+  - friendly_name: "32-bit Only"
+    llvm_name: In32BitMode
+
   # Early extensions
   - friendly_name: "MMX"
     llvm_name: HasMMX
   - friendly_name: "x87 FPU"
     llvm_name: HasX87
   - friendly_name: "3DNow!"
-    llvm_name: Has3DNow
-  - friendly_name: "3DNow!"
-    llvm_name: Has3DNowA
+    llvm_name: ["Has3DNow", Has3DNowA"]
+
+  # BMI
+  - friendly_name: "BMI1"
+    llvm_name: HasBMI
+  - friendly_name: "BMI2"
+    llvm_name: HasBMI2
+  - friendly_name: "TBM"
+    llvm_name: HasTBM
+
+  # Cache Control
+  # There's loads of separate predicates within LLVM for these, and they are separate in CPUID, but
+  # that would create a tonne of noise in the filter list.
+  # I don't think these instructions are super common, either...
+  # I'm going to just group them together instead.
+  - friendly_name: "Cache Control (CLFLUSH/PMEM/etc)"
+    llvm_name: ["HasCLFLUSH", "HasCLFLUSHOPT", "HasCLDEMOTE", "HasCLZERO", "HasCLWB"]
 
   # SSE
   - friendly_name: "SSE1"
@@ -153,3 +174,15 @@ predicates:
     llvm_name: HasRAOINT
   - friendly_name: "ADX"
     llvm_name: HasADX
+  - friendly_name: "User Interrupts"
+    llvm_name: HasUINTR
+
+ignore_predicates:
+  # Unclear when/why this is applied, to me. I think it's just optimisation...?
+  - NoAVX 
+
+  # Codegen control
+  - FavorMemIndirectCall
+  - NotUseIndirectThunkCalls
+  - OptForSize
+
