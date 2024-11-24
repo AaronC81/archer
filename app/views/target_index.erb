@@ -374,13 +374,22 @@ function refreshFilters() {
 
         if (includedResults == resultLimit) {
             htmlString = `
-                <div>
+                <div class="result-card notice">
                     <b>Truncated to ${resultLimit} results</b> - apply some filters.
                 </div>
             ` + htmlString;
             break;
         }
     }
+
+    if (includedResults == 0) {
+        htmlString = `
+            <div class="result-card notice">
+                <b>No results</b> - double-check your filters.
+            </div>
+        ` + htmlString;
+    }
+
     htmlString += "";
 
     instructionResults.innerHTML = htmlString;
