@@ -50,7 +50,7 @@
                         <div>
                             <br/>
                             <b>Operands:</b>
-                            <table id="filter-operand-table">
+                            <table class="filter-table">
                                 <tr>
                                     <td></td>
                                     <td class="checkbox-cell"><b>Input</b></td>
@@ -58,7 +58,7 @@
                                 </tr>
 
                                 <tr>
-                                    <td class="label-cell">
+                                    <td class="label-cell align-end">
                                         <i>
                                             <abbr title="Filter to instructions which do not have any input/output operands">None</abbr>
                                         </i>
@@ -73,7 +73,7 @@
 
                                 <% @target.operand_type_families.each do |_, ty| %>
                                     <tr>
-                                        <td class="label-cell">
+                                        <td class="label-cell align-end">
                                             <mark style="<%= ty.colour.css_text_style %>">
                                                 <%= ty.name %>
                                             </mark>
@@ -83,6 +83,36 @@
                                         </td>
                                         <td class="checkbox-cell">
                                             <input class="input-operand-output-filter" data-operand-name="<%= ty.name %>" type="checkbox" onchange="refreshFilters()" />
+                                        </td>
+                                    </tr>
+                                <% end %>
+                            </table>
+                        </div>
+
+                        <div>
+                            <br/>
+                            <b>Capabilities:</b> <!-- LLVM calls them "Predicates", but that's a weird name for a user-facing filter -->
+
+                            <button type="button" onclick="selectNoPredicates()">None</button>
+                            <button type="button" onclick="selectAllPredicates()">All</button>
+
+                            <table class="filter-table">
+                                <tr>
+                                    <td class="checkbox-cell">
+                                        <input id="input-predicate-none-filter" type="checkbox" onchange="refreshFilters()" checked />
+                                    </td>
+                                    <td class="label-cell">
+                                        <abbr title="Include instructions which require no additional processor capabilities">None</abbr>
+                                    </td>
+                                </tr>
+
+                                <% @target.predicates.values.map(&:friendly_name).uniq.each do |pred| %>
+                                    <tr>
+                                        <td class="checkbox-cell">
+                                            <input class="input-predicate-filter" data-predicate-name="<%= pred %>" type="checkbox" onchange="refreshFilters()" checked />
+                                        </td>
+                                        <td class="label-cell">
+                                            <%= pred %>
                                         </td>
                                     </tr>
                                 <% end %>
@@ -183,11 +213,31 @@ const operandOutputFilters = [...document.querySelectorAll(".input-operand-outpu
 const operandNoInputsFilter = document.getElementById("input-operand-input-none-filter");
 const operandNoOutputsFilter = document.getElementById("input-operand-output-none-filter");
 
+const predicateFilters = [...document.querySelectorAll(".input-predicate-filter")];
+const predicateNoneFilter = document.getElementById("input-predicate-none-filter");
+
 const instructionResults = document.getElementById("instruction-results");
 
 const assemblyVariantSelector = document.getElementById("assembly-variant-selector");
 
 const resultLimit = 500;
+
+function selectNoPredicates() {
+    // Deselect all additional predicates, but keep 'None' selected
+    // (This is _probably_ the behaviour you're after...)
+    predicateNoneFilter.checked = true;
+    predicateFilters.forEach(el => el.checked = false);
+
+    refreshFilters();
+}
+
+function selectAllPredicates() {
+    // Select everything
+    predicateNoneFilter.checked = true;
+    predicateFilters.forEach(el => el.checked = true);
+
+    refreshFilters();
+}
 
 function refreshFilters() {
     // Load filter values
@@ -206,6 +256,11 @@ function refreshFilters() {
     const operandNoInputsFilterValue = operandNoInputsFilter.checked;
     const operandNoOutputsFilterValue = operandNoOutputsFilter.checked;
 
+    const satisfiedPredicates = predicateFilters
+        .filter(el => el.checked)
+        .map(el => el.dataset.predicateName);
+    const predicateNoneFilterValue = predicateNoneFilter.checked;
+
     let assemblyVariant;
     if (assemblyVariantSelector) {
         assemblyVariant = parseInt(assemblyVariantSelector.value);
@@ -218,14 +273,17 @@ function refreshFilters() {
     for (var i = 0; i < instructions.length; i++) {
         const instruction = instructions[i];
 
-        // Test against filters
+        // Memory characteristic filters
         if (storeFilterValue && !instruction.mayStore)
             continue;
         if (loadFilterValue && !instruction.mayLoad)
             continue;
+
+        // Textual filter
         if (mnemonicFilterValue && !instruction.assemblyVariants[assemblyVariant].format.includes(mnemonicFilterValue))
             continue;
 
+        // Operand filters
         if (operandInputFilterValues.length > 0) {
             if (!operandInputFilterValues.every(o => instruction.inputs.map(i => i.operandTypeFamily).includes(o)))
                 continue;
@@ -234,11 +292,24 @@ function refreshFilters() {
             if (!operandOutputFilterValues.every(o => instruction.outputs.map(i => i.operandTypeFamily).includes(o)))
                 continue;
         }
-
         if (operandNoInputsFilterValue && instruction.inputs.length > 0)
             continue;
         if (operandNoOutputsFilterValue && instruction.outputs.length > 0)
             continue;
+
+        // Predicate filters
+        // Either one of the following must be true for the instruction to show up:
+        //   (1) This instruction has no predicates, and the user has ticked "None", and 
+        //   (2) This instruction has some predicates, and the user has ticked all of them
+        if (instruction.predicates.length == 0) {
+            // (1)
+            if (!predicateNoneFilterValue)
+                continue;
+        } else {
+            // (2)
+            if (!instruction.predicates.every(p => satisfiedPredicates.includes(p)))
+                continue;
+        }
 
         // This element has survived the filters!
         // Add to output HTML
