@@ -105,9 +105,15 @@ $content-padding: 20px;
 #static-panel {
     flex: 1;
 
+    // Fixed height so that we get a scrollbar on the filter panel
+    height: calc(100vh - $content-padding * 2);
+
     top: $content-padding; /* So it immediately becomes sticky */
     position: sticky;
     align-self: flex-start; /* Fixes sticky not sticking in flexbox */
+
+    display: flex;
+    flex-direction: column;
 
     @media screen and (max-width: 767px) {
         position: static;
@@ -115,12 +121,26 @@ $content-padding: 20px;
     }
 
     #filter-panel {
-        padding: 15px;
+        flex: 1;
+        overflow: hidden;
+
         margin: 0 10px;
         border-radius: 20px;
         background-color: var(--panel-color);
     
         box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+
+        #inner-filter-panel {
+            padding: 15px;
+            height: 100%;
+            overflow-y: auto;
+
+            // Padding doesn't apply to the scrollable area properly, so do this instead
+            // https://stackoverflow.com/questions/13471910/no-padding-when-using-overflow-auto
+            > :last-child {
+                margin-bottom: 30px;
+            }
+        }
     
         #input-mnemonic-filter {
             width: 100%;
