@@ -37,8 +37,13 @@ body, html {
 
 #title-bar {
     width: 100%;
-    padding: 20px;
     box-sizing: border-box;
+
+    padding: 20px;
+    &.already-in-padded-container {
+        padding: 0;
+        padding-bottom: 20px;
+    }
 
     display: flex;
     flex-direction: row;
