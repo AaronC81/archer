@@ -102,17 +102,21 @@
                                         <input id="input-predicate-none-filter" type="checkbox" onchange="refreshFilters()" checked />
                                     </td>
                                     <td class="label-cell">
-                                        <abbr title="Include instructions which require no additional processor capabilities">None</abbr>
+                                        <b><abbr title="Include instructions which require no additional processor capabilities">None</abbr></b>
                                     </td>
                                 </tr>
 
-                                <% @target.predicates.values.map(&:friendly_name).uniq.each do |pred| %>
+                                <% @target.predicates.values.uniq(&:friendly_name).each do |pred| %>
                                     <tr>
                                         <td class="checkbox-cell">
-                                            <input class="input-predicate-filter" data-predicate-name="<%= pred %>" type="checkbox" onchange="refreshFilters()" checked />
+                                            <input class="input-predicate-filter" data-predicate-name="<%= pred.friendly_name %>" type="checkbox" onchange="refreshFilters()" checked />
                                         </td>
                                         <td class="label-cell">
-                                            <%= pred %>
+                                            <% if pred.important? %>
+                                                <b><%= pred.friendly_name %></b>
+                                            <% else %>
+                                                <%= pred.friendly_name %>
+                                            <% end %>
                                         </td>
                                     </tr>
                                 <% end %>
@@ -182,13 +186,21 @@ const instructions = [
             implicitInputs: <%= ins.implicitly_read_registers.map(&:name).map(&:to_s).inspect %>,
             implicitOutputs: <%= ins.implicitly_written_registers.map(&:name).map(&:to_s).inspect %>,
 
-            predicates: <%=
-                ins.predicates
-                    .map { |pred| @target.predicates[pred]&.friendly_name }
-                    .compact
-                    .uniq # Predicates are allowed to share friendly names
-                    .inspect
-            %>,
+            predicates: [
+                <%
+                    ins.predicates
+                        .map { |pred| @target.predicates[pred] }
+                        .compact
+                        .uniq(&:friendly_name) # Predicates are allowed to share friendly names
+                        .sort_by { |pred| pred.important? ? 0 : 1 }
+                        .each do |pred|
+                %>
+                    {
+                        friendly_name: <%= pred.friendly_name.inspect %>,
+                        important: <%= pred.important.inspect %>,
+                    },
+                <% end %>
+            ],
 
             documentation:
             <% if ins.documentation %>
@@ -307,7 +319,7 @@ function refreshFilters() {
                 continue;
         } else {
             // (2)
-            if (!instruction.predicates.every(p => satisfiedPredicates.includes(p)))
+            if (!instruction.predicates.every(p => satisfiedPredicates.includes(p.friendly_name)))
                 continue;
         }
 
@@ -362,7 +374,15 @@ function refreshFilters() {
                     ${ instruction.mayStore ? "<tr><td></td><td>Stores memory</td></tr>" : "" }
                 </table>
                 <div class="predicate-labels">
-                    ${instruction.predicates.map(pred => `<span>${pred}</span>`).join("")}
+                    ${
+                        instruction.predicates
+                            .map(pred => 
+                                pred.important
+                                ? `<span><b>${pred.friendly_name}</b></span>`
+                                : `<span>${pred.friendly_name}</span>`
+                            )
+                            .join("")
+                    }
                 </div>
                 ${
                     instruction.documentation
