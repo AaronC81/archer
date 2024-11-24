@@ -23,71 +23,73 @@
             </div>
             
             <div id="filter-panel">
-                <h2>Search</h2>
-                <form method="GET">
-                    <div>
-                        <label>
-                            <b>Mnemonic:</b>
-                            <br>
-                            <input name="mnemonic" id="input-mnemonic-filter" oninput="refreshFilters()" onchange="refreshFilters()" />
-                        </label>
-                    </div>
-                    <br>
+                <div id="inner-filter-panel">
+                    <h2>Search</h2>
+                    <form method="GET">
+                        <div>
+                            <label>
+                                <b>Mnemonic:</b>
+                                <br>
+                                <input name="mnemonic" id="input-mnemonic-filter" oninput="refreshFilters()" onchange="refreshFilters()" />
+                            </label>
+                        </div>
+                        <br>
 
-                    <div>
-                        <b>Memory:</b>
-                        <label>
-                            <input name="store" id="input-store-filter" type="checkbox" onchange="refreshFilters()" />
-                            Store
-                        </label>
-                        <label>
-                            <input name="load" id="input-load-filter" type="checkbox" onchange="refreshFilters()" />
-                            Load
-                        </label>
-                    </div>
+                        <div>
+                            <b>Memory:</b>
+                            <label>
+                                <input name="store" id="input-store-filter" type="checkbox" onchange="refreshFilters()" />
+                                Store
+                            </label>
+                            <label>
+                                <input name="load" id="input-load-filter" type="checkbox" onchange="refreshFilters()" />
+                                Load
+                            </label>
+                        </div>
 
-                    <div>
-                        <br/>
-                        <b>Operands:</b>
-                        <table id="filter-operand-table">
-                            <tr>
-                                <td></td>
-                                <td class="checkbox-cell"><b>Input</b></td>
-                                <td class="checkbox-cell"><b>Output</b></td>
-                            </tr>
+                        <div>
+                            <br/>
+                            <b>Operands:</b>
+                            <table id="filter-operand-table">
+                                <tr>
+                                    <td></td>
+                                    <td class="checkbox-cell"><b>Input</b></td>
+                                    <td class="checkbox-cell"><b>Output</b></td>
+                                </tr>
 
-                            <tr>
-                                <td class="label-cell">
-                                    <i>
-                                        <abbr title="Filter to instructions which do not have any input/output operands">None</abbr>
-                                    </i>
-                                </td>
-                                <td class="checkbox-cell">
-                                    <input id="input-operand-input-none-filter" type="checkbox" onchange="refreshFilters()" />
-                                </td>
-                                <td class="checkbox-cell">
-                                    <input id="input-operand-output-none-filter" type="checkbox" onchange="refreshFilters()" />
-                                </td>
-                            </tr>
-
-                            <% @target.operand_type_families.each do |_, ty| %>
                                 <tr>
                                     <td class="label-cell">
-                                        <mark style="<%= ty.colour.css_text_style %>">
-                                            <%= ty.name %>
-                                        </mark>
+                                        <i>
+                                            <abbr title="Filter to instructions which do not have any input/output operands">None</abbr>
+                                        </i>
                                     </td>
                                     <td class="checkbox-cell">
-                                        <input class="input-operand-input-filter" data-operand-name="<%= ty.name %>" type="checkbox" onchange="refreshFilters()" />
+                                        <input id="input-operand-input-none-filter" type="checkbox" onchange="refreshFilters()" />
                                     </td>
                                     <td class="checkbox-cell">
-                                        <input class="input-operand-output-filter" data-operand-name="<%= ty.name %>" type="checkbox" onchange="refreshFilters()" />
+                                        <input id="input-operand-output-none-filter" type="checkbox" onchange="refreshFilters()" />
                                     </td>
                                 </tr>
-                            <% end %>
-                        </table>
-                    </div>
-                </form>
+
+                                <% @target.operand_type_families.each do |_, ty| %>
+                                    <tr>
+                                        <td class="label-cell">
+                                            <mark style="<%= ty.colour.css_text_style %>">
+                                                <%= ty.name %>
+                                            </mark>
+                                        </td>
+                                        <td class="checkbox-cell">
+                                            <input class="input-operand-input-filter" data-operand-name="<%= ty.name %>" type="checkbox" onchange="refreshFilters()" />
+                                        </td>
+                                        <td class="checkbox-cell">
+                                            <input class="input-operand-output-filter" data-operand-name="<%= ty.name %>" type="checkbox" onchange="refreshFilters()" />
+                                        </td>
+                                    </tr>
+                                <% end %>
+                            </table>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
 
