@@ -97,13 +97,16 @@ predicates:
   # Core stuff
   - friendly_name: "64-bit"
     llvm_name: In64BitMode
+    important: true
 
     # There are some x86 instructions which are disabled in 64-bit mode
     # (e.g. some variants of the `jcc` family)
   - friendly_name: "32-bit Only"
     llvm_name: Not64BitMode
+    important: true
   - friendly_name: "32-bit Only"
     llvm_name: In32BitMode
+    important: true
 
   # Early extensions
   - friendly_name: "MMX"
