@@ -89,39 +89,44 @@
                             </table>
                         </div>
 
-                        <div>
-                            <br/>
-                            <b>Capabilities:</b> <!-- LLVM calls them "Predicates", but that's a weird name for a user-facing filter -->
+                        <% if @target.predicates.any? %>
+                            <div>
+                                <br/>
+                                <b>Capabilities:</b> <!-- LLVM calls them "Predicates", but that's a weird name for a user-facing filter -->
 
-                            <button type="button" onclick="selectNoPredicates()">None</button>
-                            <button type="button" onclick="selectAllPredicates()">All</button>
+                                <button type="button" onclick="selectNoPredicates()">None</button>
+                                <button type="button" onclick="selectAllPredicates()">All</button>
 
-                            <table class="filter-table">
-                                <tr>
-                                    <td class="checkbox-cell">
-                                        <input id="input-predicate-none-filter" type="checkbox" onchange="refreshFilters()" checked />
-                                    </td>
-                                    <td class="label-cell">
-                                        <b><abbr title="Include instructions which require no additional processor capabilities">None</abbr></b>
-                                    </td>
-                                </tr>
-
-                                <% @target.predicates.values.uniq(&:friendly_name).each do |pred| %>
+                                <table class="filter-table">
                                     <tr>
                                         <td class="checkbox-cell">
-                                            <input class="input-predicate-filter" data-predicate-name="<%= pred.friendly_name %>" type="checkbox" onchange="refreshFilters()" checked />
+                                            <input id="input-predicate-none-filter" type="checkbox" onchange="refreshFilters()" checked />
                                         </td>
                                         <td class="label-cell">
-                                            <% if pred.important? %>
-                                                <b><%= pred.friendly_name %></b>
-                                            <% else %>
-                                                <%= pred.friendly_name %>
-                                            <% end %>
+                                            <b><abbr title="Include instructions which require no additional processor capabilities">None</abbr></b>
                                         </td>
                                     </tr>
-                                <% end %>
-                            </table>
-                        </div>
+
+                                    <% @target.predicates.values.uniq(&:friendly_name).each do |pred| %>
+                                        <tr>
+                                            <td class="checkbox-cell">
+                                                <input class="input-predicate-filter" data-predicate-name="<%= pred.friendly_name %>" type="checkbox" onchange="refreshFilters()" checked />
+                                            </td>
+                                            <td class="label-cell">
+                                                <% if pred.important? %>
+                                                    <b><%= pred.friendly_name %></b>
+                                                <% else %>
+                                                    <%= pred.friendly_name %>
+                                                <% end %>
+                                            </td>
+                                        </tr>
+                                    <% end %>
+                                </table>
+                            </div>
+                        <% else %>
+                            <!-- JS expects to find this element -->
+                            <input style="display: none;" id="input-predicate-none-filter" type="checkbox" onchange="refreshFilters()" checked />
+                        <% end %>
                     </form>
                 </div>
             </div>
