@@ -22,6 +22,12 @@ operand_types:
     llvm_name: GR64
     family: General-purpose register
 
+  # x87
+  RSTi:
+    friendly_name: x87 floating-point register (ST 0-7)
+    llvm_name: RSTi
+    family: x87 floating-point register
+
   # Immediates
   "expand_immediates!": [
     "u4imm", "u8imm",
