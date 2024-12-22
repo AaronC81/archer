@@ -54,6 +54,23 @@ cd llvm
 This will take a fair bit of time, disk space, and RAM, as it creates multiple checkouts of LLVM and
 partially builds one of them.
 
+## Things to do
+
+- **Ideas**
+    - [ ] _(Easy)_ "Clear filters" button
+    - [ ] _(Medium)_ Copy link to specific instructions
+    - [ ] _(Medium)_ Dark mode
+    - [ ] _(Hard)_ Group instructions with the same mnemonic, rather than displaying separately
+    - [ ] _(Hard)_ Properly collect and show register class members
+- **Issues**
+    - [ ] Mnemonic search includes entire text, not just the mnemonic
+    - [ ] Instruction parsing seems broken - lots of errors for x86
+- **Architecture Support**
+    - [ ] ARM
+    - [ ] Rest of the x86 capabilities
+    - [ ] Rest of the RISC-V capabilities
+    - [ ] More PowerPC
+
 ## License
 
 All Archer source code and supplementary data is licensed under the [MIT License](./LICENSE).
