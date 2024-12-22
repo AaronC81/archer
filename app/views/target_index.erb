@@ -256,7 +256,16 @@ function selectAllPredicates() {
     refreshFilters();
 }
 
+function clearAnchor() {
+    window.location.hash = "";
+    refreshFilters();
+}
+
 function refreshFilters() {
+    // Anchor can be used to show one specific LLVM instruction
+    // If not specified, this is just the empty string
+    const anchor = window.location.hash.substring(1);
+
     // Load filter values
     const storeFilterValue = storeFilter.checked;
     const loadFilterValue = loadFilter.checked;
@@ -289,6 +298,10 @@ function refreshFilters() {
     var htmlString = "";
     for (var i = 0; i < instructions.length; i++) {
         const instruction = instructions[i];
+
+        // Specific instruction filter
+        if (anchor && instruction.name != anchor)
+            continue;
 
         // Memory characteristic filters
         if (storeFilterValue && !instruction.mayStore)
@@ -335,7 +348,7 @@ function refreshFilters() {
             <div class="result-card">
                 <div class="header">
                     <code class="assembly-format">${instruction.assemblyVariants[assemblyVariant].html}</code>
-                    ${instruction.name}
+                    <a href="#${instruction.name}">${instruction.name}</a>
                 </div>
                 <table class="result-operand-table">
                     <tr>
@@ -415,10 +428,23 @@ function refreshFilters() {
         ` + htmlString;
     }
 
+    if (anchor) {
+        htmlString = `
+            <div class="result-card notice">
+                <b>Currently showing one specific instruction.</b><br>
+                <button onclick="clearAnchor()">Show all instructions</button>
+            </div>
+        ` + htmlString;
+    }
+
     htmlString += "";
 
     instructionResults.innerHTML = htmlString;
 }
 
 refreshFilters();
+
+// So instruction name links immediately update the page
+window.onhashchange = refreshFilters;
+
 </script>
