@@ -39,7 +39,7 @@ def build_site
         data = SupplementaryData.load(File.join(__dir__, 'supp', "#{t}.yaml"))
 
         LoadLogger.debug "Loading TableGen data"
-        dump = TableGen::Dump.load(File.join(__dir__, 'tblgen_dump', "#{t}.json"))
+        dump = TableGen::Dump.load(File.join(__dir__, 'llvm', 'dump', "#{t}.json"))
 
         LoadLogger.debug "Creating target"
         target = Target.new(t, dump, data)
