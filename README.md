@@ -58,7 +58,8 @@ partially builds one of them.
 
 - **Ideas**
     - [ ] _(Easy)_ "Clear filters" button
-    - [ ] _(Medium)_ Copy link to specific instructions
+    - [x] _(Medium)_ Copy link to specific instructions
+    - [ ] _(Medium)_ Copy link to search filter sets
     - [ ] _(Medium)_ Dark mode
     - [ ] _(Hard)_ Group instructions with the same mnemonic, rather than displaying separately
     - [ ] _(Hard)_ Properly collect and show register class members
