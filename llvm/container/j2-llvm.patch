@@ -1,0 +1,13 @@
+diff --git a/lib/Target/J2/J2.td b/lib/Target/J2/J2.td
+index 2da4ee63651..0caed7d002f 100644
+--- a/lib/Target/J2/J2.td
++++ b/lib/Target/J2/J2.td
+@@ -29,7 +29,7 @@ include "J2CallingConv.td"
+ 
+ include "J2InstrInfo.td"
+ def J2InstrInfo : InstrInfo {
+-  let decodePositionallyEncodedOperands = 1;
++  //let decodePositionallyEncodedOperands = 1;
+ }
+ 
+ //===----------------------------------------------------------------------===//
