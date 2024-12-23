@@ -53,6 +53,8 @@ jobs:
         run:  bundle exec ruby build_site.rb
       - name: Test site
         run:  bundle exec rspec
+        env:
+          CAPYBARA_HEADLESS: 1
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

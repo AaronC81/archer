@@ -1,6 +1,7 @@
 require 'capybara'
 require 'capybara/rspec'
 require 'capybara/dsl'
+require 'selenium/webdriver'
 require 'rack'
 
 # A simple Rack app to host a static site, respecting `index.html` in nested directories.
@@ -47,7 +48,16 @@ Capybara.app = Rack::Builder.new do
   run StaticApp.new(File.join(__dir__, '..', 'build'))
 end.to_app
 
-# Use JavaScript
+# Use Selenium as a JavaScript-compatible driver engine
+Capybara.register_driver :selenium do |app|
+  Capybara::Selenium::Driver.new(
+    app,
+    browser: :firefox,
+    options: Selenium::WebDriver::Firefox::Options.new.tap do |opts|
+      opts.args << '--headless' if ENV['CAPYBARA_HEADLESS']
+    end
+  )
+end
 Capybara.default_driver = :selenium
 
 
