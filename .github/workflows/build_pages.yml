@@ -24,10 +24,17 @@ concurrency:
 jobs:
   # Single deploy job since we're just deploying
   deploy:
+    runs-on: ubuntu-latest
+
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
+
+    services:
+      selenium:
+        image: selenium/standalone-chrome
+        options: --shm-size=2gb
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -41,8 +48,12 @@ jobs:
         uses: actions/configure-pages@v5
       - name: Install Ruby dependencies
         run:  bundle install
+      
       - name: Build site
         run:  bundle exec ruby build_site.rb
+      - name: Test site
+        run:  bundle exec rspec
+      
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
