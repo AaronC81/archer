@@ -57,6 +57,7 @@ partially builds one of them.
 ## Things to do
 
 - **Ideas**
+    - [ ] _(Easy)_ Improve load times by loading JSON asynchronously
     - [ ] _(Easy)_ "Clear filters" button
     - [x] _(Medium)_ Copy link to specific instructions
     - [ ] _(Medium)_ Copy link to search filter sets
