@@ -16,7 +16,6 @@ module Colours
     "Address register" => Pair.new("fca85d", "35342f"), # light orange - dark grey
     "Data register" => Pair.new("fe9f97", "35342f"), # light pink - dark grey
     "General-purpose register" => Pair.new("08327d", "fbfbfb"), # dark blue - white
-    "General-purpose register" => Pair.new("08327d", "fbfbfb"), # dark blue - white
 
     "Other register" => Pair.new("db2f27", "fbfbfb"), # red - white
 
