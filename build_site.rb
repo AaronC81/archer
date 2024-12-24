@@ -2,11 +2,13 @@ require 'erb'
 require 'sass-embedded'
 require 'fileutils'
 require 'pathname'
+require 'json'
 
 require_relative 'lib/target'
 require_relative 'lib/tablegen/dump'
 require_relative 'lib/supp'
 require_relative 'lib/load_logger'
+require_relative 'lib/adapter'
 
 ROOT_DIR = Pathname.new(__dir__)
 APP_DIR = ROOT_DIR/'app'
@@ -78,7 +80,7 @@ def build_site
   # Generate target pages
   targets.each do |target|
     @target = target
-    @instructions = target.instructions.values
+    @adapter = Adapter.new(target)
 
     render_erb VIEWS_DIR/'target_index.erb', BUILD_DIR/'target'/target.name/'index.html'
     render_erb VIEWS_DIR/'target_info.erb', BUILD_DIR/'target'/target.name/'info'/'index.html'
