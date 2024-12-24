@@ -24,8 +24,12 @@ def render_erb(template, output)
 end
 
 def render_erb_in_layout(output)
-  FileUtils.mkdir_p(output.dirname)
   content = ERB.new(File.read(VIEWS_DIR/'layout.erb')).result(binding)
+  write_file content, output
+end
+
+def write_file(content, output)
+  FileUtils.mkdir_p(output.dirname)
   File.write(output, content)
 end
 
@@ -67,10 +71,7 @@ def build_site
 
     compiled = Sass.compile(path.to_s)
 
-    File.write(
-      BUILD_DIR/(path.basename.sub_ext(".css")),
-      compiled.css,
-    )
+    write_file compiled.css, BUILD_DIR/(path.basename.sub_ext(".css"))
   end
 
   # Generate homepage
@@ -79,11 +80,16 @@ def build_site
 
   # Generate target pages
   targets.each do |target|
+    target_dir = BUILD_DIR/'target'/target.name
+  
     @target = target
     @adapter = Adapter.new(target)
 
-    render_erb VIEWS_DIR/'target_index.erb', BUILD_DIR/'target'/target.name/'index.html'
-    render_erb VIEWS_DIR/'target_info.erb', BUILD_DIR/'target'/target.name/'info'/'index.html'
+    render_erb VIEWS_DIR/'target_index.erb', target_dir/'index.html'
+    render_erb VIEWS_DIR/'target_info.erb', target_dir/'info'/'index.html'
+
+    # Write JSON data
+    write_file @adapter.adapt_instructions.to_json, target_dir/'data'/'instructions.json'
   end
 end
 
