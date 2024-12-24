@@ -186,6 +186,9 @@ $content-padding: 20px;
         &.notice {
             background-color: #ffc488;
         }
+        &.error {
+            background-color: #fa7a90;
+        }
 
         .header {
             display: flex;
