@@ -65,7 +65,7 @@ partially builds one of them.
     - [ ] _(Hard)_ Group instructions with the same mnemonic, rather than displaying separately
     - [ ] _(Hard)_ Properly collect and show register class members
 - **Issues**
-    - [ ] Mnemonic search includes entire text, not just the mnemonic
+    - [x] Mnemonic search includes entire text, not just the mnemonic
     - [ ] Instruction parsing seems broken - lots of errors for x86
 - **Architecture Support**
     - [ ] ARM
