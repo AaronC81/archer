@@ -18,12 +18,15 @@ class Adapter
         name: ins.name,
         assemblyVariants: target.assembly_variants.length.times.map do |i|
           {
+            mnemonic: ins.mnemonic_for_variant(i),
             format: ins.assembly_format_for_variant(i),
             html: ins.assembly_parts_for_variant(i)
               .map do |type, param|
                 case type
                 when :text
                   param
+                when :mnemonic
+                  "<b>#{param}</b>"
                 when :operand
                   style = operand_type_family_colour(param.operand_type.family)
                   "<mark style=\"#{style}\">#{param.name}</mark>"
@@ -31,7 +34,7 @@ class Adapter
                   raise 'unknown assembly part'
                 end
               end
-              .join
+              .join,
           }
         end,
 
