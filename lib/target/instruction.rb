@@ -5,7 +5,6 @@ class Target
   class Instruction
     def initialize(defi, target)
       @name = defi.name
-      # p name
       @raw_assembly_format = defi.fetch('AsmString')
 
       @may_store = defi.fetch_bool('mayStore')
@@ -110,18 +109,53 @@ class Target
     # Returns an array of:
     #   - `[:text, String]` - A raw text part of the Assembly string.
     #   - `[:operand, Operand]` - A reference to one of this instruction's operands.
+    #   - `[:mnemonic, String]` - A raw text part of the Assembly string which is thought to be the
+    #                             mnemonic of this instruction. If this appears, it will be the
+    #                             first item.
+    #                             
+    # N.B: `AssemblyFormatParser` does not try to figure out the mnemonic itself because it would
+    # make the tree format very awkward. You see strings like `mov{|.b}` for x86 where the mnemonic
+    # couldn't be represented as plain text.
     def assembly_parts_for_variant(variant)
       parts = []
 
+      gathering_mnemonic = true
+      mnemonic_buffer = ''
       assembly_format.walk(variant) do |node|
         case node
         when AssemblyFormatParser::Text
-          parts << [:text, node.text]
+          if gathering_mnemonic
+            if !(/\s/ === node.text)
+              # If the entire text chunk doesn't contain any whitespace, then treat this as a 
+              # mnemonic *and* continue gathering future mnemonic bits
+              # This will happen if there are variants in the mnemonic
+              mnemonic_buffer += node.text
+            else
+              # Otherwise, split into mnemonic and normal text
+              # (Keep the whitespace at the beginning of the normal text)
+              raise "somehow #{node.text.inspect} doesn't match splitting regex" unless /^(\S*)(\s.*)$/ === node.text
+              this_mnemonic, rest = $1, $2
+              mnemonic_buffer += this_mnemonic
+              parts << [:mnemonic, mnemonic_buffer]
+              parts << [:text, rest]
+
+              gathering_mnemonic = false
+            end
+          else
+            parts << [:text, node.text]
+          end
         when AssemblyFormatParser::Operand
           parts << [:operand, find_operand(node.name)]
+          gathering_mnemonic = false
         else
           raise 'unexpected leaf type'
-        end 
+        end
+      end
+
+      # If there was any mnemonic buffer left over - probably because this instruction didn't have
+      # operands - empty it now
+      if gathering_mnemonic
+        parts << [:mnemonic, mnemonic_buffer]
       end
 
       parts
@@ -141,6 +175,18 @@ class Target
       end
 
       str
+    end
+
+    # Get the mnemonic - if one exists - for a specific variant number.
+    # @return [String, nil]
+    def mnemonic_for_variant(variant)
+      # Get first part
+      kind, value = assembly_parts_for_variant(variant).first
+      if kind == :mnemonic
+        value
+      else
+        nil
+      end
     end
 
     private def look_up_operand_type(name, target)
