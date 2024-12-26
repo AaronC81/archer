@@ -234,7 +234,6 @@ function refreshFilters() {
     // Load filter values
     const storeFilterValue = storeFilter.checked;
     const loadFilterValue = loadFilter.checked;
-    // TODO: actually use mnemonics, not this
     const mnemonicFilterValue = mnemonicFilter.value.trim();
 
     const operandInputFilterValues = operandInputFilters
@@ -275,7 +274,7 @@ function refreshFilters() {
             continue;
 
         // Textual filter
-        if (mnemonicFilterValue && !instruction.assemblyVariants[assemblyVariant].format.includes(mnemonicFilterValue))
+        if (mnemonicFilterValue && !instruction.assemblyVariants[assemblyVariant].mnemonic.includes(mnemonicFilterValue))
             continue;
 
         // Operand filters
