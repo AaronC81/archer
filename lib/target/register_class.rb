@@ -41,7 +41,7 @@ class Target
         pattern, first, last = dag.to_array.map(&:value)
         (first...last).map { |i| (pattern % i).to_sym }
 
-      when :and, :sub
+      when :and, :sub, :trunc, :interleave
         LoadLogger.warn "`#{name}` register class uses unsupported `#{dag.operator}` DAG operator to collect members"
         []
 
