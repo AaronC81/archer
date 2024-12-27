@@ -68,7 +68,11 @@ partially builds one of them.
     - [x] Mnemonic search includes entire text, not just the mnemonic
     - [ ] Instruction parsing seems broken - lots of errors for x86
 - **Architecture Support**
-    - [ ] ARM
+    - [ ] ARM...
+        - [ ] Has operands as part of mnemonic (e.g. `ADCri`) - figure out how to represent
+        - [ ] Some operand types
+        - [ ] Core capabilities (Thumb, Thumb2, etc)
+        - [ ] Other capabilities
     - [ ] Rest of the x86 capabilities
     - [ ] Rest of the RISC-V capabilities
     - [ ] More PowerPC

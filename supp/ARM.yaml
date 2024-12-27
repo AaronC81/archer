@@ -1,0 +1,12 @@
+title: "ARM"
+subtitle: "Extremely experimental, not useful yet"
+
+operand_types: []
+instruction_fixups:
+  - match: "t2CPS2p"
+    drop: true
+    desc: "Drop instructions which use operands in mnemonic"
+
+explode_operand_types:
+  - { llvm_name: addrmode_tbb, format: "" }
+  - { llvm_name: addrmode_tbh, format: "" }

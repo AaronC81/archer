@@ -23,6 +23,8 @@ class Target
       @documentation = target.documentation_provider.documentation_url(self)
 
       apply_constraints(defi.fetch('Constraints'))
+
+      @dropped_by_fixup = false
     end
 
     # @return [Symbol] LLVM's internal name for this instruction.
@@ -66,6 +68,11 @@ class Target
 
     # @return [Documentation::Link, nil] This instruction's documentation, if it has any.
     attr_reader :documentation
+
+    # @return [Boolean] Whether a fixup decided to drop this instruction. If so, a caller should
+    #   check this property and delete the instruction shortly.
+    attr_reader :dropped_by_fixup
+    alias dropped_by_fixup? dropped_by_fixup
 
     Operand = Struct.new('Operand',
       # [String] The name of the operand. 
@@ -198,6 +205,11 @@ class Target
       return unless fixup.match === name
 
       LoadLogger.info "Fixup applied to `#{name}`: #{fixup.desc}"
+
+      if fixup.drop?
+        @dropped_by_fixup = true
+        return
+      end
 
       fixup.modify.each do |var, value|
         instance_variable_set(var, value)

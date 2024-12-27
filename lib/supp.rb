@@ -43,9 +43,10 @@ class SupplementaryData
       .map do |fixup|
         InstructionFixup.new(
           Regexp.new(fixup.fetch('match')),
-          fixup.fetch('modify')
+          (fixup['modify'] || {})
             .map { |k, v| [k.to_sym, v] }
             .to_h,
+          (fixup['drop'] || false),
           fixup.fetch('desc'),
         )
       end
@@ -206,10 +207,11 @@ class SupplementaryData
   end
 
   class InstructionFixup
-    def initialize(match, modify, desc)
+    def initialize(match, modify, drop, desc)
       @match = match
       @modify = modify
       @desc = desc
+      @drop = drop
     end
 
     # @return [Regexp]
@@ -217,6 +219,10 @@ class SupplementaryData
 
     # @return [{ Symbol => Object }]
     attr_reader :modify
+
+    # @return [Boolean]
+    attr_reader :drop
+    alias drop? drop
 
     # @return [String]
     attr_reader :desc

@@ -65,6 +65,7 @@ class Target
         ins.apply_fixup(fixup)
       end
     end
+    instructions.reject! { |_, ins| ins.dropped_by_fixup? }
 
     @assembly_variants = supp.assembly_variants
 
