@@ -152,6 +152,15 @@ class Target
             parts << [:text, node.text]
           end
         when AssemblyFormatParser::Operand
+          # If we were still gathering a mnemonic, stop and emit now
+          # This case should only happen if there's no whitespace between the mnemonic text and an
+          # operand, usually if a parameter is "baked into" the mnemonic - like ARM's condition
+          # codes or flag-affecting setting.
+          if gathering_mnemonic
+            parts << [:mnemonic, mnemonic_buffer]
+            gathering_mnemonic = false
+          end
+
           parts << [:operand, find_operand(node.name)]
           gathering_mnemonic = false
         else
@@ -247,6 +256,10 @@ class Target
 
       # Multiple constraints can be separated by commas
       constraints.split(',').map(&:strip).each do |constraint|
+        # Skip blank constraints
+        # ARM has these, and I'm not sure why!
+        next if constraint.strip.empty?
+
         # Nothing to do with the `@earlyclobber` constraint
         next if constraint.start_with?('@earlyclobber ')
 
