@@ -73,6 +73,7 @@ partially builds one of them.
         - [ ] Some operand types
         - [ ] Core capabilities (Thumb, Thumb2, etc)
         - [ ] Other capabilities
+        - [ ] Load/store info
     - [ ] Rest of the x86 capabilities
     - [ ] Rest of the RISC-V capabilities
     - [ ] More PowerPC

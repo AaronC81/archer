@@ -1,7 +1,63 @@
 title: "ARM"
 subtitle: "Extremely experimental, not useful yet"
 
-operand_types: []
+operand_types:
+  # General-purpose registers
+  GPR:
+    friendly_name: General-purpose register
+    llvm_name: GPR
+    family: General-purpose register
+  GPRnoip:
+    friendly_name: General-purpose register (except IP)
+    llvm_name: GPRnoip
+    family: General-purpose register
+  GPRnopc:
+    friendly_name: General-purpose register (except PC)
+    llvm_name: GPRnopc
+    family: General-purpose register
+  rGPR:
+    friendly_name: General-purpose register (except PC or SP)
+    llvm_name: rGPR
+    family: General-purpose register
+  tGPR:
+    friendly_name: General-purpose register (between r0-r7)
+    llvm_name: tGPR
+    family: General-purpose register
+  hGPR:
+    friendly_name: General-purpose register (between r8-r15)
+    llvm_name: hGPR
+    family: General-purpose register
+
+  # Simple immediates
+  "expand_immediates!": [
+    "imm_3b", "imm_4b", "imm_6b", "imm_7b", "imm_9b", "imm_11b", "imm_12b", "imm_13b"
+  ]
+
+  # Other immediates
+  mod_imm:
+    friendly_name: Modified immediate (encoded as 12-bit, shifted to 32-bit)
+    llvm_name: mod_imm
+    family: Immediate
+  imm0_7:
+    friendly_name: Immediate (0-7)
+    llvm_name: imm0_7
+    family: Immediate
+  imm0_15:
+    friendly_name: Immediate (0-15)
+    llvm_name: imm0_15
+    family: Immediate
+  imm0_31:
+    friendly_name: Immediate (0-31)
+    llvm_name: imm0_31
+    family: Immediate
+
+  # Memory
+  addrmode_imm12:
+    friendly_name: Address in general-purpose register with 12-bit immediate offset
+    llvm_name: addrmode_imm12
+    family: Memory
+  # TODO: many more, pre/post index stuff
+
 instruction_fixups:
   - match: "t2CPS2p"
     drop: true
@@ -10,3 +66,18 @@ instruction_fixups:
 explode_operand_types:
   - { llvm_name: addrmode_tbb, format: "" }
   - { llvm_name: addrmode_tbh, format: "" }
+
+predicates:
+  # Processor types
+  - friendly_name: "ARM"
+    llvm_name: IsARM
+    important: true
+  - friendly_name: "Thumb"
+    llvm_name: IsThumb
+    important: true
+  - friendly_name: "Thumb-1 Only"
+    llvm_name: IsThumb1Only
+    important: true
+  - friendly_name: "Thumb-2"
+    llvm_name: IsThumb2
+    important: true
