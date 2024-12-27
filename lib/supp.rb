@@ -126,6 +126,14 @@ class SupplementaryData
           'family' => 'Immediate',
         })
 
+      when /^imm_(\d+)b$/ # "imm_3b" is a 3-bit immediate, seen on ARM
+        bits = $1.to_i
+        new({
+          'friendly_name' => "#{bits}-bit immediate",
+          'llvm_name' => llvm_name,
+          'family' => 'Immediate',
+        })
+
       when /^([iu])(\d+)([iu])(\d+)imm$/
         to_bits = $2.to_i
         from_form = case $3
