@@ -58,6 +58,18 @@ operand_types:
     family: Memory
   # TODO: many more, pre/post index stuff
 
+  # Instruction modifiers
+  # TODO: these form part of the mnemonic, so I'm not sure it's correct to treat them as operands
+  # like this. But that is how LLVM models them.
+  pred: # ARM calls them "condition codes", LLVM calls them "predicates"
+    friendly_name: Condition code (optional)
+    llvm_name: pred
+    family: Condition instruction modifier
+  cc_out:
+    friendly_name: Set flags ("s" to update, omit to not update)
+    llvm_name: cc_out
+    family: Flag instruction modifier
+
 instruction_fixups:
   - match: "t2CPS2p"
     drop: true
