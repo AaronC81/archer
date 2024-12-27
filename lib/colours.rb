@@ -20,7 +20,11 @@ module Colours
     "Other register" => Pair.new("db2f27", "fbfbfb"), # red - white
 
     # x86-specific
-    "x87 floating-point register" => Pair.new("0d6e25", "fbfbfb") # green - white
+    "x87 floating-point register" => Pair.new("0d6e25", "fbfbfb"), # green - white
+
+    # ARM-specific
+    "Condition instruction modifier" => Pair.new("2e2e2e", "fbfbfb"), # grey - white
+    "Flag instruction modifier" => Pair.new("595959", "fbfbfb"), # green - white
   }
 
   # For operand types with no colour
