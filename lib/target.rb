@@ -26,7 +26,6 @@ class Target
     @operand_types = supp.operand_types
       .map { |ty| [ty.llvm_name, ty] }
       .to_h
-    @operand_types['unknown!'] = SupplementaryData::OperandType.new_unknown
 
     @operand_type_families = supp.operand_type_families
       .map { |fam| [fam.name, fam] }
@@ -128,7 +127,7 @@ class Target
   def fetch_operand_type(name)
     unless operand_types.has_key?(name)
       LoadLogger.warn "Unknown operand type `#{name}`"
-      operand_types[name] = operand_types['unknown!']
+      operand_types[name] = SupplementaryData::OperandType.new_unknown(name)
     end
     
     operand_types[name]
