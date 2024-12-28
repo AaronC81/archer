@@ -25,6 +25,7 @@ module Colours
     # ARM-specific
     "Condition instruction modifier" => Pair.new("2e2e2e", "fbfbfb"), # grey - white
     "Flag instruction modifier" => Pair.new("595959", "fbfbfb"), # green - white
+    "SIMD/float register" => Pair.new("0d6e25", "fbfbfb"), # green - white
   }
 
   # For operand types with no colour
