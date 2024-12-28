@@ -50,13 +50,39 @@ operand_types:
     friendly_name: Immediate (0-31)
     llvm_name: imm0_31
     family: Immediate
+  p_imm:
+    friendly_name: Immediate (coprocessor identifier, 0-7)
+    llvm_name: p_imm
+    family: Immediate
 
   # Memory
   addrmode_imm12:
     friendly_name: Address in general-purpose register with 12-bit immediate offset
     llvm_name: addrmode_imm12
     family: Memory
+  addr_offset_none:
+    friendly_name: Address in general-purpose register
+    llvm_name: addr_offset_none
+    family: Memory
+  t_addr_offset_none:
+    friendly_name: Address in general-purpose register (between r0-r7)
+    llvm_name: t_addr_offset_none
+    family: Memory
   # TODO: many more, pre/post index stuff
+
+  # Vector/FP
+  SPR:
+    friendly_name: Single-precision float register
+    llvm_name: SPR
+    family: SIMD/float register
+  DPR:
+    friendly_name: 64-bit vector register (possibly as double-precision float)
+    llvm_name: DPR
+    family: SIMD/float register
+  QPR:
+    friendly_name: 128-bit vector register
+    llvm_name: QPR
+    family: SIMD/float register
 
   # Instruction modifiers
   # TODO: these form part of the mnemonic, so I'm not sure it's correct to treat them as operands
