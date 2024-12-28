@@ -169,9 +169,9 @@ class SupplementaryData
       })
     end
 
-    def self.new_unknown
+    def self.new_unknown(name)
       new({
-        'friendly_name' => 'Unknown',
+        'friendly_name' => "Unknown: #{name}",
         'llvm_name' => 'unknown!',
         'family' => nil,
       })
