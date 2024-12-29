@@ -101,9 +101,12 @@ instruction_fixups:
     drop: true
     desc: "Drop instructions which use operands in mnemonic"
 
+# TODO
 explode_operand_types:
-  - { llvm_name: addrmode_tbb, format: "" }
-  - { llvm_name: addrmode_tbh, format: "" }
+  - llvm_name: addrmode_tbb
+    format: ""
+  - llvm_name: addrmode_tbh
+    format: ""
 
 predicates:
   # Processor types
