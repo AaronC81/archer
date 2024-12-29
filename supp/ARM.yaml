@@ -119,3 +119,22 @@ predicates:
   - friendly_name: "Thumb-2"
     llvm_name: IsThumb2
     important: true
+
+  # Generations
+  - friendly_name: v8
+    llvm_name: HasV8
+  # TODO: loads more but I think v8 is the most impactful one
+
+  # Extensions
+  - friendly_name: "NEON"
+    llvm_name: HasNEON
+  - friendly_name: "VFPv2"
+    llvm_name: HasVFP2
+  - friendly_name: "VFPv3"
+    llvm_name: HasVFP3
+  - friendly_name: "VFPv4"
+    llvm_name: HasVFP4
+  - friendly_name: "v8 base FP" # TODO: unsure what this is
+    llvm_name: HasFPARMv8
+  - friendly_name: "Double-precision VFP"
+    llvm_name: HasDPVFP
