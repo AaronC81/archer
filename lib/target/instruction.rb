@@ -82,6 +82,11 @@ class Target
       :operand_type,
     )
 
+    # @return [Boolean] Whether all of the operands used within this instruction are known in the
+    #   supplementary data, meaning that the definition of this instruction is likely to be mostly
+    #   complete.
+    def all_operands_known? = (inputs + outputs).all? { |op| !op.operand_type.unknown? }
+
     # @return [(<Operand>, String)]
     def process_operand_list(target, dag, assembly_format)
       operands = dag.arguments.flat_map do |arg|

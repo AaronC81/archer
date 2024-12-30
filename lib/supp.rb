@@ -104,10 +104,12 @@ class SupplementaryData
   attr_reader :documentation_provider
 
   class OperandType
-    def initialize(data)
+    def initialize(data, unknown: false)
       @friendly_name = data.fetch('friendly_name')
       @llvm_name = data.fetch('llvm_name').to_sym
       @family = data.fetch('family')
+
+      @unknown = unknown
     end
 
     def self.from_immediate(llvm_name)
@@ -174,7 +176,7 @@ class SupplementaryData
         'friendly_name' => "Unknown: #{name}",
         'llvm_name' => 'unknown!',
         'family' => nil,
-      })
+      }, unknown: true)
     end
 
     # @return [String]
@@ -185,6 +187,11 @@ class SupplementaryData
 
     # @return [String]
     attr_reader :family
+
+    # @return [Boolean] Whether this operand type is really a placeholder for an unknown operand
+    #   type, and not actually from the LLVM data.
+    attr_reader :unknown
+    alias unknown? unknown
   end
 
   class ExplodeOperandType

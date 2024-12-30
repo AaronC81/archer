@@ -132,4 +132,16 @@ class Target
     
     operand_types[name]
   end
+
+  # Calculate the number of instructions which have fully-supported operands, indicating that their
+  # input and output information is likely reliable.
+  # @return [Metric]
+  def metric_instructions_with_full_operands
+    count = instructions.count { |_, ins| ins.all_operands_known? }
+    Metric.new(count, instructions.length)
+  end
+
+  Metric = Struct.new('Metric', :count, :total) do
+    def percentage = ((count.to_f / total) * 100).round(1)
+  end
 end
