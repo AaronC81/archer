@@ -1,5 +1,4 @@
 title: "ARM"
-subtitle: "Extremely experimental, not useful yet"
 
 operand_types:
   # General-purpose registers
