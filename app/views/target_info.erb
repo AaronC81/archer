@@ -11,6 +11,17 @@
         <b><%= @target.instructions.length %></b> loaded instruction variants
     </p>
 
+    <h1>Operand Type Information</h1>
+    <p>
+        <% support = @target.metric_instructions_with_full_operands %>
+        <b><%= support.count %> out of <%= support.total %> instructions (<%= support.percentage %>%)</b>
+        have fully complete operand information.
+    </p>
+    <p>
+        The remaining instructions have at least one operand where type information is unknown,
+        meaning that their documentation is incomplete.
+    </p>
+
     <h1>Import Logs</h1>
     <p>
         Describes any problems or quirks encountered while loading LLVM data and reconciling it with
