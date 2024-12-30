@@ -15,7 +15,7 @@ APP_DIR = ROOT_DIR/'app'
 VIEWS_DIR = APP_DIR/'views'
 BUILD_DIR = ROOT_DIR/'build'
 
-SUPPORTED_TARGETS = %w[X86 RISCV TriCore J2 PowerPC ARM]
+SUPPORTED_TARGETS = %w[X86 ARM RISCV PowerPC TriCore J2]
 
 def render_erb(template, output)
   render_erb_in_layout(output) do
