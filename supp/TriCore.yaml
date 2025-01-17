@@ -4,19 +4,19 @@ operand_types:
   # Registers
   addr_reg:
     friendly_name: Address register
-    llvm_name: AddrRegs
+    llvm_name: RA
     family: Address register
   data_reg:
     friendly_name: Data register
-    llvm_name: DataRegs
+    llvm_name: RD
     family: Data register
   ext_reg:
     friendly_name: Extended register
-    llvm_name: ExtRegs
+    llvm_name: RE
     family: Other register
   ps_reg:
     friendly_name: Program status register
-    llvm_name: PSRegs
+    llvm_name: RP
     family: Other register
   pair_addr_reg:
     friendly_name: Address register pair
