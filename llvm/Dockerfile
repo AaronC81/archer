@@ -12,9 +12,9 @@ RUN cmake --build . --target llvm-tblgen
 
 # Check out TriCore fork
 WORKDIR /llvm/tricore
-RUN git clone https://github.com/TriDis/llvm-tricore.git
+RUN git clone https://github.com/imbillow/llvm-tricore.git
 WORKDIR /llvm/tricore/llvm-tricore
-RUN git checkout 4bfc5ee073becdcf799978431a9c03045b1091a2
+RUN git checkout f55d68dabae7e5e0aa9e99fd89eee6eca2106b1b
 
 # Check out J2 fork, applying required patch for mainline usage
 WORKDIR /llvm/j2
