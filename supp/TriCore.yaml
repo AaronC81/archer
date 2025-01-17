@@ -1,5 +1,7 @@
 title: "TriCore"
 
+documentation_provider: TriCoreGhidraIndexProvider
+
 operand_types:
   # Registers
   addr_reg:
