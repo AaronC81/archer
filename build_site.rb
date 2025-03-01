@@ -17,7 +17,9 @@ BUILD_DIR = ROOT_DIR/'build'
 
 SUPPORTED_TARGETS = %w[X86 ARM RISCV PowerPC TriCore J2]
 
-def render_erb(template, output)
+def render_erb(template, output, title: nil)
+  @page_title = title
+
   render_erb_in_layout(output) do
     ERB.new(File.read(template)).result(binding)
   end
@@ -85,8 +87,8 @@ def build_site
     @target = target
     @adapter = Adapter.new(target)
 
-    render_erb VIEWS_DIR/'target_index.erb', target_dir/'index.html'
-    render_erb VIEWS_DIR/'target_info.erb', target_dir/'info'/'index.html'
+    render_erb VIEWS_DIR/'target_index.erb', target_dir/'index.html', title: "#{target.title} - archer"
+    render_erb VIEWS_DIR/'target_info.erb', target_dir/'info'/'index.html', title: "#{target.title} info - archer"
 
     # Write JSON data
     write_file @adapter.adapt_instructions.to_json, target_dir/'data'/'instructions.json'
