@@ -1,3 +1,15 @@
+/**
+ * A machine instruction.
+ * 
+ * Properties are defined by the JSON returned from the server. This provides some helper methods
+ * for that data.
+ */
+class Instruction {
+    constructor(obj) {
+        Object.assign(this, obj)
+    }
+}
+
 class DataManager {
     static hasLoadedInstructions = false;
 
@@ -8,7 +20,9 @@ class DataManager {
             throw new Error(`unsuccessful response code: ${resp.status}`)
         }
 
-        this.instructions = await resp.json();
+        const instructionData = await resp.json();
+        this.instructions = instructionData
+            .map(ins => new Instruction(ins));
         this.hasLoadedInstructions = true;
     }
 }
