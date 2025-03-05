@@ -240,6 +240,11 @@ $content-padding: 20px;
 
     tr, th {
         border-bottom: 1px solid var(--line-color);
+
+        &.quiet {
+            border-bottom: 0;
+            color: gray;
+        }
     }
 
     th {
