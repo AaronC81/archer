@@ -95,6 +95,12 @@ def build_site
   end
 end
 
+# For faster testing
+if ARGV.delete("--fast")
+  SUPPORTED_TARGETS.clear
+  SUPPORTED_TARGETS << 'TriCore'
+end
+
 case ARGV
 when []
   build_site
