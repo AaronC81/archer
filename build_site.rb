@@ -76,6 +76,10 @@ def build_site
     write_file compiled.css, BUILD_DIR/(path.basename.sub_ext(".css"))
   end
 
+  # Copy JavaScript
+  FileUtils.mkdir(BUILD_DIR/'js')
+  FileUtils.cp_r(APP_DIR/"js\/.", BUILD_DIR/'js')
+
   # Generate homepage
   @targets = targets
   render_erb VIEWS_DIR/'index.erb', BUILD_DIR/'index.html'
