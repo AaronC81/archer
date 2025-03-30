@@ -21,21 +21,22 @@ export function defaultFilters(targetDetails) {
 export default function FilterControls({ targetDetails, onChangeFilters }) {
     const [filters, updateFilters] = useReducer(
         (filters, reduce) => {
+            let newFilters;
+
             switch (reduce.action) {
 
             case "set":
-                filters = { ...filters, ...reduce.targets }
+                newFilters = { ...filters, ...reduce.targets }
                 break;
 
             case "invert":
-                const prevBool = filters[reduce.target];
-                filters = { ...filters };
-                filters[reduce.target] = !prevBool;
+                newFilters = { ...filters };
+                newFilters[reduce.target] = !filters[reduce.target];
                 break;
 
             case "toggle":
-                const set = filters[reduce.target];
-                filters = { ...filters };
+                const set = new Set([...filters[reduce.target]]);
+                newFilters = { ...filters };
 
                 // If the item was present, remove it, else add it
                 if (set.has(reduce.value)) {
@@ -44,11 +45,11 @@ export default function FilterControls({ targetDetails, onChangeFilters }) {
                     set.add(reduce.value);
                 }
 
-                filters[reduce.target] = set;
+                newFilters[reduce.target] = set;
                 break;
 
             case "selectNoPredicates":
-                filters = {
+                newFilters = {
                     ...filters,
                     predicateNone: true,
                     predicates: new Set(),
@@ -56,7 +57,7 @@ export default function FilterControls({ targetDetails, onChangeFilters }) {
                 break;
 
             case "selectAllPredicates":
-                filters = {
+                newFilters = {
                     ...filters,
                     predicateNone: true,
                     predicates: new Set(targetDetails.predicates.map(pred => pred.friendlyName)),
@@ -67,7 +68,7 @@ export default function FilterControls({ targetDetails, onChangeFilters }) {
                 throw new Error(`unknown reduce action: ${reduce.action}`);
             }
 
-            return filters;
+            return newFilters;
         },
         defaultFilters(targetDetails),
     );
