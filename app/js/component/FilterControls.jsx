@@ -1,4 +1,22 @@
-import React, { useReducer, useRef } from "react";
+import React, { useReducer, useRef, useState } from "react";
+
+export function defaultFilters(targetDetails) {
+    return {
+        mnemonic: "",
+
+        memoryStore: false,
+        memoryLoad: false,
+
+        inputNone: false,
+        inputFamilies: new Set(),
+
+        outputNone: false,
+        outputFamilies: new Set(),
+
+        predicateNone: true,
+        predicates: new Set(targetDetails.predicates.map(pred => pred.friendlyName)),
+    };
+}
 
 export default function FilterControls({ targetDetails, onChangeFilters }) {
     const [filters, updateFilters] = useReducer(
@@ -52,22 +70,13 @@ export default function FilterControls({ targetDetails, onChangeFilters }) {
             onChangeFilters(filters);
             return filters;
         },
-        {
-            mnemonic: "",
-
-            memoryStore: false,
-            memoryLoad: false,
-
-            inputNone: false,
-            inputFamilies: new Set(),
-
-            outputNone: false,
-            outputFamilies: new Set(),
-
-            predicateNone: true,
-            predicates: new Set(targetDetails.predicates.map(pred => pred.friendlyName)),
-        },
+        defaultFilters(targetDetails),
     );
+
+    // TODO: is there a proper way to do this?
+    // Call `onChangeFilters` once, when the component is first created, so dependent components
+    // have a default filter set to work with
+    useState(() => onChangeFilters(filters));
     
     return <>
         <h2>Search</h2>
