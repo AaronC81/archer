@@ -206,7 +206,7 @@ function refreshFilters() {
         htmlString += `
             <div id="result-${instruction.name}"></div>
         `;
-        hydrator.add(`result-${instruction.name}`, ResultCard({ instruction }));
+        hydrator.add(`result-${instruction.name}`, ResultCard({ instruction, assemblyVariant }));
 
         if (includedResults == resultLimit) {
             htmlString = `
