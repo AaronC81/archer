@@ -16,17 +16,6 @@ export function refreshFilters(filters) {
     if (!DataManager.hasLoadedInstructions && !DataManager.hasLoadedDetails)
         return;
 
-    // TODO: race between React rendering the filters, and these elements existing
-    // (This will be solved when everything's React-y)
-
-    const {
-        mnemonic,
-        memoryStore, memoryLoad,
-        inputNone, inputFamilies,
-        outputNone, outputFamilies,
-        predicateNone, predicates,
-    } = filters;
-
     const instructionResults = document.getElementById("instruction-results");
     const assemblyVariantSelector = document.getElementById("assembly-variant-selector");
 
@@ -47,47 +36,8 @@ export function refreshFilters(filters) {
     for (var i = 0; i < DataManager.instructions.length; i++) {
         const instruction = DataManager.instructions[i];
 
-        // Specific instruction filter
-        if (anchor && instruction.name != anchor)
+        if (!instruction.matchesFilters(filters, anchor, assemblyVariant))
             continue;
-
-        // Memory characteristic filters
-        if (memoryStore && !instruction.mayStore)
-            continue;
-        if (memoryLoad && !instruction.mayLoad)
-            continue;
-
-        // Textual filter
-        if (mnemonic && !instruction.assemblyVariants[assemblyVariant].mnemonic.includes(mnemonic))
-            continue;
-
-        // Operand filters
-        if (inputFamilies.size > 0) {
-            if (![...inputFamilies].every(o => instruction.inputs.map(i => i.operandTypeFamily).includes(o)))
-                continue;
-        }
-        if (outputFamilies.size > 0) {
-            if (![...outputFamilies].every(o => instruction.outputs.map(i => i.operandTypeFamily).includes(o)))
-                continue;
-        }
-        if (inputNone && instruction.inputs.length > 0)
-            continue;
-        if (outputNone && instruction.outputs.length > 0)
-            continue;
-
-        // Predicate filters
-        // Either one of the following must be true for the instruction to show up:
-        //   (1) This instruction has no predicates, and the user has ticked "None", and 
-        //   (2) This instruction has some predicates, and the user has ticked all of them
-        if (instruction.predicates.length == 0) {
-            // (1)
-            if (!predicateNone)
-                continue;
-        } else {
-            // (2)
-            if (!instruction.predicates.every(p => predicates.has(p.friendly_name)))
-                continue;
-        }
 
         // This element has survived the filters!
         // Add to output HTML
