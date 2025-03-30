@@ -1,8 +1,9 @@
 import React, { memo, useEffect, useMemo, useState } from "react";
-import FilterControls, { defaultFilters } from "./FilterControls.jsx";
+import FilterControls from "./FilterControls";
 import ResultCard from "./ResultCard.jsx";
 import useAnchor from "../hook/useAnchor.ts";
 import useTargetData from "../hook/useTargetData.ts";
+import { defaultFilters } from "../data/Filters.ts";
 
 export default function FilterView({ targetName, targetTitle }) {
     // TODO: error handling

@@ -3,6 +3,8 @@
         "sourceMap": true,
         "noImplicitAny": true,
         "strict": true,
+        "jsx": "react",
+        "esModuleInterop": true,
 
         // Necessary for spreading a Set to work correctly
         // Without: `[...new Set([1, 2, 3])] #=> []`
