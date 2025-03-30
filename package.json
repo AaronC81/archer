@@ -1,0 +1,7 @@
+{
+    "name": "archer",
+    "author": "Aaron Christiansen",
+    "devDependencies": {
+        "webpack-cli": "^6.0.1"
+    }
+}

@@ -35,9 +35,10 @@ The latest list of forks used can always be found on the homepage of
 
 Archer is a static site once built, and can be used offline if you like.
 
-You will need a Ruby >3.4 to build the site.
+You will need a Ruby >3.4 and Node (tested on v18) to build the site.
 
 ```
+npm install
 bundle install
 bundle exec build_site.rb
 ```
