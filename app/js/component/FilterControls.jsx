@@ -1,8 +1,74 @@
-import React from "react";
+import React, { useReducer, useRef } from "react";
 
-export default function FilterControls({ targetDetails }) {
-    // TODO: could use `useReducer` to atomically apply changes to filters
+export default function FilterControls({ targetDetails, onChangeFilters }) {
+    const [filters, updateFilters] = useReducer(
+        (filters, reduce) => {
+            switch (reduce.action) {
 
+            case "set":
+                filters = { ...filters, ...reduce.targets }
+                break;
+
+            case "invert":
+                const prevBool = filters[reduce.target];
+                filters = { ...filters };
+                filters[reduce.target] = !prevBool;
+                break;
+
+            case "toggle":
+                const set = filters[reduce.target];
+                filters = { ...filters };
+
+                // If the item was present, remove it, else add it
+                if (set.has(reduce.value)) {
+                    set.delete(reduce.value);
+                } else {
+                    set.add(reduce.value);
+                }
+
+                filters[reduce.target] = set;
+                break;
+
+            case "selectNoPredicates":
+                filters = {
+                    ...filters,
+                    predicateNone: true,
+                    predicates: new Set(),
+                }
+                break;
+
+            case "selectAllPredicates":
+                filters = {
+                    ...filters,
+                    predicateNone: true,
+                    predicates: new Set(targetDetails.predicates.map(pred => pred.friendlyName)),
+                }
+                break;
+
+            default:
+                throw new Error(`unknown reduce action: ${reduce.action}`);
+            }
+
+            onChangeFilters(filters);
+            return filters;
+        },
+        {
+            mnemonic: "",
+
+            memoryStore: false,
+            memoryLoad: false,
+
+            inputNone: false,
+            inputFamilies: new Set(),
+
+            outputNone: false,
+            outputFamilies: new Set(),
+
+            predicateNone: true,
+            predicates: new Set(targetDetails.predicates.map(pred => pred.friendlyName)),
+        },
+    );
+    
     return <>
         <h2>Search</h2>
         <form method="GET">
@@ -10,7 +76,7 @@ export default function FilterControls({ targetDetails }) {
                 <label>
                     <b>Mnemonic:</b>
                     <br />
-                    <input name="mnemonic" id="input-mnemonic-filter" onInput={window.refreshFilters} onChange={window.refreshFilters} />
+                    <input name="mnemonic" id="input-mnemonic-filter" value={filters.mnemonic} onChange={e => updateFilters({ action: "set", targets: { mnemonic: e.target.value } })} />
                 </label>
             </div>
             <br />
@@ -18,11 +84,11 @@ export default function FilterControls({ targetDetails }) {
             <div>
                 <b>Memory:</b>
                 <label>
-                    <input name="store" id="input-store-filter" type="checkbox" onChange={window.refreshFilters} />
+                    <input name="store" id="input-store-filter" type="checkbox" checked={filters.memoryStore} onChange={() => updateFilters({ action: "invert", target: "memoryStore" })} />
                     Store
                 </label>
                 <label>
-                    <input name="load" id="input-load-filter" type="checkbox" onChange={window.refreshFilters} />
+                    <input name="load" id="input-load-filter" type="checkbox" checked={filters.memoryLoad} onChange={() => updateFilters({ action: "invert", target: "memoryLoad" })} />
                     Load
                 </label>
             </div>
@@ -44,10 +110,10 @@ export default function FilterControls({ targetDetails }) {
                             </i>
                         </td>
                         <td className="checkbox-cell">
-                            <input id="input-operand-input-none-filter" type="checkbox" onChange={window.refreshFilters} />
+                            <input id="input-operand-input-none-filter" type="checkbox" checked={filters.inputNone} onChange={() => updateFilters({ action: "invert", target: "inputNone" })} />
                         </td>
                         <td className="checkbox-cell">
-                            <input id="input-operand-output-none-filter" type="checkbox" onChange={window.refreshFilters} />
+                            <input id="input-operand-output-none-filter" type="checkbox" checked={filters.outputNone} onChange={() => updateFilters({ action: "invert", target: "outputNone" })} />
                         </td>
                     </tr>
 
@@ -60,10 +126,10 @@ export default function FilterControls({ targetDetails }) {
                                     </mark>
                                 </td>
                                 <td className="checkbox-cell">
-                                    <input className="input-operand-input-filter" data-operand-name={ty.name} type="checkbox" onChange={window.refreshFilters} />
+                                    <input className="input-operand-input-filter" type="checkbox" checked={filters.inputFamilies.has(ty.name)} onChange={() => updateFilters({ action: "toggle", target: "inputFamilies", value: ty.name })} />
                                 </td>
                                 <td className="checkbox-cell">
-                                    <input className="input-operand-output-filter" data-operand-name={ty.name} type="checkbox" onChange={window.refreshFilters} />
+                                    <input className="input-operand-output-filter" type="checkbox" checked={filters.outputFamilies.has(ty.name)} onChange={() => updateFilters({ action: "toggle", target: "outputFamilies", value: ty.name })} />
                                 </td>
                             </tr>
                         )
@@ -72,19 +138,18 @@ export default function FilterControls({ targetDetails }) {
             </div>
 
             {
-                targetDetails.predicates.length > 0
-                ?
+                targetDetails.predicates.length > 0 &&
                     <div>
                         <br/>
                         <b>Capabilities:</b> {/* LLVM calls them "Predicates", but that's a weird name for a user-facing filter */}
 
-                        <button type="button" onClick={window.selectNoPredicates}>None</button>
-                        <button type="button" onClick={window.selectAllPredicates}>All</button>
+                        <button type="button" onClick={() => updateFilters({ action: "selectNoPredicates" })}>None</button>
+                        <button type="button" onClick={() => updateFilters({ action: "selectAllPredicates" })}>All</button>
 
                         <table className="filter-table">
                             <tr>
                                 <td className="checkbox-cell">
-                                    <input id="input-predicate-none-filter" type="checkbox" onChange={window.refreshFilters} defaultChecked />
+                                    <input id="input-predicate-none-filter" type="checkbox" checked={filters.predicateNone} onChange={() => updateFilters({ action: "invert", target: "predicateNone" })} />
                                 </td>
                                 <td className="label-cell">
                                     <b><abbr title="Include instructions which require no additional processor capabilities">None</abbr></b>
@@ -95,7 +160,7 @@ export default function FilterControls({ targetDetails }) {
                                 targetDetails.predicates.map(pred =>
                                     <tr>
                                         <td className="checkbox-cell">
-                                            <input className="input-predicate-filter" data-predicate-name={pred.friendlyName} type="checkbox" onChange={window.refreshFilters} defaultChecked />
+                                            <input className="input-predicate-filter" type="checkbox" checked={filters.predicates.has(pred.friendlyName)} onChange={() => updateFilters({ action: "toggle", target: "predicates", value: pred.friendlyName })} />
                                         </td>
                                         <td className="label-cell">
                                             {
@@ -109,9 +174,6 @@ export default function FilterControls({ targetDetails }) {
                             }
                         </table>
                     </div>
-                :
-                    /* JS expects to find this element */
-                    <input STYLE="display: none;" id="input-predicate-none-filter" type="checkbox" onChange={window.refreshFilters} defaultChecked />
             }
         </form>
     </>;
