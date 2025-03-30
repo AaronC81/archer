@@ -1,3 +1,4 @@
+import React from "react";
 import { createRoot } from "react-dom/client";
 import ResultCard from "./component/ResultCard.jsx";
 import TargetDetails from "./TargetDetails.js";
@@ -74,7 +75,7 @@ class DataManager {
         // TODO: bad encapsulation, should not be here.
         // But soon it'll all be React so it doesn't matter
         const hydrator = new ReactHydrator();
-        hydrator.add("inner-filter-panel", FilterControls({ targetDetails: this.details }));
+        hydrator.add("inner-filter-panel", <FilterControls targetDetails={this.details} onChangeFilters={refreshFilters} />);
         hydrator.done();
     }
 }
@@ -82,7 +83,7 @@ class DataManager {
 // Ask to load instructions and details
 // These functions is async, but we don't await it - it'll just happen in the background
 Promise.all([DataManager.loadDetails(), DataManager.loadInstructions()])
-    .then(() => refreshFilters()) // Show results as soon as we have data
+    .then(() => {} /* refreshFilters() */) // TODO: initial refresh as soon as we have data
     .catch(e => {
         const loadingIndicator = document.getElementById("instruction-data-loading-indicator");
         loadingIndicator.innerHTML = `
@@ -96,40 +97,12 @@ Promise.all([DataManager.loadDetails(), DataManager.loadInstructions()])
 
 const resultLimit = 500;
 
-function getPredicateFilters() {
-    return [
-        document.getElementById("input-predicate-none-filter"),
-        [...document.querySelectorAll(".input-predicate-filter")],
-    ]
-}
-
-function selectNoPredicates() {
-    const [predicateNoneFilter, predicateFilters] = getPredicateFilters();
-
-    // Deselect all additional predicates, but keep 'None' selected
-    // (This is _probably_ the behaviour you're after...)
-    predicateNoneFilter.checked = true;
-    predicateFilters.forEach(el => el.checked = false);
-
-    refreshFilters();
-}
-
-function selectAllPredicates() {
-    const [predicateNoneFilter, predicateFilters] = getPredicateFilters();
-
-    // Select everything
-    predicateNoneFilter.checked = true;
-    predicateFilters.forEach(el => el.checked = true);
-
-    refreshFilters();
-}
-
 function clearAnchor() {
     window.location.hash = "";
     refreshFilters();
 }
 
-function refreshFilters() {
+function refreshFilters(filters) {
     // If data hasn't loaded, don't show anything for now
     if (!DataManager.hasLoadedInstructions && !DataManager.hasLoadedDetails)
         return;
@@ -137,46 +110,20 @@ function refreshFilters() {
     // TODO: race between React rendering the filters, and these elements existing
     // (This will be solved when everything's React-y)
 
-    const mnemonicFilter = document.getElementById("input-mnemonic-filter");
-    const storeFilter = document.getElementById("input-store-filter");
-    const loadFilter = document.getElementById("input-load-filter");
-
-    const operandInputFilters = [...document.querySelectorAll(".input-operand-input-filter")];
-    const operandOutputFilters = [...document.querySelectorAll(".input-operand-output-filter")];
-
-    const operandNoInputsFilter = document.getElementById("input-operand-input-none-filter");
-    const operandNoOutputsFilter = document.getElementById("input-operand-output-none-filter");
-
-    const [predicateNoneFilter, predicateFilters] = getPredicateFilters();
+    const {
+        mnemonic,
+        memoryStore, memoryLoad,
+        inputNone, inputFamilies,
+        outputNone, outputFamilies,
+        predicateNone, predicates,
+    } = filters;
 
     const instructionResults = document.getElementById("instruction-results");
-
     const assemblyVariantSelector = document.getElementById("assembly-variant-selector");
-
 
     // Anchor can be used to show one specific LLVM instruction
     // If not specified, this is just the empty string
     const anchor = window.location.hash.substring(1);
-
-    // Load filter values
-    const storeFilterValue = storeFilter.checked;
-    const loadFilterValue = loadFilter.checked;
-    const mnemonicFilterValue = mnemonicFilter.value.trim();
-
-    const operandInputFilterValues = operandInputFilters
-        .filter(el => el.checked)
-        .map(el => el.dataset.operandName);
-    const operandOutputFilterValues = operandOutputFilters
-        .filter(el => el.checked)
-        .map(el => el.dataset.operandName);
-
-    const operandNoInputsFilterValue = operandNoInputsFilter.checked;
-    const operandNoOutputsFilterValue = operandNoOutputsFilter.checked;
-
-    const satisfiedPredicates = predicateFilters
-        .filter(el => el.checked)
-        .map(el => el.dataset.predicateName);
-    const predicateNoneFilterValue = predicateNoneFilter.checked;
 
     let assemblyVariant;
     if (assemblyVariantSelector) {
@@ -196,27 +143,27 @@ function refreshFilters() {
             continue;
 
         // Memory characteristic filters
-        if (storeFilterValue && !instruction.mayStore)
+        if (memoryStore && !instruction.mayStore)
             continue;
-        if (loadFilterValue && !instruction.mayLoad)
+        if (memoryLoad && !instruction.mayLoad)
             continue;
 
         // Textual filter
-        if (mnemonicFilterValue && !instruction.assemblyVariants[assemblyVariant].mnemonic.includes(mnemonicFilterValue))
+        if (mnemonic && !instruction.assemblyVariants[assemblyVariant].mnemonic.includes(mnemonic))
             continue;
 
         // Operand filters
-        if (operandInputFilterValues.length > 0) {
-            if (!operandInputFilterValues.every(o => instruction.inputs.map(i => i.operandTypeFamily).includes(o)))
+        if (inputFamilies.size > 0) {
+            if (![...inputFamilies].every(o => instruction.inputs.map(i => i.operandTypeFamily).includes(o)))
                 continue;
         }
-        if (operandOutputFilterValues.length > 0) {
-            if (!operandOutputFilterValues.every(o => instruction.outputs.map(i => i.operandTypeFamily).includes(o)))
+        if (outputFamilies.size > 0) {
+            if (![...outputFamilies].every(o => instruction.outputs.map(i => i.operandTypeFamily).includes(o)))
                 continue;
         }
-        if (operandNoInputsFilterValue && instruction.inputs.length > 0)
+        if (inputNone && instruction.inputs.length > 0)
             continue;
-        if (operandNoOutputsFilterValue && instruction.outputs.length > 0)
+        if (outputNone && instruction.outputs.length > 0)
             continue;
 
         // Predicate filters
@@ -225,11 +172,11 @@ function refreshFilters() {
         //   (2) This instruction has some predicates, and the user has ticked all of them
         if (instruction.predicates.length == 0) {
             // (1)
-            if (!predicateNoneFilterValue)
+            if (!predicateNone)
                 continue;
         } else {
             // (2)
-            if (!instruction.predicates.every(p => satisfiedPredicates.includes(p.friendly_name)))
+            if (!instruction.predicates.every(p => predicates.has(p.friendly_name)))
                 continue;
         }
 
@@ -281,5 +228,3 @@ window.onhashchange = refreshFilters;
 
 // So elements can call these
 window.refreshFilters = refreshFilters;
-window.selectNoPredicates = selectNoPredicates;
-window.selectAllPredicates = selectAllPredicates;
