@@ -2,6 +2,13 @@
     "name": "archer",
     "author": "Aaron Christiansen",
     "devDependencies": {
+        "@babel/preset-react": "^7.26.3",
+        "babel-cli": "^6.26.0",
+        "babel-loader": "^10.0.0",
         "webpack-cli": "^6.0.1"
+    },
+    "dependencies": {
+        "react": "^19.1.0",
+        "react-dom": "^19.1.0"
     }
 }

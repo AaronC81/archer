@@ -1,3 +1,5 @@
+import "./test.jsx"
+
 /**
  * A machine instruction.
  * 
