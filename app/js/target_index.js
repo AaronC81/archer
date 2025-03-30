@@ -1,21 +1,8 @@
+import React from "react";
+import FilterView from "./component/FilterView.jsx";
 import ResultCard from "./component/ResultCard.jsx";
 import DataManager from "./data/DataManager.js";
 import ReactHydrator from "./util/ReactHydrator.js";
-
-// Ask to load instructions and details
-// These functions is async, but we don't await it - it'll just happen in the background
-Promise.all([DataManager.loadDetails(), DataManager.loadInstructions()])
-    .then(() => {} /* refreshFilters() */) // TODO: initial refresh as soon as we have data
-    .catch(e => {
-        const loadingIndicator = document.getElementById("instruction-data-loading-indicator");
-        loadingIndicator.innerHTML = `
-            <b>An error occurred while loading data.</b><br>
-            Sorry! Try refreshing the page?<br>
-            <br>
-            <code>${e}</code>
-        `;
-        loadingIndicator.classList.add("error");
-    });
 
 const resultLimit = 500;
 
@@ -150,3 +137,7 @@ window.onhashchange = refreshFilters;
 
 // So elements can call these
 window.refreshFilters = refreshFilters;
+
+const topLevelHydrator = new ReactHydrator();
+topLevelHydrator.add("content", <FilterView targetName={globalThis.targetName} targetTitle={globalThis.targetTitle} />);
+topLevelHydrator.done();

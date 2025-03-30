@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import TargetDetails from "./TargetDetails.js";
 import FilterControls from "../component/FilterControls.jsx";
 import ReactHydrator from "../util/ReactHydrator.js";
 import Instruction from "./Instruction.js";
 
+// TODO: should be completely refactored later to:
+//  - not depend on `globalThis`
+//  - not maintain static state
 export default class DataManager {
     static hasLoadedInstructions = false;
     static async loadInstructions() {
@@ -36,5 +39,19 @@ export default class DataManager {
         const hydrator = new ReactHydrator();
         hydrator.add("inner-filter-panel", <FilterControls targetDetails={this.details} onChangeFilters={refreshFilters} />);
         hydrator.done();
+    }
+
+    static use() {
+        const [instructions, setInstructions] = useState(null);
+        useEffect(() => {
+            DataManager.loadInstructions().then(() => setInstructions(DataManager.instructions));
+        }, []);
+
+        const [details, setDetails] = useState(null);
+        useEffect(() => {
+            DataManager.loadDetails().then(() => setDetails(DataManager.details));
+        }, []);
+
+        return { instructions, details };
     }
 }
