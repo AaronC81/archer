@@ -26,12 +26,14 @@ class Adapter
         }
       end,
 
-      predicates: target.predicates.map do |_, pred|
-        {
-          friendlyName: pred.friendly_name,
-          important: pred.important?,
-        }
-      end,
+      predicates: target.predicates
+        .map do |_, pred|
+          {
+            friendlyName: pred.friendly_name,
+            important: pred.important?,
+          }
+        end
+        .uniq,
     }
   end
 
