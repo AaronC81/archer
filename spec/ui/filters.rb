@@ -20,3 +20,5 @@ def predicate_filter(name)
     .find("tr", text: name)
     .find("td input")
 end
+
+def select_assembly_variant(name) = select(name, from: 'assembly-variant-selector')
