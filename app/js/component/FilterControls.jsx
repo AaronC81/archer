@@ -1,4 +1,4 @@
-import React, { useReducer, useRef, useState } from "react";
+import React, { useEffect, useReducer, useRef, useState } from "react";
 
 export function defaultFilters(targetDetails) {
     return {
@@ -67,11 +67,17 @@ export default function FilterControls({ targetDetails, onChangeFilters }) {
                 throw new Error(`unknown reduce action: ${reduce.action}`);
             }
 
-            onChangeFilters(filters);
             return filters;
         },
         defaultFilters(targetDetails),
     );
+
+    // Sync state out - can't do that in `useReducer` because that runs during render.
+    // If the callback sets state (which ours does!) React isn't happy.
+    // `useEffect` runs afterwards instead.
+    useEffect(() => {
+        onChangeFilters(filters);
+    }, [filters, onChangeFilters]);
     
     return <>
         <h2>Search</h2>
