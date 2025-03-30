@@ -1,15 +1,54 @@
+// Matches `Adapter#adapt_instructions` ------------------------------------------------------------
+interface InstructionAssemblyVariant {
+    mnemonic: string,
+    format: string,
+    html: string,
+}
+interface InstructionPredicate {
+    friendly_name: string,
+    important: boolean,
+}
+interface InstructionDocumentation {
+    text: string,
+    url: string,
+}
+interface InstructionOperand {
+    name: string,
+    operandType: string,
+    operandTypeFamily: string,
+    operandTypeFamilyStyle: string,
+}
+interface Instruction {
+    name: string;
+    assemblyVariants: InstructionAssemblyVariant[];
+
+    mayStore: boolean;
+    mayLoad: boolean;
+
+    inputs: InstructionOperand[],
+    outputs: InstructionOperand[],
+
+    implicitInputs: string[];
+    implicitOutputs: string[];
+
+    predicates: InstructionPredicate[];
+
+    documentation: InstructionDocumentation | null;
+}
+// -------------------------------------------------------------------------------------------------
+
 /**
  * A machine instruction.
  * 
  * Properties are defined by the JSON returned from the server. This provides some helper methods
  * for that data.
  */
-export default class Instruction {
-    constructor(obj) {
+class Instruction {
+    constructor(obj: any) {
         Object.assign(this, obj)
     }
 
-    matchesFilters(filters, anchor, assemblyVariant) {
+    matchesFilters(filters: any /* TODO: type */, anchor: string | null, assemblyVariant: number) {
         const {
             mnemonic,
             memoryStore, memoryLoad,
@@ -75,3 +114,5 @@ export default class Instruction {
                this.mayStore;
     }
 }
+
+export default Instruction;
