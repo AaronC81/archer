@@ -102,7 +102,7 @@ export default function FilterControls(
             <div>
                 <br />
                 <b>Operands:</b>
-                <table className="filter-table">
+                <table id="operand-filter-table" className="filter-table">
                     <tbody>
                         <tr>
                             <td></td>
@@ -155,7 +155,7 @@ export default function FilterControls(
                         <button type="button" onClick={() => updateFilters({ action: "selectNoPredicates" })}>None</button>
                         <button type="button" onClick={() => updateFilters({ action: "selectAllPredicates" })}>All</button>
 
-                        <table className="filter-table">
+                        <table id="predicate-filter-table" className="filter-table">
                             <tbody>
                                 <tr>
                                     <td className="checkbox-cell">
