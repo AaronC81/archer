@@ -124,7 +124,7 @@ export default function FilterControls({ targetDetails, onChangeFilters }) {
 
                         {
                             targetDetails.operandTypeFamilies.map(ty =>
-                                <tr>
+                                <tr key={ty.name}>
                                     <td className="label-cell align-end">
                                         <mark STYLE={ty.style}>
                                             {ty.name}
@@ -165,7 +165,7 @@ export default function FilterControls({ targetDetails, onChangeFilters }) {
 
                                 {
                                     targetDetails.predicates.map(pred =>
-                                        <tr>
+                                        <tr key={pred.friendlyName}>
                                             <td className="checkbox-cell">
                                                 <input className="input-predicate-filter" type="checkbox" checked={filters.predicates.has(pred.friendlyName)} onChange={() => updateFilters({ action: "toggle", target: "predicates", value: pred.friendlyName })} />
                                             </td>

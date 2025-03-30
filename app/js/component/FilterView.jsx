@@ -58,7 +58,7 @@ export default function FilterView({ targetName, targetTitle }) {
                         <select id="assembly-variant-selector" value={assemblyVariant} onChange={e => setAssemblyVariant(parseInt(e.target.value))}>
                             {
                                 details.assemblyVariants.map((name, i) =>
-                                    <option value={i}>{name}</option>
+                                    <option key={i} value={i}>{name}</option>
                                 )
                             }
                         </select>
@@ -103,7 +103,7 @@ export default function FilterView({ targetName, targetTitle }) {
 
                                 {
                                     filteredInstructions.map(ins =>
-                                        <ResultCard instruction={ins} assemblyVariant={assemblyVariant} />
+                                        <ResultCard key={ins.name} instruction={ins} assemblyVariant={assemblyVariant} />
                                     )
                                 }
                             </>
