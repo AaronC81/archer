@@ -1,5 +1,7 @@
 import { createRoot } from "react-dom/client";
 import ResultCard from "./component/ResultCard.jsx";
+import TargetDetails from "./TargetDetails.js";
+import FilterControls from "./component/FilterControls.jsx";
 
 class ReactHydrator {
     constructor() {
@@ -44,7 +46,6 @@ class Instruction {
 
 class DataManager {
     static hasLoadedInstructions = false;
-
     static async loadInstructions() {
         // Set by page
         const resp = await fetch(`/target/${globalThis.targetName}/data/instructions.json`);
@@ -57,11 +58,30 @@ class DataManager {
             .map(ins => new Instruction(ins));
         this.hasLoadedInstructions = true;
     }
+
+    static hasLoadedDetails = false;
+    static async loadDetails() {
+        // Set by page
+        const resp = await fetch(`/target/${globalThis.targetName}/data/details.json`);
+        if (!resp.ok) {
+            throw new Error(`unsuccessful response code: ${resp.status}`)
+        }
+
+        const detailsData = await resp.json();
+        this.details = new TargetDetails(detailsData);
+        this.hasLoadedDetails = true;
+
+        // TODO: bad encapsulation, should not be here.
+        // But soon it'll all be React so it doesn't matter
+        const hydrator = new ReactHydrator();
+        hydrator.add("inner-filter-panel", FilterControls({ targetDetails: this.details }));
+        hydrator.done();
+    }
 }
 
-// Ask to load instructions
-// This function is async, but we don't await it - it'll just happen in the background
-DataManager.loadInstructions()
+// Ask to load instructions and details
+// These functions is async, but we don't await it - it'll just happen in the background
+Promise.all([DataManager.loadDetails(), DataManager.loadInstructions()])
     .then(() => refreshFilters()) // Show results as soon as we have data
     .catch(e => {
         const loadingIndicator = document.getElementById("instruction-data-loading-indicator");
@@ -74,26 +94,18 @@ DataManager.loadInstructions()
         loadingIndicator.classList.add("error");
     });
 
-const mnemonicFilter = document.getElementById("input-mnemonic-filter");
-const storeFilter = document.getElementById("input-store-filter");
-const loadFilter = document.getElementById("input-load-filter");
-
-const operandInputFilters = [...document.querySelectorAll(".input-operand-input-filter")];
-const operandOutputFilters = [...document.querySelectorAll(".input-operand-output-filter")];
-
-const operandNoInputsFilter = document.getElementById("input-operand-input-none-filter");
-const operandNoOutputsFilter = document.getElementById("input-operand-output-none-filter");
-
-const predicateFilters = [...document.querySelectorAll(".input-predicate-filter")];
-const predicateNoneFilter = document.getElementById("input-predicate-none-filter");
-
-const instructionResults = document.getElementById("instruction-results");
-
-const assemblyVariantSelector = document.getElementById("assembly-variant-selector");
-
 const resultLimit = 500;
 
+function getPredicateFilters() {
+    return [
+        document.getElementById("input-predicate-none-filter"),
+        [...document.querySelectorAll(".input-predicate-filter")],
+    ]
+}
+
 function selectNoPredicates() {
+    const [predicateNoneFilter, predicateFilters] = getPredicateFilters();
+
     // Deselect all additional predicates, but keep 'None' selected
     // (This is _probably_ the behaviour you're after...)
     predicateNoneFilter.checked = true;
@@ -103,6 +115,8 @@ function selectNoPredicates() {
 }
 
 function selectAllPredicates() {
+    const [predicateNoneFilter, predicateFilters] = getPredicateFilters();
+
     // Select everything
     predicateNoneFilter.checked = true;
     predicateFilters.forEach(el => el.checked = true);
@@ -117,8 +131,28 @@ function clearAnchor() {
 
 function refreshFilters() {
     // If data hasn't loaded, don't show anything for now
-    if (!DataManager.hasLoadedInstructions)
+    if (!DataManager.hasLoadedInstructions && !DataManager.hasLoadedDetails)
         return;
+
+    // TODO: race between React rendering the filters, and these elements existing
+    // (This will be solved when everything's React-y)
+
+    const mnemonicFilter = document.getElementById("input-mnemonic-filter");
+    const storeFilter = document.getElementById("input-store-filter");
+    const loadFilter = document.getElementById("input-load-filter");
+
+    const operandInputFilters = [...document.querySelectorAll(".input-operand-input-filter")];
+    const operandOutputFilters = [...document.querySelectorAll(".input-operand-output-filter")];
+
+    const operandNoInputsFilter = document.getElementById("input-operand-input-none-filter");
+    const operandNoOutputsFilter = document.getElementById("input-operand-output-none-filter");
+
+    const [predicateNoneFilter, predicateFilters] = getPredicateFilters();
+
+    const instructionResults = document.getElementById("instruction-results");
+
+    const assemblyVariantSelector = document.getElementById("assembly-variant-selector");
+
 
     // Anchor can be used to show one specific LLVM instruction
     // If not specified, this is just the empty string
@@ -245,5 +279,7 @@ refreshFilters();
 // So instruction name links immediately update the page
 window.onhashchange = refreshFilters;
 
-// So elements can call `refreshFilters`
+// So elements can call these
 window.refreshFilters = refreshFilters;
+window.selectNoPredicates = selectNoPredicates;
+window.selectAllPredicates = selectAllPredicates;
