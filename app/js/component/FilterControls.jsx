@@ -72,11 +72,6 @@ export default function FilterControls({ targetDetails, onChangeFilters }) {
         },
         defaultFilters(targetDetails),
     );
-
-    // TODO: is there a proper way to do this?
-    // Call `onChangeFilters` once, when the component is first created, so dependent components
-    // have a default filter set to work with
-    useState(() => onChangeFilters(filters));
     
     return <>
         <h2>Search</h2>
