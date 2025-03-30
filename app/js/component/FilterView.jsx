@@ -25,7 +25,7 @@ export default function FilterView({ targetName, targetTitle }) {
     // TODO: very slow - should not be running on render
     const resultLimit = 100;
     const filteredInstructions = [];
-    if (instructions) {
+    if (instructions && filters) {
         for (var i = 0; i < instructions.length; i++) {
             const instruction = instructions[i];
 
