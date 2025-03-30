@@ -3,6 +3,7 @@ import { refreshFilters } from "../target_index";
 import FilterControls, { defaultFilters } from "./FilterControls.jsx";
 import DataManager from "../data/DataManager.js";
 import ResultCard from "./ResultCard.jsx";
+import useAnchor from "../hook/useAnchor.js";
 
 export default function FilterView({ targetName, targetTitle }) {
     // TODO: error handling
@@ -20,7 +21,8 @@ export default function FilterView({ targetName, targetTitle }) {
 
     // Anchor can be used to show one specific LLVM instruction
     // If not specified, this is just the empty string
-    const anchor = window.location.hash.substring(1);
+    const [anchor, setAnchor] = useAnchor();
+    console.log(anchor);
 
     // TODO: very slow - should not be running on render
     const resultLimit = 500;
@@ -94,10 +96,9 @@ export default function FilterView({ targetName, targetTitle }) {
                                     </div>
                                 }
                                 {anchor &&
-                                    /* TODO: port clearAnchor */
                                     <div className="result-card notice">
                                         <b>Currently showing one specific instruction.</b><br />
-                                        <button onclick="clearAnchor()">Show all instructions</button>
+                                        <button onClick={() => setAnchor("")}>Show all instructions</button>
                                     </div>
                                 }
 
