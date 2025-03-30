@@ -98,6 +98,7 @@ def build_site
     render_erb VIEWS_DIR/'target_info.erb', target_dir/'info'/'index.html', title: "#{target.title} info - archer"
 
     # Write JSON data
+    write_file @adapter.adapt_details.to_json, target_dir/'data'/'details.json'
     write_file @adapter.adapt_instructions.to_json, target_dir/'data'/'instructions.json'
   end
 end
