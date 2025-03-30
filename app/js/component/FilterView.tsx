@@ -67,7 +67,7 @@ export default function FilterView(
                         </small>
                     </div>
 
-                    {details &&
+                    {details && details.assemblyVariants.length > 1 &&
                         <select id="assembly-variant-selector" value={assemblyVariant} onChange={e => setAssemblyVariant(parseInt(e.target.value))}>
                             {
                                 details.assemblyVariants.map((name, i) =>
