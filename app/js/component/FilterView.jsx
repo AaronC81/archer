@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { refreshFilters } from "../target_index";
 import FilterControls, { defaultFilters } from "./FilterControls.jsx";
 import DataManager from "../data/DataManager.js";
@@ -10,7 +10,13 @@ export default function FilterView({ targetName, targetTitle }) {
 
     const [assemblyVariant, setAssemblyVariant] = useState(0);
 
+    // Initialise filters to initial values once we have target details to do so
     const [filters, setFilters] = useState(null);
+    useEffect(() => {
+        if (details) {
+            setFilters(defaultFilters(details));
+        }
+    }, [details]);
 
     // Anchor can be used to show one specific LLVM instruction
     // If not specified, this is just the empty string
