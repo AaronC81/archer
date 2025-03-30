@@ -10,7 +10,7 @@ import { useState } from "react";
  * 
  * A component which uses this hook is re-rendered if the URL hash changes.
  */
-export default function useAnchor() {
+export default function useAnchor(): [string, (_: string) => void] {
     const [anchor, internalSetAnchor] = useState(() => window.location.hash.substring(1));
 
     // Trigger render if anchor changes while the page is open
@@ -19,7 +19,7 @@ export default function useAnchor() {
     };
 
     // If the user calls `setAnchor`, update the page too
-    const setAnchor = (anchor) => {
+    const setAnchor = (anchor: string) => {
         window.location.hash = anchor;
         internalSetAnchor(anchor);
     }
