@@ -305,3 +305,6 @@ refreshFilters();
 
 // So instruction name links immediately update the page
 window.onhashchange = refreshFilters;
+
+// So elements can call `refreshFilters`
+window.refreshFilters = refreshFilters;

@@ -76,9 +76,12 @@ def build_site
     write_file compiled.css, BUILD_DIR/(path.basename.sub_ext(".css"))
   end
 
-  # Copy JavaScript
+  # Build JavaScript
   FileUtils.mkdir(BUILD_DIR/'js')
-  FileUtils.cp_r(APP_DIR/"js\/.", BUILD_DIR/'js')
+  system("npx webpack")
+  unless $?.success?
+    abort "Error: JavaScript bundle failed. Have you run `npm install`?"
+  end
 
   # Generate homepage
   @targets = targets

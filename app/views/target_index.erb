@@ -14,7 +14,7 @@
                 </div>
 
                 <% if @target.assembly_variants.length > 1 %>
-                    <select id="assembly-variant-selector" onchange="refreshFilters()">
+                    <select id="assembly-variant-selector" onchange="window.refreshFilters()">
                         <% @target.assembly_variants.each.with_index do |name, i| %>
                             <option value="<%= i %>"><%= name %></option>
                         <% end %>
@@ -30,7 +30,7 @@
                             <label>
                                 <b>Mnemonic:</b>
                                 <br>
-                                <input name="mnemonic" id="input-mnemonic-filter" oninput="refreshFilters()" onchange="refreshFilters()" />
+                                <input name="mnemonic" id="input-mnemonic-filter" oninput="window.refreshFilters()" onchange="window.refreshFilters()" />
                             </label>
                         </div>
                         <br>
@@ -38,11 +38,11 @@
                         <div>
                             <b>Memory:</b>
                             <label>
-                                <input name="store" id="input-store-filter" type="checkbox" onchange="refreshFilters()" />
+                                <input name="store" id="input-store-filter" type="checkbox" onchange="window.refreshFilters()" />
                                 Store
                             </label>
                             <label>
-                                <input name="load" id="input-load-filter" type="checkbox" onchange="refreshFilters()" />
+                                <input name="load" id="input-load-filter" type="checkbox" onchange="window.refreshFilters()" />
                                 Load
                             </label>
                         </div>
@@ -64,10 +64,10 @@
                                         </i>
                                     </td>
                                     <td class="checkbox-cell">
-                                        <input id="input-operand-input-none-filter" type="checkbox" onchange="refreshFilters()" />
+                                        <input id="input-operand-input-none-filter" type="checkbox" onchange="window.refreshFilters()" />
                                     </td>
                                     <td class="checkbox-cell">
-                                        <input id="input-operand-output-none-filter" type="checkbox" onchange="refreshFilters()" />
+                                        <input id="input-operand-output-none-filter" type="checkbox" onchange="window.refreshFilters()" />
                                     </td>
                                 </tr>
 
@@ -79,10 +79,10 @@
                                             </mark>
                                         </td>
                                         <td class="checkbox-cell">
-                                            <input class="input-operand-input-filter" data-operand-name="<%= ty.name %>" type="checkbox" onchange="refreshFilters()" />
+                                            <input class="input-operand-input-filter" data-operand-name="<%= ty.name %>" type="checkbox" onchange="window.refreshFilters()" />
                                         </td>
                                         <td class="checkbox-cell">
-                                            <input class="input-operand-output-filter" data-operand-name="<%= ty.name %>" type="checkbox" onchange="refreshFilters()" />
+                                            <input class="input-operand-output-filter" data-operand-name="<%= ty.name %>" type="checkbox" onchange="window.refreshFilters()" />
                                         </td>
                                     </tr>
                                 <% end %>
@@ -100,7 +100,7 @@
                                 <table class="filter-table">
                                     <tr>
                                         <td class="checkbox-cell">
-                                            <input id="input-predicate-none-filter" type="checkbox" onchange="refreshFilters()" checked />
+                                            <input id="input-predicate-none-filter" type="checkbox" onchange="window.refreshFilters()" checked />
                                         </td>
                                         <td class="label-cell">
                                             <b><abbr title="Include instructions which require no additional processor capabilities">None</abbr></b>
@@ -110,7 +110,7 @@
                                     <% @target.predicates.values.uniq(&:friendly_name).each do |pred| %>
                                         <tr>
                                             <td class="checkbox-cell">
-                                                <input class="input-predicate-filter" data-predicate-name="<%= pred.friendly_name %>" type="checkbox" onchange="refreshFilters()" checked />
+                                                <input class="input-predicate-filter" data-predicate-name="<%= pred.friendly_name %>" type="checkbox" onchange="window.refreshFilters()" checked />
                                             </td>
                                             <td class="label-cell">
                                                 <% if pred.important? %>
@@ -125,7 +125,7 @@
                             </div>
                         <% else %>
                             <!-- JS expects to find this element -->
-                            <input style="display: none;" id="input-predicate-none-filter" type="checkbox" onchange="refreshFilters()" checked />
+                            <input style="display: none;" id="input-predicate-none-filter" type="checkbox" onchange="window.refreshFilters()" checked />
                         <% end %>
                     </form>
                 </div>
@@ -153,4 +153,4 @@
 <script>
     globalThis.targetName = "<%= @target.name %>";
 </script>
-<script src="/js/target_index.js"></script>
+<script src="/js/bundle.js"></script>
