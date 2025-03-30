@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { refreshFilters } from "../target_index";
 import FilterControls, { defaultFilters } from "./FilterControls.jsx";
-import DataManager from "../data/DataManager.js";
 import ResultCard from "./ResultCard.jsx";
 import useAnchor from "../hook/useAnchor.js";
+import useTargetData from "../hook/useTargetData.js";
 
 export default function FilterView({ targetName, targetTitle }) {
     // TODO: error handling
-    const { instructions, details } = DataManager.use();
+    const { instructions, details } = useTargetData(targetName);
 
     const [assemblyVariant, setAssemblyVariant] = useState(0);
 
@@ -29,7 +29,7 @@ export default function FilterView({ targetName, targetTitle }) {
     const filteredInstructions = [];
     if (instructions) {
         for (var i = 0; i < instructions.length; i++) {
-            const instruction = DataManager.instructions[i];
+            const instruction = instructions[i];
 
             if (!instruction.matchesFilters(filters, anchor, assemblyVariant))
                 continue;
