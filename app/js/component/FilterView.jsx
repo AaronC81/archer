@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from "react";
+import React, { memo, useEffect, useMemo, useState } from "react";
 import FilterControls, { defaultFilters } from "./FilterControls.jsx";
 import ResultCard from "./ResultCard.jsx";
 import useAnchor from "../hook/useAnchor.js";
@@ -22,23 +22,33 @@ export default function FilterView({ targetName, targetTitle }) {
     // If not specified, this is just the empty string
     const [anchor, setAnchor] = useAnchor();
 
-    // TODO: very slow - should not be running on render
     const resultLimit = 100;
-    const filteredInstructions = [];
-    if (instructions && filters) {
-        for (var i = 0; i < instructions.length; i++) {
-            const instruction = instructions[i];
+    const isReady = instructions && details && filters;
 
-            if (!instruction.matchesFilters(filters, anchor, assemblyVariant))
-                continue;
+    const filteredInstructions = useMemo(
+        () => {
+            if (isReady) {
+                let ins = [];
+                for (var i = 0; i < instructions.length; i++) {
+                    const instruction = instructions[i];
+        
+                    if (!instruction.matchesFilters(filters, anchor, assemblyVariant))
+                        continue;
+        
+                    ins.push(instruction);
+                    if (ins.length >= resultLimit) {
+                        break;
+                    }
+                }
 
-            filteredInstructions.push(instruction);
-            if (filteredInstructions.length >= resultLimit) {
-                break;
+                return ins;
+            } else {
+                return [];
             }
-        }
-    }
-
+        },
+        [instructions, filters, isReady],
+    );
+    
     return <>
         <div id="filter-view">
             <div id="static-panel">
@@ -80,7 +90,7 @@ export default function FilterView({ targetName, targetTitle }) {
                 <hr id="filter-results-divider" />
                 <div id="instruction-results">
                     {
-                        instructions && details
+                        isReady
                         ?
                             <>
                                 {filteredInstructions.length == resultLimit &&
