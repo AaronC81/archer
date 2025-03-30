@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { refreshFilters } from "../target_index";
 import FilterControls, { defaultFilters } from "./FilterControls.jsx";
 import ResultCard from "./ResultCard.jsx";
 import useAnchor from "../hook/useAnchor.js";
