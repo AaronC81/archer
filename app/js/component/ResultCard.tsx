@@ -1,11 +1,14 @@
 import React, { memo } from "react";
+import Instruction from "../data/Instruction";
 
 // TODO: uses `STYLE` to get around React's object-based styling. This is rubbish
 
 /**
  * A card describing a specific instruction.
  */
-const ResultCard = memo(function ResultCard({ instruction, assemblyVariant }) {
+const ResultCard = memo(function ResultCard(
+    { instruction, assemblyVariant }: { instruction: Instruction, assemblyVariant: number }
+) {
     return (
         <div className="result-card">
             <div className="header">
@@ -19,13 +22,18 @@ const ResultCard = memo(function ResultCard({ instruction, assemblyVariant }) {
                         ? 
                             <>
                                 <tr>
-                                    <th colSpan="2">Inputs</th>
+                                    <th colSpan={2}>Inputs</th>
                                 </tr>
                                 {
                                     instruction.inputs
                                         .map(i =>
                                             <tr key={i.name}>
-                                                <td className="label-cell"><mark STYLE={i.operandTypeFamilyStyle}><code>{i.name}</code></mark></td>
+                                                <td className="label-cell">
+                                                    {/* @ts-ignore */}
+                                                    <mark STYLE={i.operandTypeFamilyStyle}>
+                                                        <code>{i.name}</code>
+                                                    </mark>
+                                                </td>
                                                 <td>{i.operandType}</td>
                                             </tr>
                                         )
@@ -44,7 +52,7 @@ const ResultCard = memo(function ResultCard({ instruction, assemblyVariant }) {
                             </>
                         :
                             <tr className="quiet">
-                                <th className="quiet" colSpan="2">No Inputs</th>
+                                <th className="quiet" colSpan={2}>No Inputs</th>
                             </tr>
                     }
                     
@@ -53,13 +61,18 @@ const ResultCard = memo(function ResultCard({ instruction, assemblyVariant }) {
                         ?
                             <>
                                 <tr>
-                                    <th colSpan="2">Outputs</th>
+                                    <th colSpan={2}>Outputs</th>
                                 </tr>
                                 {
                                     instruction.outputs
                                         .map(i =>
                                             <tr key={i.name}>
-                                                <td className="label-cell"><mark STYLE={i.operandTypeFamilyStyle}><code>{i.name}</code></mark></td>
+                                                <td className="label-cell">
+                                                    {/* @ts-ignore */}
+                                                    <mark STYLE={i.operandTypeFamilyStyle}>
+                                                        <code>{i.name}</code>
+                                                    </mark>
+                                                </td>
                                                 <td>{i.operandType}</td>
                                             </tr>
                                         )
@@ -78,7 +91,7 @@ const ResultCard = memo(function ResultCard({ instruction, assemblyVariant }) {
                             </>
                         :
                             <tr className="quiet">
-                                <th className="quiet" colSpan="2">No Outputs</th>
+                                <th className="quiet" colSpan={2}>No Outputs</th>
                             </tr>
                     }
                 </tbody>
@@ -99,6 +112,7 @@ const ResultCard = memo(function ResultCard({ instruction, assemblyVariant }) {
             </div>
             {
                 instruction.documentation &&
+                    /* @ts-ignore */
                     <a href={instruction.documentation.url} target="_blank" STYLE="display: inline-block; margin-top: 15px;">{ instruction.documentation.text }</a>
             }
         </div>

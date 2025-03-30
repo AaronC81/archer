@@ -1,6 +1,6 @@
 import React, { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import FilterView from "./component/FilterView.jsx";
+import FilterView from "./component/FilterView";
 
 createRoot(document.getElementById("content"))
     .render(

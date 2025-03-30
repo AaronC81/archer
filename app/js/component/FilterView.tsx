@@ -1,18 +1,20 @@
 import React, { memo, useEffect, useMemo, useState } from "react";
 import FilterControls from "./FilterControls";
-import ResultCard from "./ResultCard.jsx";
-import useAnchor from "../hook/useAnchor.ts";
-import useTargetData from "../hook/useTargetData.ts";
-import { defaultFilters } from "../data/Filters.ts";
+import ResultCard from "./ResultCard";
+import useAnchor from "../hook/useAnchor";
+import useTargetData from "../hook/useTargetData";
+import { defaultFilters, Filters } from "../data/Filters";
 
-export default function FilterView({ targetName, targetTitle }) {
+export default function FilterView(
+    { targetName, targetTitle }: { targetName: string, targetTitle: string }
+) {
     // TODO: error handling
     const { instructions, details } = useTargetData(targetName);
 
     const [assemblyVariant, setAssemblyVariant] = useState(0);
 
     // Initialise filters to initial values once we have target details to do so
-    const [filters, setFilters] = useState(null);
+    const [filters, setFilters] = useState<Filters | null>(null);
     useEffect(() => {
         if (details) {
             setFilters(defaultFilters(details));
