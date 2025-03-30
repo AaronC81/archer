@@ -1,27 +1,21 @@
 import React, { useEffect, useReducer, useRef, useState } from "react";
+import TargetDetails from "../data/TargetDetails";
+import { defaultFilters, Filters } from "../data/Filters";
+import { KeyOfType } from "../utils/typing";
 
-export function defaultFilters(targetDetails) {
-    return {
-        mnemonic: "",
+export default function FilterControls(
+    { targetDetails, onChangeFilters }: { targetDetails: TargetDetails, onChangeFilters: (_: Filters) => void }
+) {
+    type Action
+        = { action: "set", targets: Partial<Filters> }
+        | { action: "invert", target: KeyOfType<Filters, boolean> }
+        | { action: "toggle", target: KeyOfType<Filters, Set<string>>, value: string }
+        | { action: "selectNoPredicates" }
+        | { action: "selectAllPredicates" }
 
-        memoryStore: false,
-        memoryLoad: false,
-
-        inputNone: false,
-        inputFamilies: new Set(),
-
-        outputNone: false,
-        outputFamilies: new Set(),
-
-        predicateNone: true,
-        predicates: new Set(targetDetails.predicates.map(pred => pred.friendlyName)),
-    };
-}
-
-export default function FilterControls({ targetDetails, onChangeFilters }) {
-    const [filters, updateFilters] = useReducer(
+    const [filters, updateFilters] = useReducer<Filters, [Action]>(
         (filters, reduce) => {
-            let newFilters;
+            let newFilters: Filters;
 
             switch (reduce.action) {
 
@@ -65,7 +59,8 @@ export default function FilterControls({ targetDetails, onChangeFilters }) {
                 break;
 
             default:
-                throw new Error(`unknown reduce action: ${reduce.action}`);
+                throw new Error(`unknown reduce action: ${reduce}`);
+
             }
 
             return newFilters;
@@ -133,6 +128,7 @@ export default function FilterControls({ targetDetails, onChangeFilters }) {
                             targetDetails.operandTypeFamilies.map(ty =>
                                 <tr key={ty.name}>
                                     <td className="label-cell align-end">
+                                        {/* @ts-ignore */}
                                         <mark STYLE={ty.style}>
                                             {ty.name}
                                         </mark>

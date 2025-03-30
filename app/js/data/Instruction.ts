@@ -1,3 +1,5 @@
+import { Filters } from "./Filters";
+
 // Matches `Adapter#adapt_instructions` ------------------------------------------------------------
 interface InstructionAssemblyVariant {
     mnemonic: string,
@@ -48,7 +50,7 @@ class Instruction {
         Object.assign(this, obj)
     }
 
-    matchesFilters(filters: any /* TODO: type */, anchor: string | null, assemblyVariant: number) {
+    matchesFilters(filters: Filters, anchor: string | null, assemblyVariant: number) {
         const {
             mnemonic,
             memoryStore, memoryLoad,
