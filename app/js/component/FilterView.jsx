@@ -1,14 +1,37 @@
 import React, { useState } from "react";
 import { refreshFilters } from "../target_index";
-import FilterControls from "./FilterControls.jsx";
+import FilterControls, { defaultFilters } from "./FilterControls.jsx";
 import DataManager from "../data/DataManager.js";
+import ResultCard from "./ResultCard.jsx";
 
 export default function FilterView({ targetName, targetTitle }) {
     // TODO: error handling
     const { instructions, details } = DataManager.use();
 
-    // TODO: doesn't trigger redraw yet due to out-of-component instruction updating mayhem
     const [assemblyVariant, setAssemblyVariant] = useState(0);
+
+    const [filters, setFilters] = useState(null);
+
+    // Anchor can be used to show one specific LLVM instruction
+    // If not specified, this is just the empty string
+    const anchor = window.location.hash.substring(1);
+
+    // TODO: very slow - should not be running on render
+    const resultLimit = 500;
+    const filteredInstructions = [];
+    if (instructions) {
+        for (var i = 0; i < instructions.length; i++) {
+            const instruction = DataManager.instructions[i];
+
+            if (!instruction.matchesFilters(filters, anchor, assemblyVariant))
+                continue;
+
+            filteredInstructions.push(instruction);
+            if (filteredInstructions.length >= resultLimit) {
+                break;
+            }
+        }
+    }
 
     return <>
         <div id="filter-view">
@@ -39,7 +62,7 @@ export default function FilterView({ targetName, targetTitle }) {
                 <div id="filter-panel">
                     <div id="inner-filter-panel">
                         {details &&
-                            <FilterControls targetDetails={details} onChangeFilters={window.refreshFilters} />
+                            <FilterControls targetDetails={details} onChangeFilters={setFilters} />
                         }
                     </div>
                 </div>
@@ -50,14 +73,39 @@ export default function FilterView({ targetName, targetTitle }) {
             <div id="filter-results">
                 <hr id="filter-results-divider" />
                 <div id="instruction-results">
-                    {/*
-                        Magical loading indicator.
-                        This will disappear the first time the results are able to refresh.
-                        This also has an ID so it can be turned into an error if something goes wrong
-                    */}
-                    <div className="result-card" id="instruction-data-loading-indicator">
-                        <b>Loading data...</b>
-                    </div>
+                    {
+                        instructions && details
+                        ?
+                            <>
+                                {filteredInstructions.length == resultLimit &&
+                                    <div className="result-card notice">
+                                        <b>Truncated to {resultLimit} results</b> - apply some filters.
+                                    </div>
+                                }
+                                {filteredInstructions.length == 0 &&
+                                    <div className="result-card notice">
+                                        <b>No results</b> - double-check your filters.
+                                    </div>
+                                }
+                                {anchor &&
+                                    /* TODO: port clearAnchor */
+                                    <div className="result-card notice">
+                                        <b>Currently showing one specific instruction.</b><br />
+                                        <button onclick="clearAnchor()">Show all instructions</button>
+                                    </div>
+                                }
+
+                                {
+                                    filteredInstructions.map(ins =>
+                                        <ResultCard instruction={ins} assemblyVariant={assemblyVariant} />
+                                    )
+                                }
+                            </>
+                        :
+                            <div className="result-card" id="instruction-data-loading-indicator">
+                                <b>Loading data...</b>
+                            </div>
+                    }
                 </div>
             </div>
         </div>

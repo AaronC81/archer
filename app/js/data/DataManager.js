@@ -33,12 +33,6 @@ export default class DataManager {
         const detailsData = await resp.json();
         this.details = new TargetDetails(detailsData);
         this.hasLoadedDetails = true;
-
-        // TODO: bad encapsulation, should not be here.
-        // But soon it'll all be React so it doesn't matter
-        const hydrator = new ReactHydrator();
-        hydrator.add("inner-filter-panel", <FilterControls targetDetails={this.details} onChangeFilters={refreshFilters} />);
-        hydrator.done();
     }
 
     static use() {
