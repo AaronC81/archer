@@ -1,84 +1,6 @@
-import React from "react";
-import { createRoot } from "react-dom/client";
 import ResultCard from "./component/ResultCard.jsx";
-import TargetDetails from "./TargetDetails.js";
-import FilterControls from "./component/FilterControls.jsx";
-
-class ReactHydrator {
-    constructor() {
-        this.pendingElements = {};
-    }
-
-    add(id, component) {
-        this.pendingElements[id] = component;
-    }
-
-    done() {
-        for (const [id, component] of Object.entries(this.pendingElements)) {
-            const element = document.getElementById(id);
-            createRoot(element).render(component);
-        }
-    }
-}
-
-/**
- * A machine instruction.
- * 
- * Properties are defined by the JSON returned from the server. This provides some helper methods
- * for that data.
- */
-class Instruction {
-    constructor(obj) {
-        Object.assign(this, obj)
-    }
-    
-    hasAnyInputs() {
-        return this.inputs.length > 0 ||
-               this.implicitInputs.length > 0 ||
-               this.mayLoad;
-    }
-
-    hasAnyOutputs() {
-        return this.outputs.length > 0 ||
-               this.implicitOutputs.length > 0 ||
-               this.mayStore;
-    }
-}
-
-class DataManager {
-    static hasLoadedInstructions = false;
-    static async loadInstructions() {
-        // Set by page
-        const resp = await fetch(`/target/${globalThis.targetName}/data/instructions.json`);
-        if (!resp.ok) {
-            throw new Error(`unsuccessful response code: ${resp.status}`)
-        }
-
-        const instructionData = await resp.json();
-        this.instructions = instructionData
-            .map(ins => new Instruction(ins));
-        this.hasLoadedInstructions = true;
-    }
-
-    static hasLoadedDetails = false;
-    static async loadDetails() {
-        // Set by page
-        const resp = await fetch(`/target/${globalThis.targetName}/data/details.json`);
-        if (!resp.ok) {
-            throw new Error(`unsuccessful response code: ${resp.status}`)
-        }
-
-        const detailsData = await resp.json();
-        this.details = new TargetDetails(detailsData);
-        this.hasLoadedDetails = true;
-
-        // TODO: bad encapsulation, should not be here.
-        // But soon it'll all be React so it doesn't matter
-        const hydrator = new ReactHydrator();
-        hydrator.add("inner-filter-panel", <FilterControls targetDetails={this.details} onChangeFilters={refreshFilters} />);
-        hydrator.done();
-    }
-}
+import DataManager from "./data/DataManager.js";
+import ReactHydrator from "./util/ReactHydrator.js";
 
 // Ask to load instructions and details
 // These functions is async, but we don't await it - it'll just happen in the background
@@ -102,7 +24,7 @@ function clearAnchor() {
     refreshFilters();
 }
 
-function refreshFilters(filters) {
+export function refreshFilters(filters) {
     // If data hasn't loaded, don't show anything for now
     if (!DataManager.hasLoadedInstructions && !DataManager.hasLoadedDetails)
         return;
