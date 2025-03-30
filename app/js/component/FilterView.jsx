@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { refreshFilters } from "../target_index";
 import FilterControls from "./FilterControls.jsx";
 import DataManager from "../data/DataManager.js";
@@ -7,7 +7,8 @@ export default function FilterView({ targetName, targetTitle }) {
     // TODO: error handling
     const { instructions, details } = DataManager.use();
 
-    console.log("render");
+    // TODO: doesn't trigger redraw yet due to out-of-component instruction updating mayhem
+    const [assemblyVariant, setAssemblyVariant] = useState(0);
 
     return <>
         <div id="filter-view">
@@ -25,8 +26,7 @@ export default function FilterView({ targetName, targetTitle }) {
                     </div>
 
                     {details &&
-                        /* TODO: does not trigger redraw - value not captured anywhere */
-                        <select id="assembly-variant-selector">
+                        <select id="assembly-variant-selector" value={assemblyVariant} onChange={e => setAssemblyVariant(parseInt(e.target.value))}>
                             {
                                 details.assemblyVariants.map((name, i) =>
                                     <option value={i}>{name}</option>
