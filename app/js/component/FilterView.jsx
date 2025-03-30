@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import FilterControls, { defaultFilters } from "./FilterControls.jsx";
 import ResultCard from "./ResultCard.jsx";
 import useAnchor from "../hook/useAnchor.js";
@@ -23,7 +23,7 @@ export default function FilterView({ targetName, targetTitle }) {
     const [anchor, setAnchor] = useAnchor();
 
     // TODO: very slow - should not be running on render
-    const resultLimit = 500;
+    const resultLimit = 100;
     const filteredInstructions = [];
     if (instructions) {
         for (var i = 0; i < instructions.length; i++) {

@@ -1,11 +1,11 @@
-import React from "react";
+import React, { memo } from "react";
 
 // TODO: uses `STYLE` to get around React's object-based styling. This is rubbish
 
 /**
  * A card describing a specific instruction.
  */
-function ResultCard({ instruction, assemblyVariant }) {
+const ResultCard = memo(function ResultCard({ instruction, assemblyVariant }) {
     return (
         <div className="result-card">
             <div className="header">
@@ -103,6 +103,6 @@ function ResultCard({ instruction, assemblyVariant }) {
             }
         </div>
     );
-}
+});
 
 export default ResultCard;
