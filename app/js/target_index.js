@@ -1,6 +1,5 @@
 import { createRoot } from "react-dom/client";
 import ResultCard from "./component/ResultCard.jsx";
-import "./test.jsx"
 
 class ReactHydrator {
     constructor() {
