@@ -1,7 +1,6 @@
 import React from "react";
 
 // TODO: uses `STYLE` to get around React's object-based styling. This is rubbish
-// TODO: need `key` in some places - see console warnings
 
 /**
  * A card describing a specific instruction.
@@ -25,7 +24,7 @@ function ResultCard({ instruction, assemblyVariant }) {
                                 {
                                     instruction.inputs
                                         .map(i =>
-                                            <tr>
+                                            <tr key={i.name}>
                                                 <td className="label-cell"><mark STYLE={i.operandTypeFamilyStyle}><code>{i.name}</code></mark></td>
                                                 <td>{i.operandType}</td>
                                             </tr>
@@ -33,7 +32,11 @@ function ResultCard({ instruction, assemblyVariant }) {
                                 }
                                 {
                                     instruction.implicitInputs
-                                        .map(i => <tr><td className="label-cell">Implicit</td><td><code>{i}</code></td></tr>)
+                                        .map(i =>
+                                            <tr key={i}>
+                                                <td className="label-cell">Implicit</td><td><code>{i}</code></td>
+                                            </tr>
+                                        )
                                 }
                                 { instruction.mayLoad &&
                                     <tr><td></td><td>Loads memory</td></tr>
@@ -55,7 +58,7 @@ function ResultCard({ instruction, assemblyVariant }) {
                                 {
                                     instruction.outputs
                                         .map(i =>
-                                            <tr>
+                                            <tr key={i.name}>
                                                 <td className="label-cell"><mark STYLE={i.operandTypeFamilyStyle}><code>{i.name}</code></mark></td>
                                                 <td>{i.operandType}</td>
                                             </tr>
@@ -63,7 +66,11 @@ function ResultCard({ instruction, assemblyVariant }) {
                                 }
                                 {
                                     instruction.implicitOutputs
-                                        .map(i => <tr><td className="label-cell">Implicit</td><td><code>{i}</code></td></tr>)
+                                        .map(i =>
+                                            <tr key={i}>
+                                                <td className="label-cell">Implicit</td><td><code>{i}</code></td>
+                                            </tr>
+                                        )
                                 }
                                 { instruction.mayStore &&
                                     <tr><td></td><td>Stores memory</td></tr> 
@@ -80,9 +87,13 @@ function ResultCard({ instruction, assemblyVariant }) {
                 {
                     instruction.predicates
                         .map(pred => 
-                            pred.important
-                            ? <span><b>{pred.friendly_name}</b></span>
-                            : <span>{pred.friendly_name}</span>
+                            <span key={pred.friendly_name}>
+                                {
+                                    pred.important
+                                    ? <b>{pred.friendly_name}</b>
+                                    : pred.friendly_name
+                                }
+                            </span>
                         )
                 }
             </div>
