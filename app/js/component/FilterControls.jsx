@@ -101,43 +101,45 @@ export default function FilterControls({ targetDetails, onChangeFilters }) {
                 <br />
                 <b>Operands:</b>
                 <table className="filter-table">
-                    <tr>
-                        <td></td>
-                        <td className="checkbox-cell"><b>Input</b></td>
-                        <td className="checkbox-cell"><b>Output</b></td>
-                    </tr>
+                    <tbody>
+                        <tr>
+                            <td></td>
+                            <td className="checkbox-cell"><b>Input</b></td>
+                            <td className="checkbox-cell"><b>Output</b></td>
+                        </tr>
 
-                    <tr>
-                        <td className="label-cell align-end">
-                            <i>
-                                <abbr title="Filter to instructions which do not have any input/output operands">None</abbr>
-                            </i>
-                        </td>
-                        <td className="checkbox-cell">
-                            <input id="input-operand-input-none-filter" type="checkbox" checked={filters.inputNone} onChange={() => updateFilters({ action: "invert", target: "inputNone" })} />
-                        </td>
-                        <td className="checkbox-cell">
-                            <input id="input-operand-output-none-filter" type="checkbox" checked={filters.outputNone} onChange={() => updateFilters({ action: "invert", target: "outputNone" })} />
-                        </td>
-                    </tr>
+                        <tr>
+                            <td className="label-cell align-end">
+                                <i>
+                                    <abbr title="Filter to instructions which do not have any input/output operands">None</abbr>
+                                </i>
+                            </td>
+                            <td className="checkbox-cell">
+                                <input id="input-operand-input-none-filter" type="checkbox" checked={filters.inputNone} onChange={() => updateFilters({ action: "invert", target: "inputNone" })} />
+                            </td>
+                            <td className="checkbox-cell">
+                                <input id="input-operand-output-none-filter" type="checkbox" checked={filters.outputNone} onChange={() => updateFilters({ action: "invert", target: "outputNone" })} />
+                            </td>
+                        </tr>
 
-                    {
-                        targetDetails.operandTypeFamilies.map(ty =>
-                            <tr>
-                                <td className="label-cell align-end">
-                                    <mark STYLE={ty.style}>
-                                        {ty.name}
-                                    </mark>
-                                </td>
-                                <td className="checkbox-cell">
-                                    <input className="input-operand-input-filter" type="checkbox" checked={filters.inputFamilies.has(ty.name)} onChange={() => updateFilters({ action: "toggle", target: "inputFamilies", value: ty.name })} />
-                                </td>
-                                <td className="checkbox-cell">
-                                    <input className="input-operand-output-filter" type="checkbox" checked={filters.outputFamilies.has(ty.name)} onChange={() => updateFilters({ action: "toggle", target: "outputFamilies", value: ty.name })} />
-                                </td>
-                            </tr>
-                        )
-                    }
+                        {
+                            targetDetails.operandTypeFamilies.map(ty =>
+                                <tr>
+                                    <td className="label-cell align-end">
+                                        <mark STYLE={ty.style}>
+                                            {ty.name}
+                                        </mark>
+                                    </td>
+                                    <td className="checkbox-cell">
+                                        <input className="input-operand-input-filter" type="checkbox" checked={filters.inputFamilies.has(ty.name)} onChange={() => updateFilters({ action: "toggle", target: "inputFamilies", value: ty.name })} />
+                                    </td>
+                                    <td className="checkbox-cell">
+                                        <input className="input-operand-output-filter" type="checkbox" checked={filters.outputFamilies.has(ty.name)} onChange={() => updateFilters({ action: "toggle", target: "outputFamilies", value: ty.name })} />
+                                    </td>
+                                </tr>
+                            )
+                        }
+                    </tbody>
                 </table>
             </div>
 
@@ -151,31 +153,33 @@ export default function FilterControls({ targetDetails, onChangeFilters }) {
                         <button type="button" onClick={() => updateFilters({ action: "selectAllPredicates" })}>All</button>
 
                         <table className="filter-table">
-                            <tr>
-                                <td className="checkbox-cell">
-                                    <input id="input-predicate-none-filter" type="checkbox" checked={filters.predicateNone} onChange={() => updateFilters({ action: "invert", target: "predicateNone" })} />
-                                </td>
-                                <td className="label-cell">
-                                    <b><abbr title="Include instructions which require no additional processor capabilities">None</abbr></b>
-                                </td>
-                            </tr>
+                            <tbody>
+                                <tr>
+                                    <td className="checkbox-cell">
+                                        <input id="input-predicate-none-filter" type="checkbox" checked={filters.predicateNone} onChange={() => updateFilters({ action: "invert", target: "predicateNone" })} />
+                                    </td>
+                                    <td className="label-cell">
+                                        <b><abbr title="Include instructions which require no additional processor capabilities">None</abbr></b>
+                                    </td>
+                                </tr>
 
-                            {
-                                targetDetails.predicates.map(pred =>
-                                    <tr>
-                                        <td className="checkbox-cell">
-                                            <input className="input-predicate-filter" type="checkbox" checked={filters.predicates.has(pred.friendlyName)} onChange={() => updateFilters({ action: "toggle", target: "predicates", value: pred.friendlyName })} />
-                                        </td>
-                                        <td className="label-cell">
-                                            {
-                                                pred.important
-                                                ? <b>{pred.friendlyName}</b>
-                                                : <span>{pred.friendlyName}</span>
-                                            }
-                                        </td>
-                                    </tr>
-                                )
-                            }
+                                {
+                                    targetDetails.predicates.map(pred =>
+                                        <tr>
+                                            <td className="checkbox-cell">
+                                                <input className="input-predicate-filter" type="checkbox" checked={filters.predicates.has(pred.friendlyName)} onChange={() => updateFilters({ action: "toggle", target: "predicates", value: pred.friendlyName })} />
+                                            </td>
+                                            <td className="label-cell">
+                                                {
+                                                    pred.important
+                                                    ? <b>{pred.friendlyName}</b>
+                                                    : <span>{pred.friendlyName}</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    )
+                                }
+                            </tbody>
                         </table>
                     </div>
             }
