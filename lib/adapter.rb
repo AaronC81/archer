@@ -10,6 +10,31 @@ class Adapter
   # @return [Target]
   attr_reader :target
 
+  # Generate front-end data describing this target's operand families, predicates, and other factors
+  # relevant to filtering.
+  # @return [Hash]
+  def adapt_details
+    {
+      name: target.name,
+      title: target.title,
+      assemblyVariants: target.assembly_variants,
+
+      operandTypeFamilies: target.operand_type_families.map do |_, ty|
+        {
+          name: ty.name,
+          style: ty.colour.css_text_style,
+        }
+      end,
+
+      predicates: target.predicates.map do |_, pred|
+        {
+          friendlyName: pred.friendly_name,
+          important: pred.important?,
+        }
+      end,
+    }
+  end
+
   # Generate front-end data describing all instructions available on this target.
   # @return [Array] The list of instructions.
   def adapt_instructions
