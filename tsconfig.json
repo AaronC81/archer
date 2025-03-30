@@ -3,5 +3,10 @@
         "sourceMap": true,
         "noImplicitAny": true,
         "strict": true,
+
+        // Necessary for spreading a Set to work correctly
+        // Without: `[...new Set([1, 2, 3])] #=> []`
+        // With:    `[...new Set([1, 2, 3])] #=> [1, 2, 3]`
+        "downlevelIteration": true,
     },
 }
