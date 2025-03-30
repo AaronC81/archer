@@ -21,7 +21,6 @@ export default function FilterView({ targetName, targetTitle }) {
     // Anchor can be used to show one specific LLVM instruction
     // If not specified, this is just the empty string
     const [anchor, setAnchor] = useAnchor();
-    console.log(anchor);
 
     // TODO: very slow - should not be running on render
     const resultLimit = 500;
