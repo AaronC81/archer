@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import TargetDetails from "./TargetDetails.js";
 import FilterControls from "../component/FilterControls.jsx";
-import ReactHydrator from "../util/ReactHydrator.js";
 import Instruction from "./Instruction.js";
 
 // TODO: should be completely refactored later to:
