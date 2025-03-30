@@ -3,8 +3,11 @@
     "author": "Aaron Christiansen",
     "devDependencies": {
         "@babel/preset-react": "^7.26.3",
+        "@types/react": "^19.0.12",
+        "@types/react-dom": "^19.0.4",
         "babel-cli": "^6.26.0",
         "babel-loader": "^10.0.0",
+        "ts-loader": "^9.5.2",
         "webpack-cli": "^6.0.1"
     },
     "dependencies": {
