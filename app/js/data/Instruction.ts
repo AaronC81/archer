@@ -20,18 +20,17 @@ interface InstructionOperand {
     operandTypeFamily: string,
     operandTypeFamilyStyle: string,
 }
+interface InstructionParameters {
+    memory: boolean,
+    implicit: string[],
+    operands: InstructionOperand[],
+}
 interface Instruction {
     name: string;
     assemblyVariants: InstructionAssemblyVariant[];
 
-    mayStore: boolean;
-    mayLoad: boolean;
-
-    inputs: InstructionOperand[],
-    outputs: InstructionOperand[],
-
-    implicitInputs: string[];
-    implicitOutputs: string[];
+    input: InstructionParameters,
+    output: InstructionParameters,
 
     predicates: InstructionPredicate[];
 
@@ -64,9 +63,9 @@ class Instruction {
             return false;
 
         // Memory characteristic filters
-        if (memoryStore && !this.mayStore)
+        if (memoryStore && !this.output.memory)
             return false;
-        if (memoryLoad && !this.mayLoad)
+        if (memoryLoad && !this.input.memory)
             return false;
 
         // Textual filter
@@ -75,16 +74,16 @@ class Instruction {
 
         // Operand filters
         if (inputFamilies.size > 0) {
-            if (![...inputFamilies].every(o => this.inputs.map(i => i.operandTypeFamily).includes(o)))
+            if (![...inputFamilies].every(o => this.input.operands.map(i => i.operandTypeFamily).includes(o)))
                 return false;
         }
         if (outputFamilies.size > 0) {
-            if (![...outputFamilies].every(o => this.outputs.map(i => i.operandTypeFamily).includes(o)))
+            if (![...outputFamilies].every(o => this.output.operands.map(i => i.operandTypeFamily).includes(o)))
                 return false;
         }
-        if (inputNone && this.inputs.length > 0)
+        if (inputNone && this.input.operands.length > 0)
             return false;
-        if (outputNone && this.outputs.length > 0)
+        if (outputNone && this.output.operands.length > 0)
             return false;
 
         // Predicate filters
@@ -103,17 +102,19 @@ class Instruction {
 
         return true;
     }
+
+    hasAnyParameters(params: InstructionParameters): boolean {
+        return params.operands.length > 0 ||
+               params.implicit.length > 0 ||
+               params.memory;
+    }
     
-    hasAnyInputs() {
-        return this.inputs.length > 0 ||
-               this.implicitInputs.length > 0 ||
-               this.mayLoad;
+    hasAnyInputs(): boolean {
+        return this.hasAnyParameters(this.input);
     }
 
-    hasAnyOutputs() {
-        return this.outputs.length > 0 ||
-               this.implicitOutputs.length > 0 ||
-               this.mayStore;
+    hasAnyOutputs(): boolean {
+        return this.hasAnyParameters(this.output);
     }
 }
 

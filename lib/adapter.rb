@@ -65,14 +65,17 @@ class Adapter
           }
         end,
 
-        mayStore: ins.may_store?,
-        mayLoad: ins.may_load?,
+        input: {
+          memory: ins.may_load?,
+          implicit: ins.implicitly_read_registers.map(&:name).map(&:to_s),
+          operands: adapt_instruction_operand_list(ins.inputs),
+        },
 
-        inputs: adapt_instruction_operand_list(ins.inputs),
-        outputs: adapt_instruction_operand_list(ins.outputs),
-
-        implicitInputs: ins.implicitly_read_registers.map(&:name).map(&:to_s),
-        implicitOutputs: ins.implicitly_written_registers.map(&:name).map(&:to_s),
+        output: {
+          memory: ins.may_store?,
+          implicit: ins.implicitly_written_registers.map(&:name).map(&:to_s),
+          operands: adapt_instruction_operand_list(ins.outputs),
+        },
 
         predicates:
           ins.predicates
