@@ -25,7 +25,7 @@ const ResultCard = memo(function ResultCard(
                                     <th colSpan={2}>Inputs</th>
                                 </tr>
                                 {
-                                    instruction.inputs
+                                    instruction.input.operands
                                         .map(i =>
                                             <tr key={i.name}>
                                                 <td className="label-cell">
@@ -39,14 +39,14 @@ const ResultCard = memo(function ResultCard(
                                         )
                                 }
                                 {
-                                    instruction.implicitInputs
+                                    instruction.input.implicit
                                         .map(i =>
                                             <tr key={i}>
                                                 <td className="label-cell">Implicit</td><td><code>{i}</code></td>
                                             </tr>
                                         )
                                 }
-                                { instruction.mayLoad &&
+                                { instruction.input.memory &&
                                     <tr><td></td><td>Loads memory</td></tr>
                                 }
                             </>
@@ -64,7 +64,7 @@ const ResultCard = memo(function ResultCard(
                                     <th colSpan={2}>Outputs</th>
                                 </tr>
                                 {
-                                    instruction.outputs
+                                    instruction.output.operands
                                         .map(i =>
                                             <tr key={i.name}>
                                                 <td className="label-cell">
@@ -78,14 +78,14 @@ const ResultCard = memo(function ResultCard(
                                         )
                                 }
                                 {
-                                    instruction.implicitOutputs
+                                    instruction.output.implicit
                                         .map(i =>
                                             <tr key={i}>
                                                 <td className="label-cell">Implicit</td><td><code>{i}</code></td>
                                             </tr>
                                         )
                                 }
-                                { instruction.mayStore &&
+                                { instruction.output.memory &&
                                     <tr><td></td><td>Stores memory</td></tr> 
                                 }
                             </>
