@@ -20,7 +20,7 @@ interface InstructionOperand {
     operandTypeFamily: string,
     operandTypeFamilyStyle: string,
 }
-interface InstructionParameters {
+export interface InstructionParameters {
     memory: boolean,
     implicit: string[],
     operands: InstructionOperand[],
@@ -103,18 +103,18 @@ class Instruction {
         return true;
     }
 
-    hasAnyParameters(params: InstructionParameters): boolean {
+    static hasAnyParameters(params: InstructionParameters): boolean {
         return params.operands.length > 0 ||
                params.implicit.length > 0 ||
                params.memory;
     }
     
     hasAnyInputs(): boolean {
-        return this.hasAnyParameters(this.input);
+        return Instruction.hasAnyParameters(this.input);
     }
 
     hasAnyOutputs(): boolean {
-        return this.hasAnyParameters(this.output);
+        return Instruction.hasAnyParameters(this.output);
     }
 }
 
