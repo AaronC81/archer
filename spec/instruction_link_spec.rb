@@ -27,4 +27,15 @@ feature 'Instruction linking' do
     expect(page).to have_content 'mov.a'
     expect(page).to have_content 'Currently showing one specific instruction'
   end
+
+  it 'enables navigating away from the instruction' do
+    # Initially, there should be one result
+    visit '/target/TriCore#MOV_A_rr'
+    expect(page).to have_selector('.instruction-card', count: 1)
+
+    # If you click to clear the filter, there should be more than one (and not zero)
+    click_on 'Show all instructions'
+    expect(page).to have_selector('.instruction-card')
+    expect(page).not_to have_selector('.instruction-card', count: 1)
+  end
 end

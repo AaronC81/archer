@@ -10,7 +10,7 @@ const ResultCard = memo(function ResultCard(
     { instruction, assemblyVariant }: { instruction: Instruction, assemblyVariant: number }
 ) {
     return (
-        <div className="result-card">
+        <div className="result-card instruction-card">
             <div className="header">
                 <code className="assembly-format" dangerouslySetInnerHTML={{__html: instruction.assemblyVariants[assemblyVariant].html}}></code>
                 <a href={"#" + instruction.name}>{instruction.name}</a>
