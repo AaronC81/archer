@@ -44,7 +44,7 @@ const ResultCard = memo(function ResultCard(
             {
                 instruction.documentation &&
                     /* @ts-ignore */
-                    <a href={instruction.documentation.url} target="_blank" STYLE="display: inline-block; margin-top: 15px;">{ instruction.documentation.text }</a>
+                    <a href={instruction.documentation.url} target="_blank" rel="noreferrer" STYLE="display: inline-block; margin-top: 15px;">{ instruction.documentation.text }</a>
             }
         </div>
     );

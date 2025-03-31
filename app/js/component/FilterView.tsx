@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import FilterControls from "./FilterControls";
 import ResultCard from "./ResultCard";
 import useAnchor from "../hook/useAnchor";
@@ -49,7 +49,7 @@ export default function FilterView(
                 return [];
             }
         },
-        [instructions, filters, isReady, anchor],
+        [instructions, filters, isReady, anchor, assemblyVariant],
     );
     
     return <>
@@ -96,12 +96,12 @@ export default function FilterView(
                         isReady
                         ?
                             <>
-                                {filteredInstructions.length == resultLimit &&
+                                {filteredInstructions.length === resultLimit &&
                                     <div className="result-card notice">
                                         <b>Truncated to {resultLimit} results</b> - apply some filters.
                                     </div>
                                 }
-                                {filteredInstructions.length == 0 &&
+                                {filteredInstructions.length === 0 &&
                                     <div className="result-card notice">
                                         <b>No results</b> - double-check your filters.
                                     </div>
