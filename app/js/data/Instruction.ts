@@ -59,7 +59,7 @@ class Instruction {
         } = filters;
 
         // Specific instruction filter
-        if (anchor && this.name != anchor)
+        if (anchor && this.name !== anchor)
             return false;
 
         // Memory characteristic filters
@@ -90,7 +90,7 @@ class Instruction {
         // Either one of the following must be true for the instruction to show up:
         //   (1) This instruction has no predicates, and the user has ticked "None", and 
         //   (2) This instruction has some predicates, and the user has ticked all of them
-        if (this.predicates.length == 0) {
+        if (this.predicates.length === 0) {
             // (1)
             if (!predicateNone)
                 return false;

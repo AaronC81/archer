@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useRef, useState } from "react";
+import React, { useEffect, useReducer } from "react";
 import TargetDetails from "../data/TargetDetails";
 import { defaultFilters, Filters } from "../data/Filters";
 import { KeyOfType } from "../utils/typing";
