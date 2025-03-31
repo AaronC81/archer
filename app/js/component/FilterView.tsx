@@ -49,7 +49,7 @@ export default function FilterView(
                 return [];
             }
         },
-        [instructions, filters, isReady],
+        [instructions, filters, isReady, anchor],
     );
     
     return <>
