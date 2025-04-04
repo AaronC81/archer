@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useReducer } from "react";
 import TargetDetails from "../data/TargetDetails";
-import { defaultFilters, Filters } from "../data/Filters";
+import { defaultFilters, defaultPredicates, Filters } from "../data/Filters";
 import { KeyOfType } from "../utils/typing";
 
 export default function FilterControls(
@@ -94,7 +94,7 @@ export default function FilterControls(
                 newFilters = {
                     ...filters,
                     predicateNone: true,
-                    predicates: new Set(targetDetails.predicates.map(pred => pred.friendlyName)),
+                    predicates: defaultPredicates(targetDetails),
                 }
                 break;
 
@@ -199,7 +199,7 @@ export default function FilterControls(
             </div>
 
             {
-                targetDetails.predicates.length > 0 &&
+                targetDetails.predicateFamilies.map(family => family.predicates.length).reduce((a, b) => a + b, 0) > 0 &&
                     <div>
                         <br/>
                         <b>Capabilities:</b> {/* LLVM calls them "Predicates", but that's a weird name for a user-facing filter */}
@@ -219,19 +219,30 @@ export default function FilterControls(
                                 </tr>
 
                                 {
-                                    targetDetails.predicates.map(pred =>
-                                        <tr key={pred.friendlyName}>
-                                            <td className="checkbox-cell">
-                                                <input className="input-predicate-filter" type="checkbox" checked={filters.predicates.has(pred.friendlyName)} onChange={() => updateFilters({ action: "toggle", target: "predicates", value: pred.friendlyName })} />
-                                            </td>
-                                            <td className="label-cell">
-                                                {
-                                                    pred.important
-                                                    ? <b>{pred.friendlyName}</b>
-                                                    : <span>{pred.friendlyName}</span>
-                                                }
-                                            </td>
-                                        </tr>
+                                    targetDetails.predicateFamilies.map(family =>
+                                        <>
+                                            {family.family &&
+                                                <tr key={"TITLE_" + family.family}>
+                                                    <td><u>{family.family}</u></td>
+                                                </tr>
+                                            }
+                                            {
+                                                family.predicates.map(pred =>
+                                                    <tr key={pred.friendlyName}>
+                                                        <td className="checkbox-cell">
+                                                            <input className="input-predicate-filter" type="checkbox" checked={filters.predicates.has(pred.friendlyName)} onChange={() => updateFilters({ action: "toggle", target: "predicates", value: pred.friendlyName })} />
+                                                        </td>
+                                                        <td className="label-cell">
+                                                            {
+                                                                pred.important
+                                                                ? <b>{pred.friendlyName}</b>
+                                                                : <span>{pred.friendlyName}</span>
+                                                            } 
+                                                        </td>
+                                                    </tr>
+                                                )
+                                            }
+                                        </>
                                     )
                                 }
                             </tbody>

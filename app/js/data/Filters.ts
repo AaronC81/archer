@@ -36,6 +36,15 @@ export function defaultFilters(targetDetails: TargetDetails): Filters {
         outputFamilies: new Set(),
 
         predicateNone: true,
-        predicates: new Set(targetDetails.predicates.map(pred => pred.friendlyName)),
+        predicates: defaultPredicates(targetDetails),
     };
+}
+
+/**
+ * A default set of predicates.
+ */
+export function defaultPredicates(targetDetails: TargetDetails): Set<string> {
+    return new Set(
+        targetDetails.predicateFamilies.flatMap(preds => preds.predicates.map(pred => pred.friendlyName))
+    )
 }

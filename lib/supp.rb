@@ -61,7 +61,7 @@ class SupplementaryData
         llvm_names = [llvm_names] unless llvm_names.is_a?(Array)
 
         llvm_names.map do |llvm_name|
-          Predicate.new(llvm_name.to_sym, pred.fetch('friendly_name'), pred['important'] || false)
+          Predicate.new(llvm_name.to_sym, pred.fetch('friendly_name'), pred['family'], pred['important'] || false)
         end
       end
 
@@ -250,8 +250,11 @@ class SupplementaryData
     # [String]
     :friendly_name,
 
+    # [String, nil]
+    :family,
+
     # [Boolean]
-    :important
+    :important,
   ) do
     def important? = important
   end

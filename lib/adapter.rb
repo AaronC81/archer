@@ -26,14 +26,21 @@ class Adapter
         }
       end,
 
-      predicates: target.predicates
-        .map do |_, pred|
+      predicateFamilies: target.predicates
+        .values
+        .group_by(&:family)
+        .sort_by { |family, _| family == nil ? 0 : 1 } # Put "no family" first
+        .map do |family, preds|
           {
-            friendlyName: pred.friendly_name,
-            important: pred.important?,
+            family: family,
+            predicates: preds.map do |pred|
+              {
+                friendlyName: pred.friendly_name,
+                important: pred.important?,
+              }
+            end.uniq,
           }
-        end
-        .uniq,
+        end,
     }
   end
 
