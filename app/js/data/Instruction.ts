@@ -69,8 +69,18 @@ class Instruction {
             return false;
 
         // Textual filter
-        if (mnemonic && !this.assemblyVariants[assemblyVariant].mnemonic.includes(mnemonic))
-            return false;
+        if (mnemonic) {
+            const actualMnemonic = this.assemblyVariants[assemblyVariant].mnemonic;
+
+            if (typeof mnemonic === "string") {
+                if (!actualMnemonic.includes(mnemonic))
+                    return false;
+            } else {
+                // RegExp
+                if (!mnemonic.test(actualMnemonic))
+                    return false;
+            }
+        }
 
         // Operand filters
         if (inputFamilies.size > 0) {

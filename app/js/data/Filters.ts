@@ -4,7 +4,7 @@ import TargetDetails from "./TargetDetails";
  * The set of filters that can be used to filter instructions.
  */
 export type Filters = {
-    mnemonic: string,
+    mnemonic: string | RegExp,
 
     memoryStore: boolean,
     memoryLoad: boolean,

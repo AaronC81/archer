@@ -6,21 +6,48 @@ import { KeyOfType } from "../utils/typing";
 export default function FilterControls(
     { targetDetails, onChangeFilters }: { targetDetails: TargetDetails, onChangeFilters: (_: Filters) => void }
 ) {
+    // Capture some internal state which doesn't need to be made available to our `onChangeFilters`
+    // subscriber. (It's still bundled into the same object for convenience of reducing.)
+    type InternalFilterState = {
+        internalMnemonicString: string,
+        internalMnemonicError: string | null,
+    }
+    type InternalFilters = Filters & InternalFilterState;
+
     type Action
         = { action: "set", targets: Partial<Filters> }
+        | { action: "setMnemonic", value: string }
         | { action: "invert", target: KeyOfType<Filters, boolean> }
         | { action: "toggle", target: KeyOfType<Filters, Set<string>>, value: string }
         | { action: "selectNoPredicates" }
         | { action: "selectAllPredicates" }
 
-    const [filters, updateFilters] = useReducer<Filters, [Action]>(
+    const [filters, updateFilters] = useReducer<InternalFilters, [Action]>(
         (filters, reduce) => {
-            let newFilters: Filters;
+            let newFilters: InternalFilters;
 
             switch (reduce.action) {
 
             case "set":
                 newFilters = { ...filters, ...reduce.targets }
+                break;
+
+            case "setMnemonic":
+                newFilters = { ...filters, internalMnemonicString: reduce.value };
+
+                newFilters.internalMnemonicError = null;
+                if (reduce.value.charAt(0) == "/") {
+                    // It's a regex - try to parse it
+                    try {
+                        newFilters.mnemonic = new RegExp(newFilters.internalMnemonicString.substring(1));
+                    } catch (e) {
+                        // The `mnemonic` field remains unchanged, so the filters aren't interrupted
+                        newFilters.internalMnemonicError = (e as SyntaxError).message;
+                    }
+                } else {
+                    newFilters.mnemonic = newFilters.internalMnemonicString;
+                }
+
                 break;
 
             case "invert":
@@ -65,7 +92,11 @@ export default function FilterControls(
 
             return newFilters;
         },
-        defaultFilters(targetDetails),
+        {
+            ...defaultFilters(targetDetails),
+            internalMnemonicString: "",
+            internalMnemonicError: null,
+        },
     );
 
     // Sync state out - can't do that in `useReducer` because that runs during render.
@@ -82,7 +113,15 @@ export default function FilterControls(
                 <label>
                     <b>Mnemonic:</b>
                     <br />
-                    <input name="mnemonic" id="input-mnemonic-filter" value={filters.mnemonic} onChange={e => updateFilters({ action: "set", targets: { mnemonic: e.target.value } })} />
+                    <input name="mnemonic"
+                        id="input-mnemonic-filter"
+                        placeholder="Start with / to use regex"
+                        value={filters.internalMnemonicString}
+                        onChange={e => updateFilters({ action: "setMnemonic", value: e.target.value })}
+                        className={filters.internalMnemonicError ? "validation-error" : ""} />
+                    {filters.internalMnemonicError &&
+                        <span className="validation-error">{filters.internalMnemonicError}</span>
+                    }
                 </label>
             </div>
             <br />
