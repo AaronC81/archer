@@ -140,6 +140,13 @@ $content-padding: 20px;
             flex: unset;
         }
 
+        #top-filter-panel {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+        }
+
         #inner-filter-panel {
             padding: 15px;
             height: 100%;
