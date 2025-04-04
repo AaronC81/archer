@@ -278,6 +278,13 @@ $content-padding: 20px;
     }
 }
 
+span.validation-error {
+    color: red;
+}
+input.validation-error {
+    outline: 3px solid red !important;
+}
+
 /* For operand highlighting */
 mark {
     display: inline-block;
