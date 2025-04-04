@@ -1,111 +1,115 @@
-import React, { useCallback, useEffect, useReducer } from "react";
+import React, { Fragment, useCallback, useEffect, useReducer } from "react";
 import TargetDetails from "../data/TargetDetails";
 import { defaultFilters, defaultPredicates, Filters } from "../data/Filters";
 import { KeyOfType } from "../utils/typing";
 
+
+// Capture some internal state which doesn't need to be made available to our `onChangeFilters`
+// subscriber. (It's still bundled into the same object for convenience of reducing.)
+type InternalFilterState = {
+    internalMnemonicString: string,
+    internalMnemonicError: string | null,
+}
+type InternalFilters = Filters & InternalFilterState;
+
+function defaultInternalFilters(targetDetails: TargetDetails) {
+    return {
+        ...defaultFilters(targetDetails),
+        internalMnemonicString: "",
+        internalMnemonicError: null,
+    }
+}
+
+type Action
+    = { action: "reset" }
+    | { action: "set", targets: Partial<Filters> }
+    | { action: "setMnemonic", value: string }
+    | { action: "invert", target: KeyOfType<Filters, boolean> }
+    | { action: "toggle", target: KeyOfType<Filters, Set<string>>, value: string }
+    | { action: "selectNoPredicates" }
+    | { action: "selectAllPredicates" }
+
+function updateFiltersReducer(filters: InternalFilters, reduce: Action, targetDetails: TargetDetails): InternalFilters {
+    let newFilters: InternalFilters;
+
+    switch (reduce.action) {
+
+    case "reset":
+        newFilters = defaultInternalFilters(targetDetails);
+        break;
+
+    case "set":
+        newFilters = { ...filters, ...reduce.targets }
+        break;
+
+    case "setMnemonic":
+        newFilters = { ...filters, internalMnemonicString: reduce.value };
+
+        newFilters.internalMnemonicError = null;
+        if (reduce.value.charAt(0) == "/") {
+            // It's a regex - try to parse it
+            try {
+                newFilters.mnemonic = new RegExp(newFilters.internalMnemonicString.substring(1));
+            } catch (e) {
+                // The `mnemonic` field remains unchanged, so the filters aren't interrupted
+                newFilters.internalMnemonicError = (e as SyntaxError).message;
+            }
+        } else {
+            newFilters.mnemonic = newFilters.internalMnemonicString;
+        }
+
+        break;
+
+    case "invert":
+        newFilters = { ...filters };
+        newFilters[reduce.target] = !filters[reduce.target];
+        break;
+
+    case "toggle":
+        const set = new Set([...filters[reduce.target]]);
+        newFilters = { ...filters };
+
+        // If the item was present, remove it, else add it
+        if (set.has(reduce.value)) {
+            set.delete(reduce.value);
+        } else {
+            set.add(reduce.value);
+        }
+
+        newFilters[reduce.target] = set;
+        break;
+
+    case "selectNoPredicates":
+        newFilters = {
+            ...filters,
+            predicateNone: true,
+            predicates: new Set(),
+        }
+        break;
+
+    case "selectAllPredicates":
+        newFilters = {
+            ...filters,
+            predicateNone: true,
+            predicates: defaultPredicates(targetDetails),
+        }
+        break;
+
+    default:
+        throw new Error(`unknown reduce action: ${reduce}`);
+
+    }
+
+    return newFilters;
+}
+
+
 export default function FilterControls(
     { targetDetails, onChangeFilters }: { targetDetails: TargetDetails, onChangeFilters: (_: Filters) => void }
 ) {
-    // Capture some internal state which doesn't need to be made available to our `onChangeFilters`
-    // subscriber. (It's still bundled into the same object for convenience of reducing.)
-    type InternalFilterState = {
-        internalMnemonicString: string,
-        internalMnemonicError: string | null,
-    }
-    type InternalFilters = Filters & InternalFilterState;
-
-    const defaultInternalFilters = useCallback(() => {
-        return {
-            ...defaultFilters(targetDetails),
-            internalMnemonicString: "",
-            internalMnemonicError: null,
-        }
-    }, [targetDetails]);
-
-    type Action
-        = { action: "reset" }
-        | { action: "set", targets: Partial<Filters> }
-        | { action: "setMnemonic", value: string }
-        | { action: "invert", target: KeyOfType<Filters, boolean> }
-        | { action: "toggle", target: KeyOfType<Filters, Set<string>>, value: string }
-        | { action: "selectNoPredicates" }
-        | { action: "selectAllPredicates" }
-
     const [filters, updateFilters] = useReducer<InternalFilters, [Action]>(
-        (filters, reduce) => {
-            let newFilters: InternalFilters;
-
-            switch (reduce.action) {
-
-            case "reset":
-                newFilters = defaultInternalFilters();
-                break;
-
-            case "set":
-                newFilters = { ...filters, ...reduce.targets }
-                break;
-
-            case "setMnemonic":
-                newFilters = { ...filters, internalMnemonicString: reduce.value };
-
-                newFilters.internalMnemonicError = null;
-                if (reduce.value.charAt(0) == "/") {
-                    // It's a regex - try to parse it
-                    try {
-                        newFilters.mnemonic = new RegExp(newFilters.internalMnemonicString.substring(1));
-                    } catch (e) {
-                        // The `mnemonic` field remains unchanged, so the filters aren't interrupted
-                        newFilters.internalMnemonicError = (e as SyntaxError).message;
-                    }
-                } else {
-                    newFilters.mnemonic = newFilters.internalMnemonicString;
-                }
-
-                break;
-
-            case "invert":
-                newFilters = { ...filters };
-                newFilters[reduce.target] = !filters[reduce.target];
-                break;
-
-            case "toggle":
-                const set = new Set([...filters[reduce.target]]);
-                newFilters = { ...filters };
-
-                // If the item was present, remove it, else add it
-                if (set.has(reduce.value)) {
-                    set.delete(reduce.value);
-                } else {
-                    set.add(reduce.value);
-                }
-
-                newFilters[reduce.target] = set;
-                break;
-
-            case "selectNoPredicates":
-                newFilters = {
-                    ...filters,
-                    predicateNone: true,
-                    predicates: new Set(),
-                }
-                break;
-
-            case "selectAllPredicates":
-                newFilters = {
-                    ...filters,
-                    predicateNone: true,
-                    predicates: defaultPredicates(targetDetails),
-                }
-                break;
-
-            default:
-                throw new Error(`unknown reduce action: ${reduce}`);
-
-            }
-
-            return newFilters;
-        },
-        defaultInternalFilters(),
+        (f, a) => updateFiltersReducer(f, a, targetDetails),
+        defaultInternalFilters(targetDetails),
     );
 
     // Sync state out - can't do that in `useReducer` because that runs during render.
@@ -220,9 +224,9 @@ export default function FilterControls(
 
                                 {
                                     targetDetails.predicateFamilies.map(family =>
-                                        <>
+                                        <Fragment key={family.family}>
                                             {family.family &&
-                                                <tr key={"TITLE_" + family.family}>
+                                                <tr key="__TITLE__">
                                                     <td><u>{family.family}</u></td>
                                                 </tr>
                                             }
@@ -242,7 +246,7 @@ export default function FilterControls(
                                                     </tr>
                                                 )
                                             }
-                                        </>
+                                        </Fragment>
                                     )
                                 }
                             </tbody>
