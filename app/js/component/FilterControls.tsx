@@ -131,8 +131,9 @@ export default function FilterControls(
                         value={filters.internalMnemonicString}
                         onChange={e => updateFilters({ action: "setMnemonic", value: e.target.value })}
                         className={filters.internalMnemonicError ? "validation-error" : ""} />
-                    {filters.internalMnemonicError &&
-                        <span className="validation-error">{filters.internalMnemonicError}</span>
+                    {filters.internalMnemonicError
+                        ? <span className="validation-error">{filters.internalMnemonicError}</span>
+                        : <span>&nbsp;</span>
                     }
                 </label>
             </div>
