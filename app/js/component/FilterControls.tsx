@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useCallback, useEffect, useReducer } from "react";
 import TargetDetails from "../data/TargetDetails";
 import { defaultFilters, Filters } from "../data/Filters";
 import { KeyOfType } from "../utils/typing";
@@ -14,8 +14,17 @@ export default function FilterControls(
     }
     type InternalFilters = Filters & InternalFilterState;
 
+    const defaultInternalFilters = useCallback(() => {
+        return {
+            ...defaultFilters(targetDetails),
+            internalMnemonicString: "",
+            internalMnemonicError: null,
+        }
+    }, [targetDetails]);
+
     type Action
-        = { action: "set", targets: Partial<Filters> }
+        = { action: "reset" }
+        | { action: "set", targets: Partial<Filters> }
         | { action: "setMnemonic", value: string }
         | { action: "invert", target: KeyOfType<Filters, boolean> }
         | { action: "toggle", target: KeyOfType<Filters, Set<string>>, value: string }
@@ -27,6 +36,10 @@ export default function FilterControls(
             let newFilters: InternalFilters;
 
             switch (reduce.action) {
+
+            case "reset":
+                newFilters = defaultInternalFilters();
+                break;
 
             case "set":
                 newFilters = { ...filters, ...reduce.targets }
@@ -92,11 +105,7 @@ export default function FilterControls(
 
             return newFilters;
         },
-        {
-            ...defaultFilters(targetDetails),
-            internalMnemonicString: "",
-            internalMnemonicError: null,
-        },
+        defaultInternalFilters(),
     );
 
     // Sync state out - can't do that in `useReducer` because that runs during render.
@@ -107,7 +116,10 @@ export default function FilterControls(
     }, [filters, onChangeFilters]);
     
     return <>
-        <h2>Search</h2>
+        <div id="top-filter-panel">
+            <h2>Search</h2>
+            <button onClick={() => confirm("Do you really want to reset all of your search filters?") && updateFilters({ action: "reset" })}>Reset</button>
+        </div>
         <form method="GET">
             <div>
                 <label>
