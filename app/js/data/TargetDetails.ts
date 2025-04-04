@@ -4,11 +4,15 @@ interface TargetDetails {
     title: string,
     assemblyVariants: string[],
     operandTypeFamilies: TargetOperandTypeFamily[],
-    predicates: TargetPredicate[],
+    predicateFamilies: TargetPredicateFamily[],
 }
 interface TargetOperandTypeFamily {
     name: string,
     style: string,
+}
+interface TargetPredicateFamily {
+    family: string | null,
+    predicates: TargetPredicate[],
 }
 interface TargetPredicate {
     friendlyName: string,

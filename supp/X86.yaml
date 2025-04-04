@@ -117,74 +117,99 @@ predicates:
   # Early extensions
   - friendly_name: "MMX"
     llvm_name: HasMMX
+    family: SIMD/FPU
   - friendly_name: "x87 FPU"
     llvm_name: HasX87
+    family: SIMD/FPU
   - friendly_name: "3DNow!"
     llvm_name: ["Has3DNow", Has3DNowA"]
+    family: SIMD/FPU
 
   # BMI
   - friendly_name: "BMI1"
     llvm_name: HasBMI
+    family: BMI
   - friendly_name: "BMI2"
     llvm_name: HasBMI2
+    family: BMI
   - friendly_name: "TBM"
     llvm_name: HasTBM
-
-  # Cache Control
-  # There's loads of separate predicates within LLVM for these, and they are separate in CPUID, but
-  # that would create a tonne of noise in the filter list.
-  # I don't think these instructions are super common, either...
-  # I'm going to just group them together instead.
-  - friendly_name: "Cache Control (CLFLUSH/PMEM/etc)"
-    llvm_name: ["HasCLFLUSH", "HasCLFLUSHOPT", "HasCLDEMOTE", "HasCLZERO", "HasCLWB"]
+    family: BMI
 
   # SSE
   - friendly_name: "SSE1"
     llvm_name: ["HasSSE1", "UseSSE1"]
+    family: SSE
   - friendly_name: "SSE2"
     llvm_name: ["HasSSE2", "UseSSE2"]
+    family: SSE
   - friendly_name: "SSE3"
     llvm_name: ["HasSSE3", "UseSSE3"]
+    family: SSE
   - friendly_name: "SSE4.1"
     llvm_name: ["HasSSE41", "UseSSE41"]
+    family: SSE
   - friendly_name: "SSE4.2"
     llvm_name: ["HasSSE42", "UseSSE42"]
+    family: SSE
   - friendly_name: "SSE4A"
     llvm_name: HasSSE4A
+    family: SSE
   - friendly_name: "SSE Prefetch"
     llvm_name: HasSSEPrefetch
+    family: SSE
   - friendly_name: "SSSE3"
     llvm_name: ["HasSSSE3", "UseSSSE3"]
+    family: SSE
 
   # AVX
   - friendly_name: "AVX"
     llvm_name: ["HasAVX", "UseAVX"]
+    family: AVX
   - friendly_name: "AVX"
     llvm_name: HasAVX1Only
+    family: AVX
   - friendly_name: "AVX2"
     llvm_name: HasAVX2
+    family: AVX
   - friendly_name: "AVX-512"
     llvm_name: HasAVX512
+    family: AVX
 
   # AVX-512 extensions
   - friendly_name: "AVX-512 Bit Algorithms"
     llvm_name: HasBITALG
+    family: AVX
 
   # AES
   - friendly_name: "AES"
     llvm_name: HasAES
+    family: AES
   - friendly_name: "AES Key Locker"
     llvm_name: HasKL
+    family: AES
   - friendly_name: "AES Wide Key Locker"
     llvm_name: HasWIDEKL
+    family: AES
 
   # Other
   - friendly_name: "RAO-INT"
     llvm_name: HasRAOINT
+    family: Other
   - friendly_name: "ADX"
     llvm_name: HasADX
+    family: Other
   - friendly_name: "User Interrupts"
     llvm_name: HasUINTR
+    family: Other
+    # Cache Control
+    # There's loads of separate predicates within LLVM for these, and they are separate in CPUID, but
+    # that would create a tonne of noise in the filter list.
+    # I don't think these instructions are super common, either...
+    # I'm going to just group them together instead.
+  - friendly_name: "Cache Control (CLFLUSH/PMEM/etc)"
+    llvm_name: ["HasCLFLUSH", "HasCLFLUSHOPT", "HasCLDEMOTE", "HasCLZERO", "HasCLWB"]
+    family: Other
 
 ignore_predicates:
   # Unclear when/why this is applied, to me. I think it's just optimisation...?
