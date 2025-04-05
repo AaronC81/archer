@@ -3,8 +3,8 @@ import { createRoot } from "react-dom/client";
 import FilterView from "./component/FilterView";
 
 createRoot(document.getElementById("content"))
-    .render(
-        <StrictMode>
-            <FilterView targetName={globalThis.targetName} targetTitle={globalThis.targetTitle} />
-        </StrictMode>
-    );
+  .render(
+    <StrictMode>
+      <FilterView targetName={globalThis.targetName} targetTitle={globalThis.targetTitle} />
+    </StrictMode>
+  );

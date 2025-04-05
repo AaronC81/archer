@@ -1,66 +1,66 @@
 <div id="title-bar">
-    <a href="/" id="home-link">
-        <img src="/logo.svg" alt="Archer logo" />
-    </a>
-    <h1><%= @target.title %></h1>
+  <a href="/" id="home-link">
+    <img src="/logo.svg" alt="Archer logo" />
+  </a>
+  <h1><%= @target.title %></h1>
 </div>
 
 <div id="content">
-    <h1>Summary</h1>
-    <p>
-        <b><%= @target.instructions.length %></b> loaded instruction variants
-    </p>
+  <h1>Summary</h1>
+  <p>
+    <b><%= @target.instructions.length %></b> loaded instruction variants
+  </p>
 
-    <h1>Operand Type Information</h1>
-    <p>
-        <% support = @target.metric_instructions_with_full_operands %>
-        <b><%= support.count %> out of <%= support.total %> instructions (<%= support.percentage %>%)</b>
-        have fully complete operand information.
-    </p>
-    <p>
-        The remaining instructions have at least one operand where type information is unknown,
-        meaning that their documentation is incomplete.
-    </p>
+  <h1>Operand Type Information</h1>
+  <p>
+    <% support = @target.metric_instructions_with_full_operands %>
+    <b><%= support.count %> out of <%= support.total %> instructions (<%= support.percentage %>%)</b>
+    have fully complete operand information.
+  </p>
+  <p>
+    The remaining instructions have at least one operand where type information is unknown,
+    meaning that their documentation is incomplete.
+  </p>
 
-    <h1>Import Logs</h1>
-    <p>
-        Describes any problems or quirks encountered while loading LLVM data and reconciling it with
-        hand-written filter files.
-    </p>
-    <p>
-        A high number of warnings means that an architecture will have less accurate instruction
-        listings and search results.
-    </p>
+  <h1>Import Logs</h1>
+  <p>
+    Describes any problems or quirks encountered while loading LLVM data and reconciling it with
+    hand-written filter files.
+  </p>
+  <p>
+    A high number of warnings means that an architecture will have less accurate instruction
+    listings and search results.
+  </p>
 
-    <%
-        # 'Debug' messages aren't very helpful in a view like this - they're designed for
-        # figuring out where an exception occurred while building the site.
-        messages = @target.logger.messages
-            .reject { |msg| msg.severity == :debug }
-            .map do |msg| 
-                # Replace pairs of backticks with `code` tags for nicer rendering
-                [
-                    msg.severity,
-                    msg.text.gsub(/`(.+?)`/) { "<code>#{$1}</code>" },
-                ]
-            end
+  <%
+    # 'Debug' messages aren't very helpful in a view like this - they're designed for
+    # figuring out where an exception occurred while building the site.
+    messages = @target.logger.messages
+      .reject { |msg| msg.severity == :debug }
+      .map do |msg| 
+        # Replace pairs of backticks with `code` tags for nicer rendering
+        [
+          msg.severity,
+          msg.text.gsub(/`(.+?)`/) { "<code>#{$1}</code>" },
+        ]
+      end
 
-        emoji = {
-            warn: '⚠️',
-            info: 'ℹ️',
-        }
+    emoji = {
+      warn: '⚠️',
+      info: 'ℹ️',
+    }
 
-        counts = @target.logger.count_message_severities
-    %>
-    
-    <p>
-        <b><%= counts[:warn] %> warnings</b>
-        and <%= counts[:info] %> info messages:
-    </p>
+    counts = @target.logger.count_message_severities
+  %>
+  
+  <p>
+    <b><%= counts[:warn] %> warnings</b>
+    and <%= counts[:info] %> info messages:
+  </p>
 
-    <ul>
-        <% messages.each do |sev, text| %>
-            <li><%= emoji[sev] %> <%= text %></li>
-        <% end %>
-    </ul>
+  <ul>
+    <% messages.each do |sev, text| %>
+      <li><%= emoji[sev] %> <%= text %></li>
+    <% end %>
+  </ul>
 </div>

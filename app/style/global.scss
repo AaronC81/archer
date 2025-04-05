@@ -1,303 +1,303 @@
 :root {
-    --page-color: white;
-    --panel-color: #FAFAFA;
-    --line-color: #D5D5D5;
-    
-    --font-color: black;
+  --page-color: white;
+  --panel-color: #FAFAFA;
+  --line-color: #D5D5D5;
+  
+  --font-color: black;
 }
 
 body, html {
-    margin: 0 !important;
-    padding: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
 
-    /* Imported by layout.erb */
-    font-family: "Host Grotesk", sans-serif;
-    font-optical-sizing: auto;
-    font-weight: 300;
-    font-style: normal;
+  /* Imported by layout.erb */
+  font-family: "Host Grotesk", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
 
-    background-color: var(--page-color);
-    color: var(--font-color);
+  background-color: var(--page-color);
+  color: var(--font-color);
 }
 
 #logo-heading {
-    display: flex;
-    flex-direction: row;
-    gap: 30px;
-    align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+  align-items: center;
 
-    img {
-        height: 70px;
-    }
+  img {
+    height: 70px;
+  }
 
-    h1 {
-        margin: 0;
-    }
+  h1 {
+    margin: 0;
+  }
 }
 
 #title-bar {
-    width: 100%;
-    box-sizing: border-box;
+  width: 100%;
+  box-sizing: border-box;
 
-    padding: 20px;
-    &.already-in-padded-container {
-        padding: 0;
-        padding-bottom: 20px;
-    }
+  padding: 20px;
+  &.already-in-padded-container {
+    padding: 0;
+    padding-bottom: 20px;
+  }
 
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    gap: 50px;
-    align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 50px;
+  align-items: center;
 
-    #home-link img {
-        height: 60px;
-        display: block;
-    }
-    
-    h1 {
-        margin-block: 0;
-    }
+  #home-link img {
+    height: 60px;
+    display: block;
+  }
+  
+  h1 {
+    margin-block: 0;
+  }
 
-    #assembly-variant-selector {
-        font-size: 25px;
-    }
+  #assembly-variant-selector {
+    font-size: 25px;
+  }
 }
 
 #revision-info {
-    display: block;
-    margin-top: 40px;
-    color: #aaa;
+  display: block;
+  margin-top: 40px;
+  color: #aaa;
 }
 
 $content-padding: 20px;
 #content {
-    padding: $content-padding;
-    box-sizing: border-box;
+  padding: $content-padding;
+  box-sizing: border-box;
 
-    &.centred {
-        max-width: 800px;
-        margin: 0 auto;    
-    }
+  &.centred {
+    max-width: 800px;
+    margin: 0 auto;    
+  }
 }
 
 #filter-view {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    justify-content: space-around;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  justify-content: space-around;
+
+  @media screen and (max-width: 767px) {
+    flex-direction: column;
+  }
+
+  #filter-view-divider {
+    position: sticky;
+    align-self: flex-start;
+    top: $content-padding;
+    height: calc(100vh - 2*$content-padding);
+
+    width: 1px;
+    background-color: #eee;
 
     @media screen and (max-width: 767px) {
-        flex-direction: column;
+      display: none;
     }
-
-    #filter-view-divider {
-        position: sticky;
-        align-self: flex-start;
-        top: $content-padding;
-        height: calc(100vh - 2*$content-padding);
-
-        width: 1px;
-        background-color: #eee;
-
-        @media screen and (max-width: 767px) {
-            display: none;
-        }
-    }
+  }
 }
 
 #static-panel {
+  flex: 1;
+
+  // Fixed height so that we get a scrollbar on the filter panel
+  height: calc(100vh - $content-padding * 2);
+
+  top: $content-padding; /* So it immediately becomes sticky */
+  position: sticky;
+  align-self: flex-start; /* Fixes sticky not sticking in flexbox */
+
+  display: flex;
+  flex-direction: column;
+
+  @media screen and (max-width: 767px) {
+    position: static;
+    align-self: unset;
+  }
+
+  #filter-panel {
     flex: 1;
+    overflow: hidden;
 
-    // Fixed height so that we get a scrollbar on the filter panel
-    height: calc(100vh - $content-padding * 2);
-
-    top: $content-padding; /* So it immediately becomes sticky */
-    position: sticky;
-    align-self: flex-start; /* Fixes sticky not sticking in flexbox */
-
-    display: flex;
-    flex-direction: column;
+    margin: 0 10px;
+    border-radius: 20px;
+    background-color: var(--panel-color);
+  
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 
     @media screen and (max-width: 767px) {
-        position: static;
-        align-self: unset;
+      /* Fixes panel being invisible on Safari */
+      flex: unset;
     }
 
-    #filter-panel {
-        flex: 1;
-        overflow: hidden;
+    #top-filter-panel {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-        margin: 0 10px;
-        border-radius: 20px;
-        background-color: var(--panel-color);
-    
-        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    #inner-filter-panel {
+      padding: 15px;
+      height: 100%;
+      overflow-y: auto;
 
-        @media screen and (max-width: 767px) {
-            /* Fixes panel being invisible on Safari */
-            flex: unset;
-        }
-
-        #top-filter-panel {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        #inner-filter-panel {
-            padding: 15px;
-            height: 100%;
-            overflow-y: auto;
-
-            // Padding doesn't apply to the scrollable area properly, so do this instead
-            // https://stackoverflow.com/questions/13471910/no-padding-when-using-overflow-auto
-            > :last-child {
-                margin-bottom: 30px;
-            }
-        }
-    
-        #input-mnemonic-filter {
-            width: 100%;
-            box-sizing: border-box;
-            padding: 5px;
-            border: 1px solid var(--line-color);
-            border-radius: 5px;
-        }
-    }    
+      // Padding doesn't apply to the scrollable area properly, so do this instead
+      // https://stackoverflow.com/questions/13471910/no-padding-when-using-overflow-auto
+      > :last-child {
+        margin-bottom: 30px;
+      }
+    }
+  
+    #input-mnemonic-filter {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 5px;
+      border: 1px solid var(--line-color);
+      border-radius: 5px;
+    }
+  }    
 }
 
 #filter-results {
-    flex: 3;
-    
-    #filter-results-divider {
-        display: none; /* Changed by media query */
+  flex: 3;
+  
+  #filter-results-divider {
+    display: none; /* Changed by media query */
 
-        border: 0;
-        height: 0;
-        border-top: 1px solid var(--line-color);
-        margin-top: 20px;
-        margin-bottom: 20px;
+    border: 0;
+    height: 0;
+    border-top: 1px solid var(--line-color);
+    margin-top: 20px;
+    margin-bottom: 20px;
 
-        @media screen and (max-width: 767px) {
-            display: block;
-        }
+    @media screen and (max-width: 767px) {
+      display: block;
+    }
+  }
+
+  .result-card {
+    padding: 15px;
+    margin: 0 10px;
+    margin-bottom: 30px;
+    border-radius: 20px;
+    background-color: var(--panel-color);
+  
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+
+    &.notice {
+      background-color: #ffc488;
+    }
+    &.error {
+      background-color: #fa7a90;
     }
 
-    .result-card {
-        padding: 15px;
-        margin: 0 10px;
-        margin-bottom: 30px;
-        border-radius: 20px;
-        background-color: var(--panel-color);
-    
-        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-
-        &.notice {
-            background-color: #ffc488;
-        }
-        &.error {
-            background-color: #fa7a90;
-        }
-
-        .header {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 10px;
-        }
-
-        .assembly-format {
-            font-size: 20px;
-        }
-
-        ul {
-            margin-block: 0;
-        }
+    .header {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 10px;
     }
+
+    .assembly-format {
+      font-size: 20px;
+    }
+
+    ul {
+      margin-block: 0;
+    }
+  }
 }
 
 .filter-table {
-    margin: 0 auto;
-    border-collapse: collapse;
+  margin: 0 auto;
+  border-collapse: collapse;
 
-    tr {
-        border-bottom: 1px solid var(--line-color);
-    }
+  tr {
+    border-bottom: 1px solid var(--line-color);
+  }
 
-    .checkbox-cell {
-        width: 60px;
-        text-align: center;
-    }
-    
-    .label-cell {
-        padding-right: 10px;
+  .checkbox-cell {
+    width: 60px;
+    text-align: center;
+  }
+  
+  .label-cell {
+    padding-right: 10px;
 
-        &.align-end {
-            text-align: end;
-        }
+    &.align-end {
+      text-align: end;
     }
+  }
 }
 
 .result-operand-table {
-    border-collapse: collapse;
+  border-collapse: collapse;
 
-    tr, th {
-        border-bottom: 1px solid var(--line-color);
+  tr, th {
+    border-bottom: 1px solid var(--line-color);
 
-        &.quiet {
-            border-bottom: 0;
-            color: gray;
-        }
+    &.quiet {
+      border-bottom: 0;
+      color: gray;
     }
+  }
 
-    th {
-        padding-top: 15px;
-        text-align: left;
-    }
+  th {
+    padding-top: 15px;
+    text-align: left;
+  }
 
-    .label-cell {
-        text-align: end;
-        padding-right: 10px;
-        padding-left: 20px;
-    }
+  .label-cell {
+    text-align: end;
+    padding-right: 10px;
+    padding-left: 20px;
+  }
 }
 
 .predicate-labels {
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
 
-    span {
-        display: inline-block;
-        padding: 5px;
-        margin-top: 15px;
-        margin-bottom: 5px;
-    
-        font-size: 14px;
-    
-        border: 1px solid black;
-        background-color: white;
-        border-radius: 5px;
-    }
+  span {
+    display: inline-block;
+    padding: 5px;
+    margin-top: 15px;
+    margin-bottom: 5px;
+  
+    font-size: 14px;
+  
+    border: 1px solid black;
+    background-color: white;
+    border-radius: 5px;
+  }
 }
 
 span.validation-error {
-    color: red;
+  color: red;
 }
 input.validation-error {
-    outline: 3px solid red !important;
+  outline: 3px solid red !important;
 }
 
 /* For operand highlighting */
 mark {
-    display: inline-block;
-    padding: 1px 3px;
-    border-radius: 3px;
+  display: inline-block;
+  padding: 1px 3px;
+  border-radius: 3px;
 
-    /* default colour - almost always overridden */
-    background-color: white;
+  /* default colour - almost always overridden */
+  background-color: white;
 }

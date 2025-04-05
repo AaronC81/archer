@@ -1,123 +1,123 @@
 <div id="content" class="centred">
-    <div id="logo-heading">
-        <img src="logo.svg">
-        <h1>archer</h1>
-    </div>
+  <div id="logo-heading">
+    <img src="logo.svg">
+    <h1>archer</h1>
+  </div>
 
-    <p>
-        <b>A machine instruction search tool</b> for Assembly polyglots.
-    </p>
-    <p>
-        Find the instruction you need by filtering on operands and behaviour.<br>Or learn about an
-        instruction you've never seen before, by searching for its mnemonic.
-    </p>
-    <ul id="arch-list">
-        <% @targets.each do |target| %>
-            <a href="/target/<%= target.name %>">
-                <li>
-                    <span><b><%= target.title %></b></span>
-                    <% if target.subtitle %>
-                        <small><%= target.subtitle %></small>
-                    <% end %>
-                    <% support = target.metric_instructions_with_full_operands %>
-                    <span class="spacer"></span>
-                    <small>
-                        Progress:
-                        <progress max="100" value="<%= support.percentage %>">
-                    </small>
-                </li>
-            </a>
-        <% end %>
-    </ul>
-    <p>
-        <b>The information shown by this tool is unofficial, and may be incorrect.</b>
-        <br>Always check the official documentation for your hardware.
-    </p>
-    <p>
-        Instruction set listings are generated automatically from <a href="https://llvm.org/">LLVM</a>.
-        <br>Data sources:
-    </p>
-    <ul>
-        <li><a href="https://github.com/TriDis/llvm-tricore"><code>llvm-tricore</code> fork by Sidney Pontes-Filho</a>, with <a href="https://github.com/TriDis/llvm-tricore/pull/4">patch by @imbillow</a> - TriCore
-        <li><a href="https://github.com/francisvm/j2-llvm"><code>j2-llvm</code> fork by Francis Visoiu Mistrih</a> - J2
-        <li><a href="https://github.com/llvm/llvm-project">Mainline</a> - All other architectures</li>
-    </ul>
-    
-    <p style="margin-top: 50px">
-        <small>
-            archer's code and data is <a href="https://github.com/AaronC81/archer">open source on GitHub</a>.
-            <br>
-            Created by <a href="https://aaronc.cc">Aaron Christiansen</a>.
-        </small>
-    </p>
-    <p>
-        <small id="revision-info">
-            Built from
-            <code><%= `git rev-parse --short HEAD` %></code>
-            at <%= Time.now %>
-        </small>
-    </p>
+  <p>
+    <b>A machine instruction search tool</b> for Assembly polyglots.
+  </p>
+  <p>
+    Find the instruction you need by filtering on operands and behaviour.<br>Or learn about an
+    instruction you've never seen before, by searching for its mnemonic.
+  </p>
+  <ul id="arch-list">
+    <% @targets.each do |target| %>
+      <a href="/target/<%= target.name %>">
+        <li>
+          <span><b><%= target.title %></b></span>
+          <% if target.subtitle %>
+            <small><%= target.subtitle %></small>
+          <% end %>
+          <% support = target.metric_instructions_with_full_operands %>
+          <span class="spacer"></span>
+          <small>
+            Progress:
+            <progress max="100" value="<%= support.percentage %>">
+          </small>
+        </li>
+      </a>
+    <% end %>
+  </ul>
+  <p>
+    <b>The information shown by this tool is unofficial, and may be incorrect.</b>
+    <br>Always check the official documentation for your hardware.
+  </p>
+  <p>
+    Instruction set listings are generated automatically from <a href="https://llvm.org/">LLVM</a>.
+    <br>Data sources:
+  </p>
+  <ul>
+    <li><a href="https://github.com/TriDis/llvm-tricore"><code>llvm-tricore</code> fork by Sidney Pontes-Filho</a>, with <a href="https://github.com/TriDis/llvm-tricore/pull/4">patch by @imbillow</a> - TriCore
+    <li><a href="https://github.com/francisvm/j2-llvm"><code>j2-llvm</code> fork by Francis Visoiu Mistrih</a> - J2
+    <li><a href="https://github.com/llvm/llvm-project">Mainline</a> - All other architectures</li>
+  </ul>
+  
+  <p style="margin-top: 50px">
+    <small>
+      archer's code and data is <a href="https://github.com/AaronC81/archer">open source on GitHub</a>.
+      <br>
+      Created by <a href="https://aaronc.cc">Aaron Christiansen</a>.
+    </small>
+  </p>
+  <p>
+    <small id="revision-info">
+      Built from
+      <code><%= `git rev-parse --short HEAD` %></code>
+      at <%= Time.now %>
+    </small>
+  </p>
 </div>
 
 <style>
-    #arch-list {
-        padding: 20px;
-        display: grid;
-        grid-template-columns: 1fr;
-        grid-auto-rows: 1fr;
-        gap: 20px;
+  #arch-list {
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-auto-rows: 1fr;
+    gap: 20px;
 
-        list-style-type: none;
-    }
+    list-style-type: none;
+  }
 
-    #arch-list a {
-        display: block;
-        background-color: #FAFAFA;
-        border-radius: 10px;
-        padding: 10px;
-        font-size: 20px;
-        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  #arch-list a {
+    display: block;
+    background-color: #FAFAFA;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 20px;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 
-        color: black;
-        text-align: center;
-        text-decoration: none;
+    color: black;
+    text-align: center;
+    text-decoration: none;
 
-        /* Vertically centre content */
-        display: flex;
-        flex-direction: column;
-        justify-content: space-around;
-    }
+    /* Vertically centre content */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+  }
 
+  #arch-list a li {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+  }
+
+  #arch-list a span {
+    color: black;
+    text-align: center;
+    text-decoration: underline;
+  }
+
+  #arch-list a small {
+    font-size: 14px;
+  }
+
+  #arch-list a .spacer {
+    flex-grow: 1;
+  }
+
+  #arch-list a progress {
+    /* Matches logo orange */
+    accent-color: #E48641;
+  }
+
+  @media screen and (max-width: 767px) {
     #arch-list a li {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: 20px;
+      flex-direction: column;
+      gap: 5px;
     }
-
-    #arch-list a span {
-        color: black;
-        text-align: center;
-        text-decoration: underline;
-    }
-
-    #arch-list a small {
-        font-size: 14px;
-    }
-
-    #arch-list a .spacer {
-        flex-grow: 1;
-    }
-
-    #arch-list a progress {
-        /* Matches logo orange */
-        accent-color: #E48641;
-    }
-
-    @media screen and (max-width: 767px) {
-        #arch-list a li {
-            flex-direction: column;
-            gap: 5px;
-        }
-    }
+  }
 </style>
