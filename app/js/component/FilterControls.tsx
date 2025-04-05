@@ -25,7 +25,7 @@ type Action
   | { action: "set", targets: Partial<Filters> }
   | { action: "setMnemonic", value: string }
   | { action: "invert", target: KeyOfType<Filters, boolean> }
-  | { action: "toggle", target: KeyOfType<Filters, Set<string>>, value: string }
+  | { action: "addOrRemove", target: KeyOfType<Filters, Set<string>>, values: Iterable<string>, include: boolean }
   | { action: "selectNoPredicates" }
   | { action: "selectAllPredicates" }
 
@@ -65,15 +65,17 @@ function updateFiltersReducer(filters: InternalFilters, reduce: Action, targetDe
     newFilters[reduce.target] = !filters[reduce.target];
     break;
 
-  case "toggle":
-    const set = new Set([...filters[reduce.target]]);
+  case "addOrRemove":
     newFilters = { ...filters };
-
-    // If the item was present, remove it, else add it
-    if (set.has(reduce.value)) {
-      set.delete(reduce.value);
+    
+    let set: Set<string>;
+    if (reduce.include) {
+      set = new Set([...filters[reduce.target], ...reduce.values]);
     } else {
-      set.add(reduce.value);
+      set = new Set([...filters[reduce.target]]);
+      for (let value of reduce.values) {
+        set.delete(value);
+      }
     }
 
     newFilters[reduce.target] = set;
@@ -190,10 +192,10 @@ export default function FilterControls(
                     </mark>
                   </td>
                   <td className="checkbox-cell">
-                    <input className="input-operand-input-filter" type="checkbox" checked={filters.inputFamilies.has(ty.name)} onChange={() => updateFilters({ action: "toggle", target: "inputFamilies", value: ty.name })} />
+                    <input className="input-operand-input-filter" type="checkbox" checked={filters.inputFamilies.has(ty.name)} onChange={e => updateFilters({ action: "addOrRemove", target: "inputFamilies", values: [ty.name], include: e.target.checked })} />
                   </td>
                   <td className="checkbox-cell">
-                    <input className="input-operand-output-filter" type="checkbox" checked={filters.outputFamilies.has(ty.name)} onChange={() => updateFilters({ action: "toggle", target: "outputFamilies", value: ty.name })} />
+                    <input className="input-operand-output-filter" type="checkbox" checked={filters.outputFamilies.has(ty.name)} onChange={e => updateFilters({ action: "addOrRemove", target: "outputFamilies", values: [ty.name], include: e.target.checked })} />
                   </td>
                 </tr>
               )
@@ -254,7 +256,7 @@ function PredicateFamilyFilters(
         family.predicates.map(pred =>
           <tr key={pred.friendlyName}>
             <td className="checkbox-cell">
-              <input className="input-predicate-filter" type="checkbox" checked={filters.predicates.has(pred.friendlyName)} onChange={() => updateFilters({ action: "toggle", target: "predicates", value: pred.friendlyName })} />
+              <input className="input-predicate-filter" type="checkbox" checked={filters.predicates.has(pred.friendlyName)} onChange={e => updateFilters({ action: "addOrRemove", target: "predicates", values: [pred.friendlyName], include: e.target.checked })} />
             </td>
             <td className="label-cell">
               {
