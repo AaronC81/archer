@@ -1,19 +1,19 @@
 {
-    "name": "archer",
-    "author": "Aaron Christiansen",
-    "devDependencies": {
-        "@babel/preset-react": "^7.26.3",
-        "@types/react": "^19.0.12",
-        "@types/react-dom": "^19.0.4",
-        "babel-cli": "^6.26.0",
-        "babel-loader": "^10.0.0",
-        "eslint": "^8.57.1",
-        "eslint-config-react-app": "^7.0.1",
-        "ts-loader": "^9.5.2",
-        "webpack-cli": "^6.0.1"
-    },
-    "dependencies": {
-        "react": "^19.1.0",
-        "react-dom": "^19.1.0"
-    }
+  "name": "archer",
+  "author": "Aaron Christiansen",
+  "devDependencies": {
+    "@babel/preset-react": "^7.26.3",
+    "@types/react": "^19.0.12",
+    "@types/react-dom": "^19.0.4",
+    "babel-cli": "^6.26.0",
+    "babel-loader": "^10.0.0",
+    "eslint": "^8.57.1",
+    "eslint-config-react-app": "^7.0.1",
+    "ts-loader": "^9.5.2",
+    "webpack-cli": "^6.0.1"
+  },
+  "dependencies": {
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  }
 }

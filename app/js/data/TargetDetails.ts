@@ -1,22 +1,22 @@
 // Matches `Adapter#adapt_details` -----------------------------------------------------------------
 interface TargetDetails {
-    name: string,
-    title: string,
-    assemblyVariants: string[],
-    operandTypeFamilies: TargetOperandTypeFamily[],
-    predicateFamilies: TargetPredicateFamily[],
+  name: string,
+  title: string,
+  assemblyVariants: string[],
+  operandTypeFamilies: TargetOperandTypeFamily[],
+  predicateFamilies: TargetPredicateFamily[],
 }
 interface TargetOperandTypeFamily {
-    name: string,
-    style: string,
+  name: string,
+  style: string,
 }
 export interface TargetPredicateFamily {
-    family: string | null,
-    predicates: TargetPredicate[],
+  family: string | null,
+  predicates: TargetPredicate[],
 }
 interface TargetPredicate {
-    friendlyName: string,
-    important: boolean,
+  friendlyName: string,
+  important: boolean,
 }
 // -------------------------------------------------------------------------------------------------
 
@@ -27,9 +27,9 @@ interface TargetPredicate {
  * for that data.
  */
 class TargetDetails {
-    constructor(obj: any) {
-        Object.assign(this, obj)
-    }
+  constructor(obj: any) {
+    Object.assign(this, obj)
+  }
 }
 
 export default TargetDetails;
