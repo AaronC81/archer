@@ -224,6 +224,10 @@ $content-padding: 20px;
   margin: 0 auto;
   border-collapse: collapse;
 
+  &.full-width {
+    width: 100%;
+  }
+
   tr {
     border-bottom: 1px solid var(--line-color);
   }

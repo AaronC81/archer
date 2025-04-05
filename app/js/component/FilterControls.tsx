@@ -213,28 +213,30 @@ export default function FilterControls(
             <button type="button" onClick={() => updateFilters({ action: "selectNoPredicates" })}>None</button>
             <button type="button" onClick={() => updateFilters({ action: "selectAllPredicates" })}>All</button>
 
-            <table id="predicate-filter-table" className="filter-table">
-              <tbody>
-                <tr>
-                  <td className="checkbox-cell">
-                    <input id="input-predicate-none-filter" type="checkbox" checked={filters.predicateNone} onChange={() => updateFilters({ action: "invert", target: "predicateNone" })} />
-                  </td>
-                  <td className="label-cell">
-                    <b><abbr title="Include instructions which require no additional processor capabilities">None</abbr></b>
-                  </td>
-                </tr>
+            <div id="predicate-filter-table">
+              <table className="filter-table full-width">
+                <tbody>
+                  <tr>
+                    <td className="checkbox-cell">
+                      <input id="input-predicate-none-filter" type="checkbox" checked={filters.predicateNone} onChange={() => updateFilters({ action: "invert", target: "predicateNone" })} />
+                    </td>
+                    <td className="label-cell">
+                      <b><abbr title="Include instructions which require no additional processor capabilities">None</abbr></b>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
 
-                {
-                  targetDetails.predicateFamilies.map(family =>
-                    <PredicateFamilyFilters
-                      key={family.family}
-                      family={family}
-                      filters={filters}
-                      updateFilters={updateFilters} />
-                  )
-                }
-              </tbody>
-            </table>
+              {
+                targetDetails.predicateFamilies.map(family =>
+                  <PredicateFamilyFilters
+                    key={family.family}
+                    family={family}
+                    filters={filters}
+                    updateFilters={updateFilters} />
+                )
+              }
+            </div>
           </div>
       }
     </form>
@@ -245,28 +247,41 @@ export default function FilterControls(
 function PredicateFamilyFilters(
   { family, filters, updateFilters }: { family: TargetPredicateFamily, filters: InternalFilters, updateFilters: (a: Action) => void }
 ) {
+  const table =
+    <table className="filter-table full-width">
+      <tbody>
+        {
+          family.predicates.map(pred =>
+            <tr key={pred.friendlyName}>
+              <td className="checkbox-cell">
+                <input className="input-predicate-filter" type="checkbox" checked={filters.predicates.has(pred.friendlyName)} onChange={e => updateFilters({ action: "addOrRemove", target: "predicates", values: [pred.friendlyName], include: e.target.checked })} />
+              </td>
+              <td className="label-cell">
+                {
+                  pred.important
+                  ? <b>{pred.friendlyName}</b>
+                  : <span>{pred.friendlyName}</span>
+                } 
+              </td>
+            </tr>
+          )
+        }
+      </tbody>
+    </table>;
+
   return (
     <>
-      {family.family &&
-        <tr key="__TITLE__">
-          <td><u>{family.family}</u></td>
-        </tr>
-      }
-      {
-        family.predicates.map(pred =>
-          <tr key={pred.friendlyName}>
-            <td className="checkbox-cell">
-              <input className="input-predicate-filter" type="checkbox" checked={filters.predicates.has(pred.friendlyName)} onChange={e => updateFilters({ action: "addOrRemove", target: "predicates", values: [pred.friendlyName], include: e.target.checked })} />
-            </td>
-            <td className="label-cell">
-              {
-                pred.important
-                ? <b>{pred.friendlyName}</b>
-                : <span>{pred.friendlyName}</span>
-              } 
-            </td>
-          </tr>
-        )
+      {family.family
+        ?
+          <details>
+            <summary>
+              <input type="checkbox"  />
+              <b>{family.family}</b>
+            </summary>
+            {table}
+          </details>
+        :
+          table
       }
     </>
   )
