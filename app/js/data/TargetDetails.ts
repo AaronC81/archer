@@ -10,7 +10,7 @@ interface TargetOperandTypeFamily {
     name: string,
     style: string,
 }
-interface TargetPredicateFamily {
+export interface TargetPredicateFamily {
     family: string | null,
     predicates: TargetPredicate[],
 }
