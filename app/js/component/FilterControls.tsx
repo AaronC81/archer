@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useEffect, useReducer } from "react";
+import React, { DetailedHTMLProps, Fragment, InputHTMLAttributes, useCallback, useEffect, useReducer, useRef } from "react";
 import TargetDetails, { TargetPredicateFamily } from "../data/TargetDetails";
 import { defaultFilters, defaultPredicates, Filters } from "../data/Filters";
 import { KeyOfType } from "../utils/typing";
@@ -269,13 +269,25 @@ function PredicateFamilyFilters(
       </tbody>
     </table>;
 
+  // Boolean of inclusions:
+  //  - If all "true", all selected
+  //  - If all "false", all not selected
+  //  - If neither, indeterminate
+  const inclusionList = family.predicates.map(pred => filters.predicates.has(pred.friendlyName));
+  const allSelected = inclusionList.every(x => x);
+  const anySelected = inclusionList.some(x => x);
+
   return (
     <>
       {family.family
         ?
           <details>
             <summary>
-              <input type="checkbox"  />
+              <CheckboxWithIndeterminate
+                checked={allSelected}
+                indeterminate={!allSelected && anySelected}
+                onChange={e => updateFilters({ action: "addOrRemove", target: "predicates", values: family.predicates.map(pred => pred.friendlyName), include: e.target.checked })}
+                />
               <b>{family.family}</b>
             </summary>
             {table}
@@ -285,4 +297,23 @@ function PredicateFamilyFilters(
       }
     </>
   )
+}
+
+
+function CheckboxWithIndeterminate(
+  props: { indeterminate: boolean } & DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
+) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const indeterminate = props.indeterminate;
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.indeterminate = indeterminate;
+    }
+  }, [inputRef, indeterminate]);
+
+  const propsWithoutIndeterminate: any = {...props};
+  delete propsWithoutIndeterminate.indeterminate;
+
+  return <input ref={inputRef} type="checkbox" {...propsWithoutIndeterminate} />
 }
