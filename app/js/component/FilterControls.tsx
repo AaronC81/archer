@@ -1,5 +1,5 @@
 import React, { Fragment, useCallback, useEffect, useReducer } from "react";
-import TargetDetails from "../data/TargetDetails";
+import TargetDetails, { TargetPredicateFamily } from "../data/TargetDetails";
 import { defaultFilters, defaultPredicates, Filters } from "../data/Filters";
 import { KeyOfType } from "../utils/typing";
 
@@ -224,29 +224,11 @@ export default function FilterControls(
 
                                 {
                                     targetDetails.predicateFamilies.map(family =>
-                                        <Fragment key={family.family}>
-                                            {family.family &&
-                                                <tr key="__TITLE__">
-                                                    <td><u>{family.family}</u></td>
-                                                </tr>
-                                            }
-                                            {
-                                                family.predicates.map(pred =>
-                                                    <tr key={pred.friendlyName}>
-                                                        <td className="checkbox-cell">
-                                                            <input className="input-predicate-filter" type="checkbox" checked={filters.predicates.has(pred.friendlyName)} onChange={() => updateFilters({ action: "toggle", target: "predicates", value: pred.friendlyName })} />
-                                                        </td>
-                                                        <td className="label-cell">
-                                                            {
-                                                                pred.important
-                                                                ? <b>{pred.friendlyName}</b>
-                                                                : <span>{pred.friendlyName}</span>
-                                                            } 
-                                                        </td>
-                                                    </tr>
-                                                )
-                                            }
-                                        </Fragment>
+                                        <PredicateFamilyFilters
+                                            key={family.family}
+                                            family={family}
+                                            filters={filters}
+                                            updateFilters={updateFilters} />
                                     )
                                 }
                             </tbody>
@@ -255,4 +237,35 @@ export default function FilterControls(
             }
         </form>
     </>;
+}
+
+
+function PredicateFamilyFilters(
+    { family, filters, updateFilters }: { family: TargetPredicateFamily, filters: InternalFilters, updateFilters: (a: Action) => void }
+) {
+    return (
+        <>
+            {family.family &&
+                <tr key="__TITLE__">
+                    <td><u>{family.family}</u></td>
+                </tr>
+            }
+            {
+                family.predicates.map(pred =>
+                    <tr key={pred.friendlyName}>
+                        <td className="checkbox-cell">
+                            <input className="input-predicate-filter" type="checkbox" checked={filters.predicates.has(pred.friendlyName)} onChange={() => updateFilters({ action: "toggle", target: "predicates", value: pred.friendlyName })} />
+                        </td>
+                        <td className="label-cell">
+                            {
+                                pred.important
+                                ? <b>{pred.friendlyName}</b>
+                                : <span>{pred.friendlyName}</span>
+                            } 
+                        </td>
+                    </tr>
+                )
+            }
+        </>
+    )
 }
