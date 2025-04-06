@@ -306,16 +306,13 @@ function CheckboxWithIndeterminate(
   props: { indeterminate: boolean } & DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
 ) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const indeterminate = props.indeterminate;
+  const { indeterminate, ...propsWithoutIndeterminate } = props;
 
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.indeterminate = indeterminate;
     }
   }, [inputRef, indeterminate]);
-
-  const propsWithoutIndeterminate: any = {...props};
-  delete propsWithoutIndeterminate.indeterminate;
 
   return <input ref={inputRef} type="checkbox" {...propsWithoutIndeterminate} />
 }
