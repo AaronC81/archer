@@ -75,7 +75,9 @@ partially builds one of them.
         - [ ] Core capabilities (Thumb, Thumb2, etc)
         - [ ] Other capabilities
         - [ ] Load/store info
-    - [ ] Rest of the x86 capabilities
+    - [ ] X86...
+        - [ ] Rest of the x86 capabilities
+        - [ ] Fix memory information (e.g. `mov mem -> reg` variants are missing "load")
     - [ ] Rest of the RISC-V capabilities
     - [ ] More PowerPC
 
