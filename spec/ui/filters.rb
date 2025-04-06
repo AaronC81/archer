@@ -15,6 +15,10 @@ def memory_load_filter = find(id: 'input-load-filter')
 
 def mnemonic_filter = find(id: 'input-mnemonic-filter')
 
+def predicate_header(name)
+  find("#predicate-filter-table")
+    .find("summary", text: name)
+end
 def predicate_filter(name)
   find("#predicate-filter-table")
     .find("tr", text: name)

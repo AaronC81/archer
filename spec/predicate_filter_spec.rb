@@ -9,6 +9,9 @@ feature "Predicate filtering" do
     # All predicates are selected by default, so this should show
     mnemonic_filter.set 'fabs'
     expect(page).to have_content 'ABS_F' # LLVM name
+ 
+    # Expand predicates
+    predicate_header('SIMD/FPU').click
 
     # Untick that filter - it goes away
     predicate_filter('x87 FPU').set(false)
