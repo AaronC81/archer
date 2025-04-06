@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import FilterControls from "./FilterControls";
+import FilterControls, { useFilters } from "./FilterControls";
 import ResultCard from "./ResultCard";
 import useAnchor from "../hook/useAnchor";
 import useTargetData from "../hook/useTargetData";
@@ -14,12 +14,7 @@ export default function FilterView(
   const [assemblyVariant, setAssemblyVariant] = useState(0);
 
   // Initialise filters to initial values once we have target details to do so
-  const [filters, setFilters] = useState<Filters | null>(null);
-  useEffect(() => {
-    if (details) {
-      setFilters(defaultFilters(details));
-    }
-  }, [details]);
+  const [filters, updateFilters] = useFilters(details);
 
   // Anchor can be used to show one specific LLVM instruction
   // If not specified, this is just the empty string
@@ -81,7 +76,7 @@ export default function FilterView(
         <div id="filter-panel">
           <div id="inner-filter-panel">
             {details &&
-              <FilterControls targetDetails={details} onChangeFilters={setFilters} />
+              <FilterControls targetDetails={details} filters={filters} updateFilters={updateFilters} />
             }
           </div>
         </div>

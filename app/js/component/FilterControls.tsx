@@ -1,24 +1,8 @@
 import React, { DetailedHTMLProps, Fragment, InputHTMLAttributes, useCallback, useEffect, useReducer, useRef } from "react";
 import TargetDetails, { TargetPredicateFamily } from "../data/TargetDetails";
-import { defaultFilters, defaultPredicates, Filters } from "../data/Filters";
+import { defaultFilters, defaultPredicates, Filters, InternalFilters } from "../data/Filters";
 import { KeyOfType } from "../utils/typing";
 
-
-// Capture some internal state which doesn't need to be made available to our `onChangeFilters`
-// subscriber. (It's still bundled into the same object for convenience of reducing.)
-type InternalFilterState = {
-  internalMnemonicString: string,
-  internalMnemonicError: string | null,
-}
-type InternalFilters = Filters & InternalFilterState;
-
-function defaultInternalFilters(targetDetails: TargetDetails) {
-  return {
-    ...defaultFilters(targetDetails),
-    internalMnemonicString: "",
-    internalMnemonicError: null,
-  }
-}
 
 type Action
   = { action: "reset" }
@@ -29,21 +13,26 @@ type Action
   | { action: "selectNoPredicates" }
   | { action: "selectAllPredicates" }
 
-function updateFiltersReducer(filters: InternalFilters, reduce: Action, targetDetails: TargetDetails): InternalFilters {
+function updateFiltersReducer(filters: InternalFilters | null, reduce: Action, targetDetails: TargetDetails | null): InternalFilters | null {
+  if (targetDetails == null) {
+    console.warn("Invoked reducer without targetDetails loaded yet - ignoring", reduce);
+    return filters;
+  }
+
   let newFilters: InternalFilters;
 
   switch (reduce.action) {
 
   case "reset":
-    newFilters = defaultInternalFilters(targetDetails);
+    newFilters = defaultFilters(targetDetails);
     break;
 
   case "set":
-    newFilters = { ...filters, ...reduce.targets }
+    newFilters = { ...filters!, ...reduce.targets }
     break;
 
   case "setMnemonic":
-    newFilters = { ...filters, internalMnemonicString: reduce.value };
+    newFilters = { ...filters!, internalMnemonicString: reduce.value };
 
     newFilters.internalMnemonicError = null;
     if (reduce.value.charAt(0) == "/") {
@@ -61,18 +50,18 @@ function updateFiltersReducer(filters: InternalFilters, reduce: Action, targetDe
     break;
 
   case "invert":
-    newFilters = { ...filters };
-    newFilters[reduce.target] = !filters[reduce.target];
+    newFilters = { ...filters! };
+    newFilters[reduce.target] = !filters![reduce.target];
     break;
 
   case "addOrRemove":
-    newFilters = { ...filters };
+    newFilters = { ...filters! };
     
     let set: Set<string>;
     if (reduce.include) {
-      set = new Set([...filters[reduce.target], ...reduce.values]);
+      set = new Set([...filters![reduce.target], ...reduce.values]);
     } else {
-      set = new Set([...filters[reduce.target]]);
+      set = new Set([...filters![reduce.target]]);
       for (let value of reduce.values) {
         set.delete(value);
       }
@@ -83,7 +72,7 @@ function updateFiltersReducer(filters: InternalFilters, reduce: Action, targetDe
 
   case "selectNoPredicates":
     newFilters = {
-      ...filters,
+      ...filters!,
       predicateNone: true,
       predicates: new Set(),
     }
@@ -91,7 +80,7 @@ function updateFiltersReducer(filters: InternalFilters, reduce: Action, targetDe
 
   case "selectAllPredicates":
     newFilters = {
-      ...filters,
+      ...filters!,
       predicateNone: true,
       predicates: defaultPredicates(targetDetails),
     }
@@ -106,20 +95,33 @@ function updateFiltersReducer(filters: InternalFilters, reduce: Action, targetDe
 }
 
 
-export default function FilterControls(
-  { targetDetails, onChangeFilters }: { targetDetails: TargetDetails, onChangeFilters: (_: Filters) => void }
-) {
-  const [filters, updateFilters] = useReducer<InternalFilters, [Action]>(
+export function useFilters(targetDetails: TargetDetails | null): [InternalFilters | null, (_: Action) => void] {
+  const [filters, updateFilters] = useReducer<InternalFilters | null, [Action]>(
     (f, a) => updateFiltersReducer(f, a, targetDetails),
-    defaultInternalFilters(targetDetails),
+    null,
   );
 
-  // Sync state out - can't do that in `useReducer` because that runs during render.
-  // If the callback sets state (which ours does!) React isn't happy.
-  // `useEffect` runs afterwards instead.
+  // Reset filters if the target details change (or are loaded for the first time)
   useEffect(() => {
-    onChangeFilters(filters);
-  }, [filters, onChangeFilters]);
+    if (targetDetails != null) {
+      updateFilters({ action: "reset" });
+    }
+  }, [targetDetails]);
+
+  return [filters, updateFilters];
+}
+
+
+export default function FilterControls(
+  { filters, updateFilters, targetDetails }: { filters: InternalFilters | null, updateFilters: (_: Action) => void, targetDetails: TargetDetails }
+) {
+  if (filters == null) {
+    return (
+      <div id="top-filter-panel">
+        <span>Loading...</span>
+      </div>
+    )
+  }
   
   return <>
     <div id="top-filter-panel">
