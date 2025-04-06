@@ -18,6 +18,7 @@ module Colours
     "General-purpose register" => Pair.new("08327d", "fbfbfb"), # dark blue - white
 
     "Other register" => Pair.new("db2f27", "fbfbfb"), # red - white
+    "Special register" => Pair.new("db2f27", "fbfbfb"), # red - white
 
     # x86-specific
     "x87 floating-point register" => Pair.new("0d6e25", "fbfbfb"), # green - white

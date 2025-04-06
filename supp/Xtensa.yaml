@@ -1,0 +1,37 @@
+title: "Xtensa"
+
+operand_types:
+  AR:
+    friendly_name: General-purpose register 
+    llvm_name: AR
+    family: General-purpose register
+  SR:
+    friendly_name: Special register
+    llvm_name: SR
+    family: Special register
+
+  "expand_immediates!": ["imm8", "uimm5", "uimm4", "imm12m"]
+  imm8_sh8:
+    friendly_name: 8-bit immediate (left-shifted by 8)
+    llvm_name: imm8_sh8
+    family: Immediate
+  imm1_16:
+    friendly_name: 4-bit immediate (1-16)
+    llvm_name: imm1_16
+    family: Immediate
+  
+  # These immediates have very special values - 4-bit encoding into a table of 'common values' to
+  # compare against when branching
+  b4constu:
+    friendly_name: Unsigned branch immediate (4-bit table index)
+    llvm_name: b4constu
+    family: Immediate
+  b4const:
+    friendly_name: Branch immediate (4-bit table index)
+    llvm_name: b4const
+    family: Immediate
+
+  "expand_memory!": ["mem8", "mem16", "mem32"]
+
+instruction_fixups: []
+explode_operand_types: []

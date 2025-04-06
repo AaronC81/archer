@@ -114,12 +114,15 @@ class SupplementaryData
 
     def self.from_immediate(llvm_name)
       case llvm_name
-      when /^([siu])((?<size>\d+)imm|imm(?<size>\d+))$/ # sometimes "u1imm", sometimes "uimm1"
+      # sometimes "u1imm", sometimes "uimm1"
+      # `m` suffix only appears on Xtensa and is irrelevant for us
+      when /^([siu]?)((?<size>\d+)imm|imm(?<size>\d+))m?$/ 
         bits = $~['size'].to_i
         form = case $1
           when 's'; 'Signed '
           when 'u'; 'Unsigned '
           when 'i'; ''
+          else;     ''
         end
 
         new({
@@ -157,18 +160,28 @@ class SupplementaryData
     end
 
     def self.from_memory(llvm_name)
-      raise "malformed memory name" unless /^([fi])(\d+)mem$/ === llvm_name
-      bits = $2.to_i
-      ty = case $1
-        when 'f'; 'float'
-        when 'i'; 'integer'
-      end
+      case llvm_name
+      when /^([fi])(\d+)mem$/
+        bits = $2.to_i
+        ty = case $1
+          when 'f'; 'float'
+          when 'i'; 'integer'
+        end
 
-      new({
-        'friendly_name' => "Memory reference to #{ty} (#{bits}-bit width)",
-        'llvm_name' => llvm_name,
-        'family' => 'Memory',
-      })
+        new({
+          'friendly_name' => "Memory reference to #{ty} (#{bits}-bit width)",
+          'llvm_name' => llvm_name,
+          'family' => 'Memory',
+        })
+        
+      when /^mem(\d+)$/ # Seen on Xtensa
+        bits = $1.to_i
+        new({
+          'friendly_name' => "Memory reference (#{bits}-bit width)",
+          'llvm_name' => llvm_name,
+          'family' => 'Memory',
+        })
+      end
     end
 
     def self.new_unknown(name)

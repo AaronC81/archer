@@ -32,5 +32,6 @@ dump_arch $llvm_mainline_target X86 X86
 dump_arch $llvm_mainline_target PowerPC PPC
 dump_arch $llvm_mainline_target RISCV RISCV
 dump_arch $llvm_mainline_target ARM ARM
+dump_arch $llvm_mainline_target Xtensa Xtensa
 dump_arch /llvm/tricore/llvm-tricore TriCore TriCore
 dump_arch /llvm/j2/j2-llvm J2 J2

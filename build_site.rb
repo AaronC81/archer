@@ -15,7 +15,7 @@ APP_DIR = ROOT_DIR/'app'
 VIEWS_DIR = APP_DIR/'views'
 BUILD_DIR = ROOT_DIR/'build'
 
-SUPPORTED_TARGETS = %w[X86 ARM RISCV PowerPC TriCore J2]
+SUPPORTED_TARGETS = %w[X86 ARM RISCV PowerPC TriCore J2 Xtensa]
 
 def render_erb(template, output, title: nil)
   @page_title = title
@@ -106,7 +106,7 @@ end
 # For faster testing
 if ARGV.delete("--fast")
   SUPPORTED_TARGETS.clear
-  SUPPORTED_TARGETS << 'TriCore'
+  SUPPORTED_TARGETS << 'Xtensa'
 end
 
 case ARGV
