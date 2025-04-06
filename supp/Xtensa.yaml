@@ -1,3 +1,8 @@
+# NOTE: The version of LLVM we're using is missing some of the windowed register instructions, like
+#       CALL4. These were only added to LLVM recently.
+#
+#       https://github.com/llvm/llvm-project/pull/121118
+
 title: "Xtensa"
 
 operand_types:
@@ -12,12 +17,16 @@ operand_types:
 
   "expand_immediates!": ["imm8", "uimm5", "uimm4", "imm12m"]
   imm8_sh8:
-    friendly_name: 8-bit immediate (left-shifted by 8)
+    friendly_name: 8-bit immediate (shifted by 8)
     llvm_name: imm8_sh8
     family: Immediate
   imm1_16:
     friendly_name: 4-bit immediate (1-16)
     llvm_name: imm1_16
+    family: Immediate
+  shimm1_31:
+    friendly_name: 5-bit immediate (1-31)
+    llvm_name: shimm1_31
     family: Immediate
   
   # These immediates have very special values - 4-bit encoding into a table of 'common values' to
@@ -32,6 +41,24 @@ operand_types:
     family: Immediate
 
   "expand_memory!": ["mem8", "mem16", "mem32"]
+
+  brtarget:
+    friendly_name: Branch target (signed 8-bit immediate)
+    llvm_name: brtarget
+    family: Immediate
+  pcrel32call:
+    friendly_name: Call target (signed 18-bit immediate, must be 32-bit aligned)
+    llvm_name: pcrel32call
+    family: Immediate
+  jumptarget:
+    friendly_name: Jump target (signed 18-bit immediate)
+    llvm_name: jumptarget
+    family: Immediate
+  L32Rtarget:
+    friendly_name: 32-bit immediate (part of PC-relative virtual address) # This one's really complicated!
+    llvm_name: L32Rtarget
+    family: Immediate
+  
 
 instruction_fixups: []
 explode_operand_types: []
